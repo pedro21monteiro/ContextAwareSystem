@@ -20,7 +20,7 @@ namespace ContextBuider
             using var _contex = new ContextAwareDb();
             var _logic = new Logic();
 
-
+            //---
 
             var factory = new ConnectionFactory { HostName = "192.168.28.86" };
 

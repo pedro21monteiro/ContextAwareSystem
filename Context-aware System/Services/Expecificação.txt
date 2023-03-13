@@ -1,0 +1,37 @@
+﻿Estes "services" serão os serviços que vou ter de criar para pedir informações das bases de dados.
+
+Ex: se precisar de saber informação sobre os trabalhadores vou criar um serviço que recebe esse informação:
+
+public interface IServices
+    {
+        Task<List<TbConsulta>> GetConsultas();
+        
+    }
+
+    //---------------------------------------------
+
+public class Services : IServices
+    {
+        private readonly HttpClient httpClient;
+
+        public Services(HttpClient _httpClient)
+        {
+            this.httpClient = _httpClient;
+        }
+
+        public async Task<List<Worker>> GetWorker()
+        {
+            return await httpClient.GetFromJsonAsync<List<Worker>>("api/Worker/GetWorkers");
+        }
+
+        
+    }
+
+    //Esta informação vai ser buscada na camada de integração e vou recer um ficheiro json
+
+    //Para já vai ser apenas experimental e vou preencher essa informação de forma estatica aqui e mais para a frente
+    // faço e pedido de informação de foma correta
+
+    A maneira de freencher a lista dentro dos meus web service vai ser a seguinte:
+    
+    ex: listConsultas = await consultaService.GetConsultas();

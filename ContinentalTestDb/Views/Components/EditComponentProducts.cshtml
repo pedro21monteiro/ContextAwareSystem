@@ -1,0 +1,54 @@
+﻿@model IEnumerable<ContinentalTestDb.Models.Component>
+
+@{
+    ViewData["Title"] = "EditComponentProducts";
+}
+
+<h1>Editar componentes do produto - @ViewBag.ProductName</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Reference)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Category)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Reference)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category)
+            </td>
+                @if(item.IsSelected == true)
+                {
+                    <td>
+                        
+                        <a asp-action="RemoverComponent" asp-controller="Components"  asp-route-idProd="@ViewBag.ProductId"  asp-route-idComp="@item.Id">Retirar</a>
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        <a asp-action="AdicionarComponent" asp-controller="Components" asp-route-idProd="@ViewBag.ProductId" asp-route-idComp="@item.Id">Adicionar</a>
+                    </td>
+                }
+                
+        </tr>
+}
+    </tbody>
+</table>

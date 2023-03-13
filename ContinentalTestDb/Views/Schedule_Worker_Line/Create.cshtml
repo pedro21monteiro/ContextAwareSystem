@@ -1,0 +1,80 @@
+﻿@model ContinentalTestDb.Models.Schedule_Worker_Line
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Schedule_Worker_Line</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Day" class="control-label"></label>
+                <input asp-for="Day" class="form-control" />
+                <span asp-validation-for="Day" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Shift" class="control-label"></label>
+                <input asp-for="Shift" class="form-control" />
+                <span asp-validation-for="Shift" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LineId" class="control-label"></label>
+                <select asp-for="LineId" class ="form-control" asp-items="ViewBag.LineId"></select>
+            </div>
+            <div>
+				<label>Tipo de Funcionário</label>
+				<select id="TipoFunc" name="tipo" class="form-control form-select">
+					<option value="1">Operador</option>
+					<option value="2">Supervisor</option>
+				</select>
+			</div>
+            <div class="form-group op">
+                <label asp-for="OperatorId" class="control-label"></label>
+                <select id="opID" asp-for="OperatorId" class ="form-control" asp-items="ViewBag.OperatorId"></select>
+            </div>
+            <div class="form-group sup">
+                <label asp-for="SupervisorId" class="control-label"></label>
+                <select id="supID" asp-for="SupervisorId" class ="form-control" asp-items="ViewBag.SupervisorId"></select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    <script>
+$(document).ready(function() {
+    $('.sup').hide();
+    $('#supID').val(-1);
+});
+
+    $('#TipoFunc').on('change', function () {
+    if (this.value == 1) {
+        $('.op').show();
+        $('#opID').prop('selectedIndex', 0);
+        $('.sup').hide();
+        $('#supID').val(-1);
+
+    } else if (this.value == 2) {
+        $('.sup').show();
+        $('#supID').prop('selectedIndex', 0);
+        $('.op').hide();
+        $('#opID').val(-1);
+    }
+});
+    </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+}

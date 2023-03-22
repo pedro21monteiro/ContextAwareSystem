@@ -1,6 +1,6 @@
 ﻿using Models.Models;
 
-namespace Context_aware_System.Services
+namespace ContextServer.Services
 
 {
     public interface IService
@@ -11,8 +11,6 @@ namespace Context_aware_System.Services
         //Workers
         Task<List<Worker>> GetWorkers();
 
-        //Machines
-        Task<List<Machine>> GetMachines();
 
         //Lines
         Task<List<Line>> GetLines();
@@ -24,8 +22,7 @@ namespace Context_aware_System.Services
         Task<List<Product>> GetProducts();
         //Products
         Task<List<Component>> GetComponents();
-        //Products
-        Task<List<Product_Component>> GetProduct_Components();
+ 
         //operators
         Task<List<Operator>> GetOperators();
         //coordinators

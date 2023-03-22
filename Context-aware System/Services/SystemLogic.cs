@@ -1,6 +1,6 @@
 ﻿using Models.FunctionModels;
 
-namespace Context_aware_System.Services
+namespace ContextServer.Services
 {
     public class SystemLogic : ISystemLogic
     {
@@ -75,6 +75,43 @@ namespace Context_aware_System.Services
             if (!dtSearchInitial.HasValue && dtSearchFinal.HasValue)
             {
                 if ((dtInitial.CompareTo(new DateTime()) < 0 && dtFinal.CompareTo(new DateTime()) < 0) || (dtInitial.CompareTo(dtSearchFinal) > 0 && dtFinal.CompareTo(dtSearchFinal) > 0))
+                {
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        }
+        public bool IsAtributeInDatetime(DateTime? dtSearchInitial, DateTime? dtSearchFinal, DateTime Day)
+        {
+            //se os dois não tiverem valores
+            if (!dtSearchInitial.HasValue && !dtSearchFinal.HasValue)
+            {
+                //vai retornar todos
+                return true;
+            }
+            //se os dois tiverem valor:
+            if (dtSearchInitial.HasValue && dtSearchFinal.HasValue)
+            {
+                if (Day.CompareTo(dtSearchInitial)<0 || Day.CompareTo(dtSearchFinal) > 0)
+                {
+                    return false;
+                }
+                return true;
+            }
+            //se tiver data inicial e não tiver final
+            if (dtSearchInitial.HasValue && !dtSearchFinal.HasValue)
+            {
+                if (Day.CompareTo(dtSearchInitial) < 0)
+                {
+                    return false;
+                }
+                return true;
+            }
+            //Se tiver só a final
+            if (!dtSearchInitial.HasValue && dtSearchFinal.HasValue)
+            {
+                if (Day.CompareTo(dtSearchFinal) > 0)
                 {
                     return false;
                 }

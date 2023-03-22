@@ -14,7 +14,7 @@ namespace Models.CustomModels
         public string Type { get; set; } = String.Empty;
         //----------------Se for Operador-----------
         public Line line { get; set; } = new Line();
-        public string ProductReference { get; set; } = String.Empty;
+        public string ProductName { get; set; } = String.Empty;
         public string TagReference { get; set; } = String.Empty;
         //neste momento pode retornar todos
         public List<Component> listMissingComponentes { get; set; } = new List<Component>();

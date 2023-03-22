@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Context-aware System", "Context-aware System\Context-aware System.csproj", "{B73EDC00-9D26-4BA8-8924-29B0A6CA7227}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContextServer", "Context-aware System\ContextServer.csproj", "{B73EDC00-9D26-4BA8-8924-29B0A6CA7227}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "Models\Models.csproj", "{474D0BCF-FCA7-4531-A2DF-D2FA14287326}"
 EndProject
@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data-Integration Layer", "D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContinentalTestDb", "ContinentalTestDb\ContinentalTestDb.csproj", "{AAECF5E9-F41F-4A00-891E-FCF61C803EE5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContextBuider", "ContextBuider\ContextBuider.csproj", "{13237901-0C36-4CEF-9548-F397C702AA29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContextBuider", "ContextBuider\ContextBuider.csproj", "{13237901-0C36-4CEF-9548-F397C702AA29}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

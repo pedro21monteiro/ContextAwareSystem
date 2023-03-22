@@ -1,5 +1,5 @@
-using Context_aware_System.Data;
-using Context_aware_System.Services;
+using ContextServer.Data;
+using ContextServer.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,10 +13,10 @@ builder.Services.AddSwaggerGen();
 //-----------------
 //builder.Services.AddSingleton(typeof(Service));
 
-builder.Services.AddSingleton<Service>();
-builder.Services.AddHttpClient<IService, Service>();
+//builder.Services.AddSingleton<Service>();
+//builder.Services.AddHttpClient<IService, Service>();
 //para o context database
-builder.Services.AddSingleton<ContextAwareDataBaseContext>();
+builder.Services.AddSingleton<ContextAwareDb>();
 
 //Singleton para a logica do sistema
 builder.Services.AddSingleton<SystemLogic>();
@@ -35,21 +35,5 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 
 app.MapControllers();
-
-//inicializar a base de dados:
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    try
-    {
-        var context = services.GetRequiredService<ContextAwareDataBaseContext>();
-        DbInitializer.Initalize(context);
-    }
-    catch (Exception ex)
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error ocurred while sendding the database");
-    }
-}
 
 app.Run();

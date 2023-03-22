@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
 
-namespace Models.Models
+namespace ContextServer.Models
 {
     public class Coordinator 
     {
@@ -19,8 +17,6 @@ namespace Models.Models
         public Worker Worker { get; set; }
         public int WorkerId { get; set; }
 
-        [JsonIgnore]
-        [IgnoreDataMember]
         public virtual ICollection<Line> Lines { get; set; }
     }
 }

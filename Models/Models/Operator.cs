@@ -1,23 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Models.Models
 {
-    public class Operator : Worker
+    public class Operator 
     {
+        public Operator()
+        {
+            this.Schedules = new HashSet<Schedule_Worker_Line>();
+        }
+
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int Id { get; set; }
+        public Worker Worker { get; set; }
         public int WorkerId { get; set; }
 
-        List<Schedule_Worker_Line> listSchedules_WorkerLine { get; set; } = new List<Schedule_Worker_Line>();
-        public void FillOperator(Worker w)
-        {
-            this.Id = w.Id;
-            this.IdFirebase = w.IdFirebase;
-            this.UserName = w.UserName;
-            this.Email = w.Email;
-            this.Role = w.Role;
-        }
+        [JsonIgnore]
+        [IgnoreDataMember]
+        public virtual ICollection<Schedule_Worker_Line> Schedules { get; set; }
     }
 }

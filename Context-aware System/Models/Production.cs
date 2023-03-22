@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
 
-namespace Models.Models
+namespace ContextServer.Models
 {
     public class Production
     {
@@ -18,8 +16,6 @@ namespace Models.Models
         public int Quantity { get; set; }
 
         //---
-        [JsonIgnore]
-        [IgnoreDataMember]
         public Production_Plan Prod_Plan { get; set; } = new Production_Plan();
         public int Production_PlanId { get; set; }
     }

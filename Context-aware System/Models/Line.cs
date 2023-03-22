@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
 
-namespace Models.Models
+namespace ContextServer.Models
 {
     public class Line
     {
@@ -27,17 +25,9 @@ namespace Models.Models
         public Coordinator Coordinator { get; set; } 
         public int CoordinatorId { get; set; }
 
-        [JsonIgnore]
-        [IgnoreDataMember]
         public virtual ICollection<Production_Plan> Production_Plans { get; set; }
-        [JsonIgnore]
-        [IgnoreDataMember]
         public virtual ICollection<Device> Devices { get; set; }
-        [JsonIgnore]
-        [IgnoreDataMember]
         public virtual ICollection<Stop> Stops { get; set; }
-        [JsonIgnore]
-        [IgnoreDataMember]
         public virtual ICollection<Schedule_Worker_Line> Schedules { get; set; }
 
         

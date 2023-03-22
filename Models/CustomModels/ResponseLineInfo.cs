@@ -10,10 +10,15 @@ namespace Models.CustomModels
     public class ResponseLineInfo
     {
         public string Message { get; set; } = String.Empty;//Mensagem de erro 
+
+        public Line Line { get; set; } = new Line();
+
         public List<Stop> listStops{ get; set; } = new List<Stop>();
-        public Coordinator Coordinator { get; set; } = new Coordinator();
+
+        //Não necessario pois já tem coordenador nos parametros
+        //public Coordinator Coordinator { get; set; } = new Coordinator();
         public Product Product { get; set; } = new Product();
-        public Production Production { get; set; } = new Production();
+        public List<Production> listProductions { get; set; } = new List<Production>();
 
     }
 }

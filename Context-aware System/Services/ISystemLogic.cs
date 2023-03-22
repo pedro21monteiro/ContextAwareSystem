@@ -1,6 +1,6 @@
 ﻿using Models.FunctionModels;
 
-namespace Context_aware_System.Services
+namespace ContextServer.Services
 {
     public interface ISystemLogic
     {
@@ -9,6 +9,6 @@ namespace Context_aware_System.Services
         WorkShift GetAtualWorkShift(DateTime dt);
 
         bool IsAtributeInDatetime(DateTime? dtSearchInitial, DateTime? dtSearchFinal, DateTime dtInitial, DateTime dtFinal);
-
+        bool IsAtributeInDatetime(DateTime? dtSearchInitial, DateTime? dtSearchFinal, DateTime Day);
     }
 }

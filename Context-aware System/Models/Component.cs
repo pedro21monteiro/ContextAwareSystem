@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
 
-namespace Models.Models
+namespace ContextServer.Models
 {
     public class Component
     {
@@ -22,8 +20,6 @@ namespace Models.Models
         [Required]
         public int Category { get; set; }//0 - Sem categoria, 1-Etiqueta , 2- parafusos / etc...
 
-        [JsonIgnore]
-        [IgnoreDataMember]
         public virtual ICollection<Product> Products { get; set; }
 
     }

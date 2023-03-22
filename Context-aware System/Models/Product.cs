@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
 
-namespace Models.Models
+namespace ContextServer.Models
 {
     public class Product
     {
@@ -24,8 +22,7 @@ namespace Models.Models
         public TimeSpan Cycle { get; set; }
 
         public virtual ICollection<Component> Components { get; set; }
-        [JsonIgnore]
-        [IgnoreDataMember]
+
         public virtual ICollection<Production_Plan> Production_Plans { get; set; }
 
     }

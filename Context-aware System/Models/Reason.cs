@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
 
-namespace Models.Models
+namespace ContextServer.Models
 {
     public class Reason
     {
@@ -18,8 +16,6 @@ namespace Models.Models
         public string Description { get; set; } = string.Empty;
 
         //--
-        [JsonIgnore]
-        [IgnoreDataMember]
         public virtual ICollection<Stop> Stops{ get; set; }
     }
 }

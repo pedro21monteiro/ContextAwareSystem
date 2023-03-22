@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
 
-namespace Models.Models
+namespace ContextServer.Models
 {
     public class Worker
     {
@@ -26,14 +24,8 @@ namespace Models.Models
         [Required]
         public int Role { get; set; } //1-coordinator , 2- Operator , 3 - Supervisor
 
-        [JsonIgnore]
-        [IgnoreDataMember]
         public virtual ICollection<Coordinator> Coordinators { get; set; }
-        [JsonIgnore]
-        [IgnoreDataMember]
         public virtual ICollection<Operator> Operators { get; set; }
-        [JsonIgnore]
-        [IgnoreDataMember]
         public virtual ICollection<Supervisor> Supervisors{ get; set; }
     }
 }

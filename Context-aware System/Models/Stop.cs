@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
 
-namespace Models.Models
+namespace ContextServer.Models
 {
     public class Stop
     {
@@ -22,8 +20,6 @@ namespace Models.Models
         public int Shift { get; set; }
 
         //----
-        [JsonIgnore]
-        [IgnoreDataMember]
         public Line Line { get; set; } = new Line();
         public int LineId { get; set; }
 

@@ -1,6 +1,6 @@
 ﻿using Models.Models;
 
-namespace Context_aware_System.Services
+namespace ContextServer.Services
 
 {
     public class Service : IService
@@ -30,10 +30,7 @@ namespace Context_aware_System.Services
         }
 
         //--------------------------Serviços relacionados com Machines-------------------------------------
-        public async Task<List<Machine>> GetMachines()
-        {
-            return await httpClient.GetFromJsonAsync<List<Machine>>("https://localhost:7057/api/Data/GetMachines");
-        }
+
         //--------------------------Serviços relacionados com ProductionLines-------------------------------------
         public async Task<List<Line>> GetLines()
         {
@@ -60,10 +57,7 @@ namespace Context_aware_System.Services
             return await httpClient.GetFromJsonAsync<List<Component>>("https://localhost:7057/api/Data/GetComponents");
         }
         //--------------------------Serviços relacionados com Product_Componets-------------------------------------
-        public async Task<List<Product_Component>> GetProduct_Components()
-        {
-            return await httpClient.GetFromJsonAsync<List<Product_Component>>("https://localhost:7057/api/Data/GetProduct_Components");
-        }
+
 
         //--------------------------Serviços relacionados com Operators-------------------------------------
         public async Task<List<Operator>> GetOperators()

@@ -142,15 +142,18 @@ namespace Context_aware_System.Controllers
                 return NotFound(roi);
             }
             //encontrar o operator
-            var ope = _context.Operators.Where(o => o.WorkerId == worker.Id).FirstOrDefault();
+            var ope = _context.Operators.Where(o => o.WorkerId == worker.Id)
+                .Include(o => o.Worker)
+                .FirstOrDefault();
             if (ope == null)
             {
                 roi.Message = "Erro ao identificar o Operator!!";
 
                 return NotFound(roi);
             }
+            roi.Operator = ope;
             //verificar se esse operador esta a trabalhar no dia atual
-            foreach (Schedule_Worker_Line swl in _context.Schedule_Worker_Lines)
+            foreach (Schedule_Worker_Line swl in _context.Schedule_Worker_Lines.Include(s => s.Operator).ToList())
             {
                 if(swl.Operator != null)
                 {
@@ -161,19 +164,24 @@ namespace Context_aware_System.Controllers
                 }
             }
             //ver em quantas linhas esta a trabalhar
-            int nLinhas = 0;
+            
             foreach (Schedule_Worker_Line swl2 in roi.listSWL)
             {
                 foreach (Line l in _context.Lines)
                 {
                     if (l.Id == swl2.LineId)
                     {
-                        nLinhas++;
+                        if (!roi.listLine.Contains(l))
+                        {
+                            //adicionar so uma vez caso ele tenha mais que um horario numa linha
+                            roi.listLine.Add(l);
+                        }
+                        
                     }
                 }
 
             }
-
+            int nLinhas = roi.listLine.Count;
             if (nLinhas == 0)
             {
                 roi.Message = "O operador " + worker.UserName + " não está a trabalhar em nenhuma linha hoje";
@@ -185,77 +193,6 @@ namespace Context_aware_System.Controllers
 
             return Ok(roi);
         }
-
-        //[HttpGet]
-        //[Route("NewProducedProductsInfo")]
-        //public async Task<IActionResult> NewProducedProductsInfo(int LineId)
-        //{
-        //    //Formato da resposta
-        //    ResponseNewProductsProducedInfo rnpi = new ResponseNewProductsProducedInfo();
-
-        //    List<Production> listProductions = new List<Production>();
-
-        //    listProductions = await _service.GetProductions();
-        //    //Aqui se encontrar a prodution line vai ter de procurar Production e os componentes da mesma
-        //    var production = listProductions.Where(p => p.Id == LineId).FirstOrDefault();
-        //    if (production == null)
-        //    {
-        //        rnpi.Message = "Erro ao identificar a production!!";
-        //        return NotFound(rnpi);
-        //    }
-        //    if (listProductions.Count() > _context.NewProducedProductsInfos.Count())
-        //    {
-        //        foreach (Production pd in listProductions)
-        //        {
-        //            var nppi = _context.NewProducedProductsInfos.SingleOrDefault(n => n.ProductionId == pd.Id);
-        //            if (nppi == null)
-        //            {
-        //                //vamos adicionar na base de dados
-        //                NewProducedProductsInfo np = new NewProducedProductsInfo();
-        //                np.ProductionId = pd.Id;
-        //                np.ProductionObjective = pd.Objective;
-        //                np.ProductionProduced = pd.Produced;
-        //                np.ProductionLineId = pd.LineId;
-        //                np.VerificationDate = DateTime.Now;
-        //                _context.NewProducedProductsInfos.Add(np);
-        //                _context.SaveChanges();
-        //            }
-        //        }
-        //    }
-        //    //atualizar a lista que vai ser escrita
-        //    var productionContext = _context.NewProducedProductsInfos.Where(p => p.ProductionId == production.Id).FirstOrDefault();
-        //    if (productionContext == null)
-        //    {
-        //        rnpi.Message = "Não existe essa produção!!";
-        //        return NotFound(rnpi);
-        //    }
-        //    //preencher a resposta
-        //    if (productionContext.ProductionProduced >= production.Produced)
-        //    {
-        //        rnpi.Message = "Não foram produzidos novos produtos";
-        //        rnpi.LastProduced = productionContext.ProductionProduced;
-        //        rnpi.LastCheck = productionContext.VerificationDate;
-        //        rnpi.AtualProduced = production.Produced;
-        //        rnpi.AtualCheck = DateTime.Now;
-        //    }
-        //    else
-        //    {
-        //        rnpi.Message = "Foram produzidos novos produtos";
-        //        rnpi.LastProduced = productionContext.ProductionProduced;
-        //        rnpi.LastCheck = productionContext.VerificationDate;
-        //        rnpi.AtualProduced = production.Produced;
-        //        rnpi.AtualCheck = DateTime.Now;
-        //        rnpi.NewProduced = production.Produced - productionContext.ProductionProduced; ;
-        //    }
-        //    //atualizar os dados daquela produção
-        //    productionContext.ProductionProduced = production.Produced;
-        //    productionContext.VerificationDate = rnpi.AtualCheck;
-        //    _context.NewProducedProductsInfos.Update(productionContext);
-        //    _context.SaveChanges();
-
-        //    //retornar a resposta
-        //    return Ok(rnpi);
-        //}
 
         [HttpGet]
         [Route("NewStopsInfo")]
@@ -313,6 +250,7 @@ namespace Context_aware_System.Controllers
 
                 return NotFound(rli);
             }
+            rli.Coordinator = line.Coordinator;
             rli.Line = line;
             //Lista de stops
             var stops = _context.Stops.Where(s => s.LineId == line.Id).ToList();
@@ -366,13 +304,16 @@ namespace Context_aware_System.Controllers
                 return NotFound(rsi);
             }
             //encontrar o operator
-            var sup = _context.Supervisors.Where(s => s.WorkerId == worker.Id).FirstOrDefault();
+            var sup = _context.Supervisors.Where(s => s.WorkerId == worker.Id)
+                .Include(s => s.Worker)
+                .FirstOrDefault();
             if (sup == null)
             {
                 rsi.Message = "Erro ao identificar o Supervisor!!";
 
                 return NotFound(rsi);
             }
+            rsi.Supervisor = sup;
             //verificar se esse operador esta a trabalhar no dia atual
             DateTime DataPesquisa = new DateTime();
             if (Day.HasValue)
@@ -393,20 +334,24 @@ namespace Context_aware_System.Controllers
                     }
                 }
             }
+            
             //ver em quantas linhas esta a trabalhar
-            int nLinhas = 0;
             foreach (Schedule_Worker_Line swl2 in rsi.listSWL)
             {
                 foreach (Line l in _context.Lines)
                 {
                     if (l.Id == swl2.LineId)
                     {
-                        nLinhas++;
+                        if (!rsi.listLine.Contains(l))
+                        {
+                            //adicionar so uma vez caso ele tenha mais que um horario numa linha
+                            rsi.listLine.Add(l);
+                        }
                     }
                 }
 
             }
-
+            int nLinhas = rsi.listLine.Count;
             if (nLinhas == 0)
             {
                 rsi.Message = "O Supervisor " + worker.UserName + " não está a supervisionar nenhuma linha - Dia: " + DataPesquisa.Date.ToString();
@@ -472,7 +417,9 @@ namespace Context_aware_System.Controllers
                 rgcdi.Message = "Erro ao identificar a linha de produção!!";
                 return NotFound(rgcdi);
             }
-            var _productions = _context.Production_Plans.Where(p => p.LineId == _line.Id).ToList();
+            var _productions = _context.Production_Plans.Where(p => p.LineId == _line.Id)
+                .Include(p => p.Product)
+                .ToList();
 
             var production = _productions.Where(p => _systemLogic.IsAtributeInDatetime(p.InitialDate, p.EndDate, DateTime.Now) == true).FirstOrDefault();
             

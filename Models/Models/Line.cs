@@ -24,6 +24,8 @@ namespace Models.Models
         [Required]
         public bool Priority { get; set; }
 
+        [JsonIgnore]
+        [IgnoreDataMember]
         public Coordinator Coordinator { get; set; } 
         public int CoordinatorId { get; set; }
 

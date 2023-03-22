@@ -23,6 +23,8 @@ namespace Models.Models
         [Required]
         public TimeSpan Cycle { get; set; }
 
+        [JsonIgnore]
+        [IgnoreDataMember]
         public virtual ICollection<Component> Components { get; set; }
         [JsonIgnore]
         [IgnoreDataMember]

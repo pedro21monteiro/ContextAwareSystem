@@ -20,26 +20,26 @@ namespace ContextServer.Services
             WorkShift ws = new WorkShift();
 
             int hour = dt.Hour;
-            if (hour >= 6 && hour < 15)
+            if (hour >= 0 && hour < 6)
             {
                 ws.Shift = 1;
                 ws.ShiftString = "Turno da Manha, Dás 06:00 às 15:00";
+                ws.InitialDate = new DateTime(dt.Year, dt.Month, dt.Hour, 0, 0, 0);
+                ws.EndDate = new DateTime(dt.Year, dt.Month, dt.Hour, 5, 59, 59);
+            }
+            if (hour >= 6 && hour < 15)
+            {
+                ws.Shift = 2;
+                ws.ShiftString = "Turno da Tarde, Dás 15:00 às 00:00";
                 ws.InitialDate = new DateTime(dt.Year, dt.Month, dt.Hour, 6, 0, 0);
                 ws.EndDate = new DateTime(dt.Year, dt.Month, dt.Hour, 14, 59, 59);
             }
             if (hour >= 15 && hour < 24)
-            {
-                ws.Shift = 2;
-                ws.ShiftString = "Turno da Tarde, Dás 15:00 às 00:00";
-                ws.InitialDate = new DateTime(dt.Year, dt.Month, dt.Hour, 15, 0, 0);
-                ws.EndDate = new DateTime(dt.Year, dt.Month, dt.Hour, 23, 59, 59);
-            }
-            if (hour >= 0 && hour < 6)
             {  
                 ws.Shift = 3;
                 ws.ShiftString = "Turno da Noite, Dás 00:00 às 06:00";
-                ws.InitialDate = new DateTime(dt.Year, dt.Month, dt.Hour, 0, 0, 0);
-                ws.EndDate = new DateTime(dt.Year, dt.Month, dt.Hour, 5, 59, 59);
+                ws.InitialDate = new DateTime(dt.Year, dt.Month, dt.Hour, 15, 0, 0);
+                ws.EndDate = new DateTime(dt.Year, dt.Month, dt.Hour, 23, 59, 59);
             }
 
             return ws;

@@ -442,6 +442,71 @@ namespace Context_aware_System.Controllers
             return Ok(rgcdi);
         }
 
+        [HttpGet]
+        [Route("ProductInfo")]
+        public async Task<IActionResult> ProductInfo(int LineId)
+        {
+            //Formato da resposta
+            ResponseProductInfo rpi = new ResponseProductInfo();
 
+            var line = _context.Lines.Where(l => l.Id == LineId).FirstOrDefault();
+            //ver se no coordinator da a informação do worker
+            if (line == null)
+            {
+                rpi.Message = "Erro ao identificar a Line!!";
+
+                return NotFound(rpi);
+            }
+
+            var _productions = _context.Production_Plans.Where(p => p.LineId == line.Id).ToList();
+            var production_plan = _productions.Where(p => _systemLogic.IsAtributeInDatetime(p.InitialDate, p.EndDate, DateTime.Now) == true).FirstOrDefault();
+
+            if (production_plan == null)
+            {
+                rpi.Message = "Não existe planos de produção na linha no momento!!";
+                return NotFound(rpi);
+            }
+            //Encontrar as produções
+            var product = _context.Products.Where(p => p.Id == production_plan.ProductId).FirstOrDefault();
+            if (product == null)
+            {
+                rpi.Message = "Erro ao identificar a product!!";
+                return NotFound(rpi);
+            }
+            rpi.Product = product;
+            rpi.Message = "Info obtida com sucesso";
+            return Ok(rpi);
+        }
+
+        [HttpGet]
+        [Route("CoordinatorInfo")]
+        public async Task<IActionResult> CoordinatorInfo(string WorkerIdFirebase)
+        {
+            //Formato da resposta
+            ResponseCoordinatorInfo rci = new ResponseCoordinatorInfo();
+            var worker = _context.Workers.Where(w => w.IdFirebase == WorkerIdFirebase).FirstOrDefault();
+
+            if (worker == null)
+            {
+                rci.Message = "Erro ao identificar o worker!!";
+
+                return NotFound(rci);
+            }
+            //encontrar o operator
+            var coord = _context.Coordinators.Where(c => c.WorkerId == worker.Id)
+                .Include(c => c.Worker)
+                .Include(c => c.Lines)
+                .FirstOrDefault();
+            if (coord == null)
+            {
+                rci.Message = "Erro ao identificar o Supervisor!!";
+
+                return NotFound(rci);
+            }
+            rci.Coordinator = coord;
+            rci.listLine = coord.Lines.ToList();
+            
+            return Ok(rci);
+        }
     }
 }

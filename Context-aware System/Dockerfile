@@ -10,7 +10,7 @@ COPY ["./ContextAwareService.csproj", "./"]
 RUN dotnet restore "ContextAwareService.csproj"
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "CContextAwareService.csproj" -c Release -o /app/build
+RUN dotnet build "ContextAwareService.csproj" -c Release -o /app/build
 
 FROM build AS publish
 RUN dotnet publish "ContextAwareService.csproj" -c Release -o /app/publish

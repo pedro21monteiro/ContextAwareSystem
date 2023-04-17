@@ -14,15 +14,16 @@ namespace ContextBuider
 {
     class Program
     {
-
+        
         static void Main(string[] args)
         {
+            string rabbitHost = System.Environment.GetEnvironmentVariable("RABBITHOST") ?? "192.168.28.86";
             using var _contex = new ContextAwareDb();
             var _logic = new Logic();
 
             //---
 
-            var factory = new ConnectionFactory { HostName = "192.168.28.86" };
+            var factory = new ConnectionFactory { HostName = rabbitHost };
 
             using var connection = factory.CreateConnection();
             using var channel = connection.CreateModel();

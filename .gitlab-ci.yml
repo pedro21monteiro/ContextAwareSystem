@@ -1,0 +1,35 @@
+stages:
+    - build-testdb
+    - build-cbuilder
+    - build-cserver
+    - deploy
+
+build-testdb:
+    stage: build-testdb
+    script:
+        - echo "Starting build test db"
+        - if [[ $(docker ps -aq --filter 'ancestor=testdbservice:latest') ]]; then docker rm --force $(docker ps -aq --filter 'ancestor=testdbservice:latest'); else echo 'deleted';fi
+        - docker build ./ContinentalTestDb/ -t testdbservice
+
+build-cbuilder:
+    stage: build-cbuilder
+    script:
+        - echo "Starting build contextbuilder"
+        - if [[ $(docker ps -aq --filter 'ancestor=contextbuilderservice:latest') ]]; then docker rm --force $(docker ps -aq --filter 'ancestor=contextbuilderservice:latest'); else echo 'deleted';fi
+        - docker build ./ContextBuilder/ -t contextbuilderservice
+
+build-cserver:
+    stage: build-cserver
+    script:
+        - echo "Starting build Context server"
+        - if [[ $(docker ps -aq --filter 'ancestor=contextservice:latest') ]]; then docker rm --force $(docker ps -aq --filter 'ancestor=contextContext-aware Systemservice:latest'); else echo 'deleted';fi
+        - docker build ./"Context-aware System"/ -t contextservice
+
+
+deploy:
+    stage: deploy
+    script:
+        - echo "Starting deployment"
+        - docker run -d -p 8180:80 --name testdbservice -e DBHOST=192.168.28.86 -e DBUSER=sa -e DBPASS=xA6UCjFY -e INTEGRATIONHOST=192.168.28.86:8089 -e GRAPHGENERATORHOST=192.168.28.86:8098 -e NOTIFICATIONSHOST=192.168.28.86:8091 -e RABBITHOST=192.168.28.86 testdbservice
+        - docker run -d -p 8181:80 --name contextbuilderservice -e DBHOST=192.168.28.86 -e DBUSER=sa -e DBPASS=xA6UCjFY -e INTEGRATIONHOST=192.168.28.86:8089 -e GRAPHGENERATORHOST=192.168.28.86:8098 -e NOTIFICATIONSHOST=192.168.28.86:8091 -e RABBITHOST=192.168.28.86 contextbuilderservice
+        - docker run -d -p 8181:80 --name contextservice -e DBHOST=192.168.28.86 -e DBUSER=sa -e DBPASS=xA6UCjFY -e INTEGRATIONHOST=192.168.28.86:8089 -e GRAPHGENERATORHOST=192.168.28.86:8098 -e NOTIFICATIONSHOST=192.168.28.86:8091 -e RABBITHOST=192.168.28.86 contextservice

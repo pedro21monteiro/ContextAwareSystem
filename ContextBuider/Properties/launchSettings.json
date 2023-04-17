@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "ContextBuider": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

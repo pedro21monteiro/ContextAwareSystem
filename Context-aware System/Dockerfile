@@ -6,7 +6,7 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["Context-aware System.csproj", "./"]
+COPY ["./Context-aware System.csproj", "./"]
 RUN dotnet restore "Context-aware System.csproj"
 COPY . .
 WORKDIR "/src/."

@@ -46,8 +46,8 @@ namespace ContextBuider
                                  autoAck: true,
                                  consumer: consumer);
 
-            Console.WriteLine(" Press [enter] to exit.");
-            Console.ReadLine();
+            //Console.WriteLine(" Press [enter] to exit.");
+            //Console.ReadLine();
 
 
         }

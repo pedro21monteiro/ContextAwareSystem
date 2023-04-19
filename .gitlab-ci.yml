@@ -22,7 +22,7 @@ build-cserver:
     stage: build-cserver
     script:
         - echo "Starting build Context server"
-        - if [[ $(docker ps -aq --filter 'ancestor=contextservice:latest') ]]; then docker rm --force $(docker ps -aq --filter 'ancestor=contextContext-aware Systemservice:latest'); else echo 'deleted';fi
+        - if [[ $(docker ps -aq --filter 'ancestor=contextservice:latest') ]]; then docker rm --force $(docker ps -aq --filter 'ancestor=contextservice:latest'); else echo 'deleted';fi
         - docker build . -t contextservice -f ./Context-aware\ System/Dockerfile
 
 

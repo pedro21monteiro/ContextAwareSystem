@@ -31,5 +31,6 @@ namespace ContextBuider.Data
         public DbSet<Stop> Stops { get; set; }
         public DbSet<Supervisor> Supervisors { get; set; }
         public DbSet<Worker> Workers { get; set; }
+        public DbSet<Request> Requests { get; set; }
     }
 }

@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContextAwareService", "Cont
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "Models\Models.csproj", "{474D0BCF-FCA7-4531-A2DF-D2FA14287326}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data-Integration Layer", "Data-Integration Layer\Data-Integration Layer.csproj", "{5D9B6E6A-9E84-47ED-A11D-5B9A17C86FDB}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContinentalTestDb", "ContinentalTestDb\ContinentalTestDb.csproj", "{AAECF5E9-F41F-4A00-891E-FCF61C803EE5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContextBuider", "ContextBuider\ContextBuider.csproj", "{13237901-0C36-4CEF-9548-F397C702AA29}"
@@ -27,10 +25,6 @@ Global
 		{474D0BCF-FCA7-4531-A2DF-D2FA14287326}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{474D0BCF-FCA7-4531-A2DF-D2FA14287326}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{474D0BCF-FCA7-4531-A2DF-D2FA14287326}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5D9B6E6A-9E84-47ED-A11D-5B9A17C86FDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5D9B6E6A-9E84-47ED-A11D-5B9A17C86FDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5D9B6E6A-9E84-47ED-A11D-5B9A17C86FDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5D9B6E6A-9E84-47ED-A11D-5B9A17C86FDB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AAECF5E9-F41F-4A00-891E-FCF61C803EE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AAECF5E9-F41F-4A00-891E-FCF61C803EE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AAECF5E9-F41F-4A00-891E-FCF61C803EE5}.Release|Any CPU.ActiveCfg = Release|Any CPU

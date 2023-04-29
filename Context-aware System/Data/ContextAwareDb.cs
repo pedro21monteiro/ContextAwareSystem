@@ -31,5 +31,6 @@ namespace ContextServer.Data
         public DbSet<Stop> Stops { get; set; }
         public DbSet<Supervisor> Supervisors { get; set; }
         public DbSet<Worker> Workers { get; set; }
+        public DbSet<Request> requests { get; set; }
     }
 }

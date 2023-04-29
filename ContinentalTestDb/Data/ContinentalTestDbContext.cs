@@ -8,7 +8,7 @@ namespace ContinentalTestDb.Data
     {
         public ContinentalTestDbContext(DbContextOptions<ContinentalTestDbContext> opt) : base(opt)
         {
-
+          
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -32,5 +32,6 @@ namespace ContinentalTestDb.Data
         public DbSet<Stop> Stops { get; set; }
         public DbSet<Supervisor> Supervisors { get; set; }
         public DbSet<Worker> Workers { get; set; }
+        public DbSet<Request> Requests { get; set; }
     }
 }

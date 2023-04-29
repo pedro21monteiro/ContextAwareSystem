@@ -37,7 +37,7 @@ namespace Context_aware_System.Migrations
                     b.ToTable("ComponentProduct");
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Component", b =>
+            modelBuilder.Entity("Models.Models.Component", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
@@ -58,7 +58,7 @@ namespace Context_aware_System.Migrations
                     b.ToTable("Components");
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Coordinator", b =>
+            modelBuilder.Entity("Models.Models.Coordinator", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
@@ -73,7 +73,7 @@ namespace Context_aware_System.Migrations
                     b.ToTable("Coordinators");
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Device", b =>
+            modelBuilder.Entity("Models.Models.Device", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
@@ -91,7 +91,7 @@ namespace Context_aware_System.Migrations
                     b.ToTable("Devices");
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Line", b =>
+            modelBuilder.Entity("Models.Models.Line", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
@@ -113,7 +113,7 @@ namespace Context_aware_System.Migrations
                     b.ToTable("Lines");
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Operator", b =>
+            modelBuilder.Entity("Models.Models.Operator", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
@@ -128,7 +128,7 @@ namespace Context_aware_System.Migrations
                     b.ToTable("Operators");
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Product", b =>
+            modelBuilder.Entity("Models.Models.Product", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
@@ -149,7 +149,7 @@ namespace Context_aware_System.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Production", b =>
+            modelBuilder.Entity("Models.Models.Production", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
@@ -173,7 +173,7 @@ namespace Context_aware_System.Migrations
                     b.ToTable("Productions");
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Production_Plan", b =>
+            modelBuilder.Entity("Models.Models.Production_Plan", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
@@ -209,7 +209,7 @@ namespace Context_aware_System.Migrations
                     b.ToTable("Production_Plans");
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Reason", b =>
+            modelBuilder.Entity("Models.Models.Reason", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
@@ -223,7 +223,31 @@ namespace Context_aware_System.Migrations
                     b.ToTable("Reasons");
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Schedule_Worker_Line", b =>
+            modelBuilder.Entity("Models.Models.Request", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WorkerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WorkerId");
+
+                    b.ToTable("requests");
+                });
+
+            modelBuilder.Entity("Models.Models.Schedule_Worker_Line", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
@@ -254,7 +278,7 @@ namespace Context_aware_System.Migrations
                     b.ToTable("Schedule_Worker_Lines");
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Stop", b =>
+            modelBuilder.Entity("Models.Models.Stop", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
@@ -289,7 +313,7 @@ namespace Context_aware_System.Migrations
                     b.ToTable("Stops");
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Supervisor", b =>
+            modelBuilder.Entity("Models.Models.Supervisor", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
@@ -304,7 +328,7 @@ namespace Context_aware_System.Migrations
                     b.ToTable("Supervisors");
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Worker", b =>
+            modelBuilder.Entity("Models.Models.Worker", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
@@ -331,22 +355,22 @@ namespace Context_aware_System.Migrations
 
             modelBuilder.Entity("ComponentProduct", b =>
                 {
-                    b.HasOne("ContextServer.Models.Component", null)
+                    b.HasOne("Models.Models.Component", null)
                         .WithMany()
                         .HasForeignKey("ComponentsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ContextServer.Models.Product", null)
+                    b.HasOne("Models.Models.Product", null)
                         .WithMany()
                         .HasForeignKey("ProductsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Coordinator", b =>
+            modelBuilder.Entity("Models.Models.Coordinator", b =>
                 {
-                    b.HasOne("ContextServer.Models.Worker", "Worker")
+                    b.HasOne("Models.Models.Worker", "Worker")
                         .WithMany("Coordinators")
                         .HasForeignKey("WorkerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -355,9 +379,9 @@ namespace Context_aware_System.Migrations
                     b.Navigation("Worker");
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Device", b =>
+            modelBuilder.Entity("Models.Models.Device", b =>
                 {
-                    b.HasOne("ContextServer.Models.Line", "Line")
+                    b.HasOne("Models.Models.Line", "Line")
                         .WithMany("Devices")
                         .HasForeignKey("LineId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -366,9 +390,9 @@ namespace Context_aware_System.Migrations
                     b.Navigation("Line");
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Line", b =>
+            modelBuilder.Entity("Models.Models.Line", b =>
                 {
-                    b.HasOne("ContextServer.Models.Coordinator", "Coordinator")
+                    b.HasOne("Models.Models.Coordinator", "Coordinator")
                         .WithMany("Lines")
                         .HasForeignKey("CoordinatorId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -377,9 +401,9 @@ namespace Context_aware_System.Migrations
                     b.Navigation("Coordinator");
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Operator", b =>
+            modelBuilder.Entity("Models.Models.Operator", b =>
                 {
-                    b.HasOne("ContextServer.Models.Worker", "Worker")
+                    b.HasOne("Models.Models.Worker", "Worker")
                         .WithMany("Operators")
                         .HasForeignKey("WorkerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -388,9 +412,9 @@ namespace Context_aware_System.Migrations
                     b.Navigation("Worker");
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Production", b =>
+            modelBuilder.Entity("Models.Models.Production", b =>
                 {
-                    b.HasOne("ContextServer.Models.Production_Plan", "Prod_Plan")
+                    b.HasOne("Models.Models.Production_Plan", "Prod_Plan")
                         .WithMany("Productions")
                         .HasForeignKey("Production_PlanId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -399,15 +423,15 @@ namespace Context_aware_System.Migrations
                     b.Navigation("Prod_Plan");
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Production_Plan", b =>
+            modelBuilder.Entity("Models.Models.Production_Plan", b =>
                 {
-                    b.HasOne("ContextServer.Models.Line", "Line")
+                    b.HasOne("Models.Models.Line", "Line")
                         .WithMany("Production_Plans")
                         .HasForeignKey("LineId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ContextServer.Models.Product", "Product")
+                    b.HasOne("Models.Models.Product", "Product")
                         .WithMany("Production_Plans")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -418,19 +442,30 @@ namespace Context_aware_System.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Schedule_Worker_Line", b =>
+            modelBuilder.Entity("Models.Models.Request", b =>
                 {
-                    b.HasOne("ContextServer.Models.Line", "Line")
+                    b.HasOne("Models.Models.Worker", "Worker")
+                        .WithMany()
+                        .HasForeignKey("WorkerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Worker");
+                });
+
+            modelBuilder.Entity("Models.Models.Schedule_Worker_Line", b =>
+                {
+                    b.HasOne("Models.Models.Line", "Line")
                         .WithMany("Schedules")
                         .HasForeignKey("LineId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ContextServer.Models.Operator", "Operator")
+                    b.HasOne("Models.Models.Operator", "Operator")
                         .WithMany("Schedules")
                         .HasForeignKey("OperatorId");
 
-                    b.HasOne("ContextServer.Models.Supervisor", "Supervisor")
+                    b.HasOne("Models.Models.Supervisor", "Supervisor")
                         .WithMany("Schedules")
                         .HasForeignKey("SupervisorId");
 
@@ -441,15 +476,15 @@ namespace Context_aware_System.Migrations
                     b.Navigation("Supervisor");
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Stop", b =>
+            modelBuilder.Entity("Models.Models.Stop", b =>
                 {
-                    b.HasOne("ContextServer.Models.Line", "Line")
+                    b.HasOne("Models.Models.Line", "Line")
                         .WithMany("Stops")
                         .HasForeignKey("LineId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ContextServer.Models.Reason", "Reason")
+                    b.HasOne("Models.Models.Reason", "Reason")
                         .WithMany("Stops")
                         .HasForeignKey("ReasonId");
 
@@ -458,9 +493,9 @@ namespace Context_aware_System.Migrations
                     b.Navigation("Reason");
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Supervisor", b =>
+            modelBuilder.Entity("Models.Models.Supervisor", b =>
                 {
-                    b.HasOne("ContextServer.Models.Worker", "Worker")
+                    b.HasOne("Models.Models.Worker", "Worker")
                         .WithMany("Supervisors")
                         .HasForeignKey("WorkerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -469,12 +504,12 @@ namespace Context_aware_System.Migrations
                     b.Navigation("Worker");
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Coordinator", b =>
+            modelBuilder.Entity("Models.Models.Coordinator", b =>
                 {
                     b.Navigation("Lines");
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Line", b =>
+            modelBuilder.Entity("Models.Models.Line", b =>
                 {
                     b.Navigation("Devices");
 
@@ -485,32 +520,32 @@ namespace Context_aware_System.Migrations
                     b.Navigation("Stops");
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Operator", b =>
+            modelBuilder.Entity("Models.Models.Operator", b =>
                 {
                     b.Navigation("Schedules");
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Product", b =>
+            modelBuilder.Entity("Models.Models.Product", b =>
                 {
                     b.Navigation("Production_Plans");
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Production_Plan", b =>
+            modelBuilder.Entity("Models.Models.Production_Plan", b =>
                 {
                     b.Navigation("Productions");
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Reason", b =>
+            modelBuilder.Entity("Models.Models.Reason", b =>
                 {
                     b.Navigation("Stops");
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Supervisor", b =>
+            modelBuilder.Entity("Models.Models.Supervisor", b =>
                 {
                     b.Navigation("Schedules");
                 });
 
-            modelBuilder.Entity("ContextServer.Models.Worker", b =>
+            modelBuilder.Entity("Models.Models.Worker", b =>
                 {
                     b.Navigation("Coordinators");
 

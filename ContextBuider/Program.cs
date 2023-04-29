@@ -17,8 +17,7 @@ namespace ContextBuider
         
         static void Main(string[] args)
         {
-            while (true)
-            {
+
                 string rabbitHost = System.Environment.GetEnvironmentVariable("RABBITHOST") ?? "192.168.28.86";
                 using var _contex = new ContextAwareDb();
                 var _logic = new Logic();
@@ -27,6 +26,8 @@ namespace ContextBuider
 
                 var factory = new ConnectionFactory { HostName = rabbitHost };
 
+                try
+                {
                 using var connection = factory.CreateConnection();
                 using var channel = connection.CreateModel();
                 channel.ExchangeDeclare(exchange: "ContinentalExchange", type: ExchangeType.Topic, durable: true);
@@ -47,13 +48,15 @@ namespace ContextBuider
                 channel.BasicConsume(queue: queueName,
                                      autoAck: true,
                                      consumer: consumer);
-            }
-           
-
-            //Console.WriteLine(" Press [enter] to exit.");
-            //Console.ReadLine();
 
 
+                Console.WriteLine(" Press [enter] to exit.");
+                 Console.ReadLine();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
         }
        
     }

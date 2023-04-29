@@ -250,6 +250,30 @@ namespace ContinentalTestDb.Migrations
                     b.ToTable("Reasons");
                 });
 
+            modelBuilder.Entity("ContinentalTestDb.Models.Request", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WorkerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WorkerId");
+
+                    b.ToTable("Requests");
+                });
+
             modelBuilder.Entity("ContinentalTestDb.Models.Schedule_Worker_Line", b =>
                 {
                     b.Property<int>("Id")
@@ -455,6 +479,17 @@ namespace ContinentalTestDb.Migrations
                     b.Navigation("Line");
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("ContinentalTestDb.Models.Request", b =>
+                {
+                    b.HasOne("ContinentalTestDb.Models.Worker", "Worker")
+                        .WithMany()
+                        .HasForeignKey("WorkerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Worker");
                 });
 
             modelBuilder.Entity("ContinentalTestDb.Models.Schedule_Worker_Line", b =>

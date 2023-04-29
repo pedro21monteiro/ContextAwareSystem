@@ -508,5 +508,12 @@ namespace Context_aware_System.Controllers
             
             return Ok(rci);
         }
+
+        [HttpGet]
+        [Route("GetRequests")]
+        public async Task<IActionResult> GetRequests()
+        {
+            return Ok(_context.requests.ToList());
+        }
     }
 }

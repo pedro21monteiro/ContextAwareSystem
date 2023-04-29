@@ -758,6 +758,33 @@ namespace ContextBuider.Services
                             }
                         }
                         break;
+                    case "request":
+                        var request = GetRequest(message);
+                        if (metodo == "create")
+                        {
+                            var wor = _context.Workers.SingleOrDefault(w => w.Id == request.WorkerId);
+                            if (wor != null)
+                            {
+                                request.Worker = wor;
+                                request.WorkerId = wor.Id;
+                                try
+                                {
+                                    _context.Add(request);
+                                    await _context.SaveChangesAsync();
+                                    Console.WriteLine(message + " - Adicionado com suceso");
+                                }
+                                catch(Exception ex)
+                                {
+                                    Console.WriteLine(ex.ToString());
+                                }
+                                
+                            }
+                            else
+                            {
+                                Console.WriteLine(message + " - Erro ao adicionar");
+                            }
+                        }                        
+                        break;
                     default:
 
                         break;
@@ -933,6 +960,20 @@ namespace ContextBuider.Services
             try
             {
                 var result = JsonConvert.DeserializeObject<Worker>(message);
+                return result;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        }
+
+        public Request GetRequest(string message)
+        {
+            try
+            {
+                var result = JsonConvert.DeserializeObject<Request>(message);
                 return result;
             }
             catch (Exception e)

@@ -10,6 +10,7 @@ namespace ContextBuider.Models
             this.Coordinators = new HashSet<Coordinator>();
             this.Operators = new HashSet<Operator>();
             this.Supervisors = new HashSet<Supervisor>();
+            this.Requests = new HashSet<Request>();
         }
 
         [Key]
@@ -27,5 +28,6 @@ namespace ContextBuider.Models
         public virtual ICollection<Coordinator> Coordinators { get; set; }
         public virtual ICollection<Operator> Operators { get; set; }
         public virtual ICollection<Supervisor> Supervisors{ get; set; }
+        public virtual ICollection<Request>  Requests{ get; set; }
     }
 }

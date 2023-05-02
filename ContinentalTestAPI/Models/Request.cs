@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ContinentalTestDb.Models
+namespace ContinentalTestAPI.Models
 {
     public class Request
     {

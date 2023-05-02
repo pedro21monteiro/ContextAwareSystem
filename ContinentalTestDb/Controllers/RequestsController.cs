@@ -36,7 +36,7 @@ namespace ContinentalTestDb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Type,Date,WorkerId")] Request request)
+        public async Task<IActionResult> Create([Bind("Id,Type,Date,WorkerId,LineId,Device")] Request request)
         {
             var r = _context.Workers.SingleOrDefault(w => w.Id == request.WorkerId);
             if (r != null)

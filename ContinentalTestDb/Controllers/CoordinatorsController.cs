@@ -66,6 +66,7 @@ namespace ContinentalTestDb.Controllers
             var w = _context.Workers.SingleOrDefault(w => w.Id == coordinator.WorkerId);
             if (w != null)
             {
+                coordinator.LastUpdate = DateTime.Now;
                 _context.Add(coordinator);
                 await _context.SaveChangesAsync();
                 await _rabbit.PublishMessage(JsonConvert.SerializeObject(coordinator), "create.coordinator");
@@ -108,7 +109,8 @@ namespace ContinentalTestDb.Controllers
             if (w != null)
             {
                 try
-                {
+                {   
+                    coordinator.LastUpdate = DateTime.Now;
                     _context.Update(coordinator);
                     await _context.SaveChangesAsync();
                     await _rabbit.PublishMessage(JsonConvert.SerializeObject(coordinator), "update.coordinator");

@@ -67,6 +67,7 @@ namespace ContinentalTestDb.Controllers
             if (pp != null)
             {
                 production.Prod_Plan = pp;
+                production.LastUpdate = DateTime.Now;
                 _context.Add(production);
                 await _context.SaveChangesAsync();
                 await _rabbit.PublishMessage(JsonConvert.SerializeObject(production), "create.production");
@@ -112,6 +113,7 @@ namespace ContinentalTestDb.Controllers
                 try
                 {
                     production.Prod_Plan = pp;
+                    production.LastUpdate = DateTime.Now;
                     _context.Update(production);
                     await _rabbit.PublishMessage(JsonConvert.SerializeObject(production), "update.production");
                     await _context.SaveChangesAsync();

@@ -17,6 +17,7 @@ namespace ContinentalTestDb.Models
         [Required]
         public int Shift { get; set; }
 
+        public DateTime LastUpdate { get; set; }
         //----
         public Line Line { get; set; } = new Line();
         public int LineId { get; set; }

@@ -16,7 +16,7 @@ namespace ContextAcquisition.Models
         public int Id { get; set; }
         public Worker Worker { get; set; }
         public int WorkerId { get; set; }
-
+        public DateTime LastUpdate { get; set; }
         public virtual ICollection<Line> Lines { get; set; }
     }
 }

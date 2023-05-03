@@ -16,5 +16,7 @@ namespace ContinentalTestDb.Models
         public int LineId { get; set; }
         public string Device { get; set; } = string.Empty;
 
+        public DateTime LastUpdate { get; set; }
+
     }
 }

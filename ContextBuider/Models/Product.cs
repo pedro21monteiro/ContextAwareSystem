@@ -21,6 +21,8 @@ namespace ContextBuider.Models
         [Required]
         public TimeSpan Cycle { get; set; }
 
+        public DateTime LastUpdate { get; set; }
+
         public virtual ICollection<Component> Components { get; set; }
 
         public virtual ICollection<Production_Plan> Production_Plans { get; set; }

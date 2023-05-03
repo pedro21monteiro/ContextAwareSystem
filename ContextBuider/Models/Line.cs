@@ -24,6 +24,7 @@ namespace ContextBuider.Models
 
         public Coordinator Coordinator { get; set; } 
         public int CoordinatorId { get; set; }
+        public DateTime LastUpdate { get; set; }
 
         public virtual ICollection<Production_Plan> Production_Plans { get; set; }
         public virtual ICollection<Device> Devices { get; set; }

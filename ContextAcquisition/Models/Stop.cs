@@ -25,6 +25,7 @@ namespace ContextAcquisition.Models
 
         public Reason? Reason { get; set; }
         public int? ReasonId { get; set; }
+        public DateTime LastUpdate { get; set; }
 
     }
 }

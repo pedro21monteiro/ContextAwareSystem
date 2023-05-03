@@ -62,6 +62,7 @@ namespace ContinentalTestDb.Controllers
         {
             if (ModelState.IsValid)
             {
+                worker.LastUpdate = DateTime.Now;
                 _context.Add(worker);
                 await _context.SaveChangesAsync();
                 await _rabbit.PublishMessage(JsonConvert.SerializeObject(worker), "create.worker");
@@ -102,6 +103,7 @@ namespace ContinentalTestDb.Controllers
             {
                 try
                 {
+                    worker.LastUpdate = DateTime.Now;
                     _context.Update(worker);
                     await _context.SaveChangesAsync();
                     await _rabbit.PublishMessage(JsonConvert.SerializeObject(worker), "update.worker");

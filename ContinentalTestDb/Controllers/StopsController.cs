@@ -75,6 +75,7 @@ namespace ContinentalTestDb.Controllers
                 {
                     stop.Reason = r;
                 }
+                stop.LastUpdate = DateTime.Now;
                 _context.Add(stop);
                 await _context.SaveChangesAsync();
                 await _rabbit.PublishMessage(JsonConvert.SerializeObject(stop), "create.stop");
@@ -126,6 +127,7 @@ namespace ContinentalTestDb.Controllers
                     {
                         stop.Reason = r;
                     }
+                    stop.LastUpdate = DateTime.Now;
                     _context.Update(stop);
                     await _context.SaveChangesAsync();
                     await _rabbit.PublishMessage(JsonConvert.SerializeObject(stop), "update.stop");

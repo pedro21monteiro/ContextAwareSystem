@@ -21,6 +21,7 @@ namespace ContextServer.Models
         public int? OperatorId { get; set; }
         public Supervisor? Supervisor { get; set; }
         public int? SupervisorId { get; set; }
+        public DateTime LastUpdate { get; set; }
 
     }
 }

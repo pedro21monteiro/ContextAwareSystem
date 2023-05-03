@@ -67,6 +67,7 @@ namespace ContinentalTestDb.Controllers
             if (l != null)
             {
                 device.Line = l;
+                device.LastUpdate = DateTime.Now;
                 _context.Add(device);
                 await _context.SaveChangesAsync();
                 await _rabbit.PublishMessage(JsonConvert.SerializeObject(device), "create.device");
@@ -109,7 +110,8 @@ namespace ContinentalTestDb.Controllers
             if (l != null)
             {
                 try
-                {
+                {   
+                    device.LastUpdate = DateTime.Now;
                     device.Line = l;
                     _context.Update(device);
                     await _context.SaveChangesAsync();

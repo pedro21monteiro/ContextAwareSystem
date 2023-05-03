@@ -15,6 +15,7 @@ namespace ContinentalTestDb.Models
         public Line Line { get; set; } = new Line();
         public int LineId { get; set; }
 
+        public DateTime LastUpdate { get; set; }
         public Operator? Operator { get; set; }
         public int? OperatorId { get; set; }
         public Supervisor? Supervisor { get; set; }

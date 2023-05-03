@@ -38,7 +38,7 @@ namespace ContinentalTestDb.Models
         [IgnoreDataMember]
         public virtual ICollection<Schedule_Worker_Line> Schedules { get; set; }
 
-        
+        public DateTime LastUpdate { get; set; }
 
     }
 }

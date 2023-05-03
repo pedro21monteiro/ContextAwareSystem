@@ -23,6 +23,7 @@ namespace ContinentalTestAPI.Models
         public string Email { get; set; } = string.Empty;
         [Required]
         public int Role { get; set; } //1-coordinator , 2- Operator , 3 - Supervisor
+        public DateTime LastUpdate { get; set; }
 
         [JsonIgnore]
         [IgnoreDataMember]

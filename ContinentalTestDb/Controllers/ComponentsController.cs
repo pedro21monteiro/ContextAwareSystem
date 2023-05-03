@@ -62,6 +62,7 @@ namespace ContinentalTestDb.Controllers
         {
             if (ModelState.IsValid)
             {
+                component.LastUpdate = DateTime.Now;
                 _context.Add(component);
                 await _context.SaveChangesAsync();
 
@@ -104,6 +105,7 @@ namespace ContinentalTestDb.Controllers
             {
                 try
                 {
+                    component.LastUpdate = DateTime.Now;
                     _context.Update(component);
                     await _context.SaveChangesAsync();
                     await _rabbit.PublishMessage(JsonConvert.SerializeObject(component), "update.component");
@@ -153,7 +155,7 @@ namespace ContinentalTestDb.Controllers
             }
             var component = await _context.Components.FindAsync(id);
             if (component != null)
-            {
+            {   
                 _context.Components.Remove(component);
                 await _rabbit.PublishMessage(JsonConvert.SerializeObject(component), "delete.component");
             }            
@@ -222,6 +224,7 @@ namespace ContinentalTestDb.Controllers
             {
                 //adicionar component ao product
                 product.Components.Add(component);
+                product.LastUpdate = DateTime.Now;
                 _context.Update(product);
                 
                 await _context.SaveChangesAsync();
@@ -253,6 +256,7 @@ namespace ContinentalTestDb.Controllers
             {
                 //adicionar component ao product
                 product.Components.Remove(component);
+                product.LastUpdate = DateTime.Now;
                 _context.Update(product);
                 await _context.SaveChangesAsync();
                 await _rabbit.PublishMessage(JsonConvert.SerializeObject(product), "update.product");

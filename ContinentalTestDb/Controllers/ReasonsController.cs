@@ -62,6 +62,7 @@ namespace ContinentalTestDb.Controllers
         {
             if (ModelState.IsValid)
             {
+                reason.LastUpdate = DateTime.Now;
                 _context.Add(reason);
                 await _context.SaveChangesAsync();
                 await _rabbit.PublishMessage(JsonConvert.SerializeObject(reason), "create.reason");
@@ -103,6 +104,7 @@ namespace ContinentalTestDb.Controllers
             {
                 try
                 {
+                    reason.LastUpdate = DateTime.Now;
                     _context.Update(reason);
                     await _context.SaveChangesAsync();
                     await _rabbit.PublishMessage(JsonConvert.SerializeObject(reason), "update.reason");

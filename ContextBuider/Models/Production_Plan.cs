@@ -23,6 +23,7 @@ namespace ContextBuider.Models
         public DateTime EndDate { get; set; }
         [Required]
         public int Shift { get; set; }
+        public DateTime LastUpdate { get; set; }
 
         //------
         public virtual ICollection<Production> Productions { get; set; }

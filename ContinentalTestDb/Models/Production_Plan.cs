@@ -24,6 +24,7 @@ namespace ContinentalTestDb.Models
         [Required]
         public int Shift { get; set; }
 
+        public DateTime LastUpdate { get; set; }
         //------
         [JsonIgnore]
         [IgnoreDataMember]

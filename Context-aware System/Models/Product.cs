@@ -20,6 +20,7 @@ namespace ContextServer.Models
         public string LabelReference { get; set; } = String.Empty;
         [Required]
         public TimeSpan Cycle { get; set; }
+        public DateTime LastUpdate { get; set; }
 
         public virtual ICollection<Component> Components { get; set; }
 

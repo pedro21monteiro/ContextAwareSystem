@@ -66,6 +66,7 @@ namespace ContinentalTestDb.Controllers
             var w = _context.Workers.SingleOrDefault(w => w.Id == supervisor.WorkerId);
             if (w != null)
             {
+                supervisor.LastUpdate = DateTime.Now;
                 _context.Add(supervisor);
                 await _context.SaveChangesAsync();
                 await _rabbit.PublishMessage(JsonConvert.SerializeObject(supervisor), "create.supervisor");
@@ -108,6 +109,7 @@ namespace ContinentalTestDb.Controllers
             {         
                 try
                 {
+                    supervisor.LastUpdate = DateTime.Now;
                     _context.Update(supervisor);
                     await _context.SaveChangesAsync();
                     await _rabbit.PublishMessage(JsonConvert.SerializeObject(supervisor), "update.supervisor");

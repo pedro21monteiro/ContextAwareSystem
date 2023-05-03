@@ -15,6 +15,8 @@ namespace ContinentalTestAPI.Models
         [Required]
         public string Description { get; set; } = string.Empty;
 
+        public DateTime LastUpdate { get; set; }
+
         //--
         [JsonIgnore]
         [IgnoreDataMember]

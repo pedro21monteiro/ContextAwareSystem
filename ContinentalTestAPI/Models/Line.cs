@@ -25,6 +25,8 @@ namespace ContinentalTestAPI.Models
         public Coordinator Coordinator { get; set; } 
         public int CoordinatorId { get; set; }
 
+        public DateTime LastUpdate { get; set; }
+
         [JsonIgnore]
         [IgnoreDataMember]
         public virtual ICollection<Production_Plan> Production_Plans { get; set; }

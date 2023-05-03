@@ -17,5 +17,6 @@ namespace ContextAcquisition.Models
         public int WorkerId { get; set; }
         public int LineId { get; set; }
         public string Device { get; set; } = string.Empty;
+        public DateTime LastUpdate { get; set; }
     }
 }

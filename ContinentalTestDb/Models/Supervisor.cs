@@ -14,6 +14,8 @@ namespace ContinentalTestDb.Models
         [Key]
         public int Id { get; set; }
 
+        public DateTime LastUpdate { get; set; }
+
         public Worker Worker { get; set; }
         public int WorkerId { get; set; }
         [JsonIgnore]

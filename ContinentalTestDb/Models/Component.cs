@@ -20,6 +20,7 @@ namespace ContinentalTestDb.Models
         public string Reference { get; set; } = String.Empty;
         [Required]
         public int Category { get; set; }//0 - Sem categoria, 1-Etiqueta , 2- parafusos / etc...
+        public DateTime LastUpdate { get; set; }
 
         [JsonIgnore]
         [IgnoreDataMember]

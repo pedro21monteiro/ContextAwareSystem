@@ -82,6 +82,7 @@ namespace ContinentalTestDb.Controllers
                 {
                     schedule_Worker_Line.Supervisor = s;
                 }
+                schedule_Worker_Line.LastUpdate = DateTime.Now;
                 _context.Add(schedule_Worker_Line);
                 await _context.SaveChangesAsync();
                 await _rabbit.PublishMessage(JsonConvert.SerializeObject(schedule_Worker_Line), "create.swl");
@@ -140,6 +141,7 @@ namespace ContinentalTestDb.Controllers
                     {
                         schedule_Worker_Line.Supervisor = s;
                     }
+                    schedule_Worker_Line.LastUpdate = DateTime.Now;
                     _context.Update(schedule_Worker_Line);
                     await _rabbit.PublishMessage(JsonConvert.SerializeObject(schedule_Worker_Line), "update.swl");
                     await _context.SaveChangesAsync();

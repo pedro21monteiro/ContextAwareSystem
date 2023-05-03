@@ -64,6 +64,7 @@ namespace ContinentalTestDb.Controllers
                   
             if (ModelState.IsValid)
             {
+                product.LastUpdate = DateTime.Now;
                 _context.Add(product);
                 await _context.SaveChangesAsync();
                 await _rabbit.PublishMessage(JsonConvert.SerializeObject(product), "create.product");
@@ -106,6 +107,7 @@ namespace ContinentalTestDb.Controllers
             {
                 try
                 {
+                    product.LastUpdate = DateTime.Now;
                     _context.Update(product);
                     await _context.SaveChangesAsync();
                     await _rabbit.PublishMessage(JsonConvert.SerializeObject(product), "update.product");

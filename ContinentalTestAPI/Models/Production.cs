@@ -13,6 +13,8 @@ namespace ContinentalTestAPI.Models
         [Required]
         public int Quantity { get; set; }
 
+        public DateTime LastUpdate { get; set; }
+
         //---
         public Production_Plan Prod_Plan { get; set; } = new Production_Plan();
         public int Production_PlanId { get; set; }

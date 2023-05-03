@@ -18,5 +18,7 @@ namespace ContextBuider.Models
         //---
         public Production_Plan Prod_Plan { get; set; } = new Production_Plan();
         public int Production_PlanId { get; set; }
+
+        public DateTime LastUpdate { get; set; }
     }
 }

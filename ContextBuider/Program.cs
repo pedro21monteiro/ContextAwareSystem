@@ -15,7 +15,7 @@ namespace ContextBuider
     class Program
     {
         
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
 
                 string rabbitHost = System.Environment.GetEnvironmentVariable("RABBITHOST") ?? "192.168.28.86";
@@ -50,9 +50,10 @@ namespace ContextBuider
                                      consumer: consumer);
 
 
-                Console.WriteLine(" Press [enter] to exit.");
-                 Console.ReadLine();
-                }
+                //Console.WriteLine(" Press [enter] to exit.");
+                // Console.ReadLine();
+                await Task.Run(() => Thread.Sleep(Timeout.Infinite));
+            }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.ToString());

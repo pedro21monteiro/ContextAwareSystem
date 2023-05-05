@@ -1,6 +1,6 @@
 ﻿using ContinentalTestAPI.Data;
-using ContinentalTestAPI.Models;
 using Microsoft.AspNetCore.Mvc;
+using Models.ContinentalModels;
 
 namespace ContinentalTestAPI.Controllers
 {

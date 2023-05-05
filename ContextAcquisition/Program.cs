@@ -1,6 +1,6 @@
 ﻿using ContextAcquisition.Data;
-using ContextAcquisition.Models;
 using ContextAcquisition.Services;
+using Models.ContextModels;
 using System.Net.Http;
 
 namespace ContextAcquisition

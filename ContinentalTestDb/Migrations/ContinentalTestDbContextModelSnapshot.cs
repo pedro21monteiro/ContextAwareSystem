@@ -37,7 +37,7 @@ namespace ContinentalTestDb.Migrations
                     b.ToTable("ComponentProduct");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Component", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Component", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -64,7 +64,7 @@ namespace ContinentalTestDb.Migrations
                     b.ToTable("Components");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Coordinator", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Coordinator", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -85,7 +85,7 @@ namespace ContinentalTestDb.Migrations
                     b.ToTable("Coordinators");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Device", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Device", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -109,7 +109,7 @@ namespace ContinentalTestDb.Migrations
                     b.ToTable("Devices");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Line", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Line", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -137,7 +137,7 @@ namespace ContinentalTestDb.Migrations
                     b.ToTable("Lines");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Operator", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Operator", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -158,7 +158,7 @@ namespace ContinentalTestDb.Migrations
                     b.ToTable("Operators");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Product", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -185,7 +185,7 @@ namespace ContinentalTestDb.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Production", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Production", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -215,7 +215,7 @@ namespace ContinentalTestDb.Migrations
                     b.ToTable("Productions");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Production_Plan", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Production_Plan", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -257,7 +257,7 @@ namespace ContinentalTestDb.Migrations
                     b.ToTable("Production_Plans");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Reason", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Reason", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -277,7 +277,7 @@ namespace ContinentalTestDb.Migrations
                     b.ToTable("Reasons");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Request", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Request", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -311,7 +311,7 @@ namespace ContinentalTestDb.Migrations
                     b.ToTable("Requests");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Schedule_Worker_Line", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Schedule_Worker_Line", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -348,7 +348,7 @@ namespace ContinentalTestDb.Migrations
                     b.ToTable("Schedule_Worker_Lines");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Stop", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Stop", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -389,7 +389,7 @@ namespace ContinentalTestDb.Migrations
                     b.ToTable("Stops");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Supervisor", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Supervisor", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -410,7 +410,7 @@ namespace ContinentalTestDb.Migrations
                     b.ToTable("Supervisors");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Worker", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Worker", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -443,22 +443,22 @@ namespace ContinentalTestDb.Migrations
 
             modelBuilder.Entity("ComponentProduct", b =>
                 {
-                    b.HasOne("ContinentalTestDb.Models.Component", null)
+                    b.HasOne("Models.ContinentalModels.Component", null)
                         .WithMany()
                         .HasForeignKey("ComponentsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ContinentalTestDb.Models.Product", null)
+                    b.HasOne("Models.ContinentalModels.Product", null)
                         .WithMany()
                         .HasForeignKey("ProductsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Coordinator", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Coordinator", b =>
                 {
-                    b.HasOne("ContinentalTestDb.Models.Worker", "Worker")
+                    b.HasOne("Models.ContinentalModels.Worker", "Worker")
                         .WithMany("Coordinators")
                         .HasForeignKey("WorkerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -467,9 +467,9 @@ namespace ContinentalTestDb.Migrations
                     b.Navigation("Worker");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Device", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Device", b =>
                 {
-                    b.HasOne("ContinentalTestDb.Models.Line", "Line")
+                    b.HasOne("Models.ContinentalModels.Line", "Line")
                         .WithMany("Devices")
                         .HasForeignKey("LineId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -478,9 +478,9 @@ namespace ContinentalTestDb.Migrations
                     b.Navigation("Line");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Line", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Line", b =>
                 {
-                    b.HasOne("ContinentalTestDb.Models.Coordinator", "Coordinator")
+                    b.HasOne("Models.ContinentalModels.Coordinator", "Coordinator")
                         .WithMany("Lines")
                         .HasForeignKey("CoordinatorId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -489,9 +489,9 @@ namespace ContinentalTestDb.Migrations
                     b.Navigation("Coordinator");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Operator", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Operator", b =>
                 {
-                    b.HasOne("ContinentalTestDb.Models.Worker", "Worker")
+                    b.HasOne("Models.ContinentalModels.Worker", "Worker")
                         .WithMany("Operators")
                         .HasForeignKey("WorkerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -500,9 +500,9 @@ namespace ContinentalTestDb.Migrations
                     b.Navigation("Worker");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Production", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Production", b =>
                 {
-                    b.HasOne("ContinentalTestDb.Models.Production_Plan", "Prod_Plan")
+                    b.HasOne("Models.ContinentalModels.Production_Plan", "Prod_Plan")
                         .WithMany("Productions")
                         .HasForeignKey("Production_PlanId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -511,15 +511,15 @@ namespace ContinentalTestDb.Migrations
                     b.Navigation("Prod_Plan");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Production_Plan", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Production_Plan", b =>
                 {
-                    b.HasOne("ContinentalTestDb.Models.Line", "Line")
+                    b.HasOne("Models.ContinentalModels.Line", "Line")
                         .WithMany("Production_Plans")
                         .HasForeignKey("LineId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ContinentalTestDb.Models.Product", "Product")
+                    b.HasOne("Models.ContinentalModels.Product", "Product")
                         .WithMany("Production_Plans")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -530,9 +530,9 @@ namespace ContinentalTestDb.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Request", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Request", b =>
                 {
-                    b.HasOne("ContinentalTestDb.Models.Worker", "Worker")
+                    b.HasOne("Models.ContinentalModels.Worker", "Worker")
                         .WithMany()
                         .HasForeignKey("WorkerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -541,19 +541,19 @@ namespace ContinentalTestDb.Migrations
                     b.Navigation("Worker");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Schedule_Worker_Line", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Schedule_Worker_Line", b =>
                 {
-                    b.HasOne("ContinentalTestDb.Models.Line", "Line")
+                    b.HasOne("Models.ContinentalModels.Line", "Line")
                         .WithMany("Schedules")
                         .HasForeignKey("LineId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ContinentalTestDb.Models.Operator", "Operator")
+                    b.HasOne("Models.ContinentalModels.Operator", "Operator")
                         .WithMany("Schedules")
                         .HasForeignKey("OperatorId");
 
-                    b.HasOne("ContinentalTestDb.Models.Supervisor", "Supervisor")
+                    b.HasOne("Models.ContinentalModels.Supervisor", "Supervisor")
                         .WithMany("Schedules")
                         .HasForeignKey("SupervisorId");
 
@@ -564,15 +564,15 @@ namespace ContinentalTestDb.Migrations
                     b.Navigation("Supervisor");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Stop", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Stop", b =>
                 {
-                    b.HasOne("ContinentalTestDb.Models.Line", "Line")
+                    b.HasOne("Models.ContinentalModels.Line", "Line")
                         .WithMany("Stops")
                         .HasForeignKey("LineId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ContinentalTestDb.Models.Reason", "Reason")
+                    b.HasOne("Models.ContinentalModels.Reason", "Reason")
                         .WithMany("Stops")
                         .HasForeignKey("ReasonId");
 
@@ -581,9 +581,9 @@ namespace ContinentalTestDb.Migrations
                     b.Navigation("Reason");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Supervisor", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Supervisor", b =>
                 {
-                    b.HasOne("ContinentalTestDb.Models.Worker", "Worker")
+                    b.HasOne("Models.ContinentalModels.Worker", "Worker")
                         .WithMany("Supervisors")
                         .HasForeignKey("WorkerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -592,12 +592,12 @@ namespace ContinentalTestDb.Migrations
                     b.Navigation("Worker");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Coordinator", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Coordinator", b =>
                 {
                     b.Navigation("Lines");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Line", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Line", b =>
                 {
                     b.Navigation("Devices");
 
@@ -608,32 +608,32 @@ namespace ContinentalTestDb.Migrations
                     b.Navigation("Stops");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Operator", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Operator", b =>
                 {
                     b.Navigation("Schedules");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Product", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Product", b =>
                 {
                     b.Navigation("Production_Plans");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Production_Plan", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Production_Plan", b =>
                 {
                     b.Navigation("Productions");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Reason", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Reason", b =>
                 {
                     b.Navigation("Stops");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Supervisor", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Supervisor", b =>
                 {
                     b.Navigation("Schedules");
                 });
 
-            modelBuilder.Entity("ContinentalTestDb.Models.Worker", b =>
+            modelBuilder.Entity("Models.ContinentalModels.Worker", b =>
                 {
                     b.Navigation("Coordinators");
 

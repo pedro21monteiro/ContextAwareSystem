@@ -3,8 +3,8 @@ using ContextServer.Services;
 using Microsoft.AspNetCore.Mvc;
 using Models.CustomModels;
 using Models.FunctionModels;
-using Models.Models;
 using Microsoft.EntityFrameworkCore;
+using Models.ContextModels;
 
 namespace Context_aware_System.Controllers
 

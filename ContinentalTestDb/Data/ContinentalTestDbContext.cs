@@ -1,4 +1,4 @@
-﻿using ContinentalTestDb.Models;
+﻿using Models.ContinentalModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer;
 

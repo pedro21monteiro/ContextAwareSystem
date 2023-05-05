@@ -1,5 +1,5 @@
-﻿using ContextAcquisition.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Models.ContextModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,5 +37,6 @@ namespace ContextAcquisition.Data
         public DbSet<Supervisor> Supervisors { get; set; }
         public DbSet<Worker> Workers { get; set; }
         public DbSet<Request> Requests { get; set; }
+        public DbSet<LastVerificationRegist> LastVerificationRegists { get; set; }
     }
 }

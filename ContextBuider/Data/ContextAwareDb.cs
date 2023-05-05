@@ -1,5 +1,5 @@
-﻿using ContextBuider.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Models.ContextModels;
 
 namespace ContextBuider.Data
 {
@@ -32,5 +32,6 @@ namespace ContextBuider.Data
         public DbSet<Supervisor> Supervisors { get; set; }
         public DbSet<Worker> Workers { get; set; }
         public DbSet<Request> Requests { get; set; }
+        public DbSet<LastVerificationRegist> lastVerificationRegists { get; set; }
     }
 }

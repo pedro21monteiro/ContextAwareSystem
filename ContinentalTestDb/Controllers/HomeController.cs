@@ -1,7 +1,8 @@
 ﻿using ContinentalTestDb.Data;
-using ContinentalTestDb.Models;
+using Models.ContinentalModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using ContinentalTestDb.Models;
 
 namespace ContinentalTestDb.Controllers
 {

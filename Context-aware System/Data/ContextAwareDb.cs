@@ -1,5 +1,5 @@
-﻿using Models.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Models.ContextModels;
 
 namespace ContextServer.Data
 {
@@ -32,5 +32,6 @@ namespace ContextServer.Data
         public DbSet<Supervisor> Supervisors { get; set; }
         public DbSet<Worker> Workers { get; set; }
         public DbSet<Request> requests { get; set; }
+        public DbSet<LastVerificationRegist> lastVerificationRegists { get; set; }
     }
 }

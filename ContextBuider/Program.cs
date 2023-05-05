@@ -8,7 +8,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using MQTTnet.Client;
 using ContextBuider.Services;
-using ContextBuider.Models;
+using Models.ContextModels;
 
 namespace ContextBuider
 {

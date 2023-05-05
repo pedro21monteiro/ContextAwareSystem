@@ -1,4 +1,4 @@
-﻿using ContinentalTestAPI.Models;
+﻿using Models.ContinentalModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace ContinentalTestAPI.Data

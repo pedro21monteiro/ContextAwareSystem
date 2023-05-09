@@ -15,7 +15,7 @@ namespace ContinentalTestAPI.Data
             var dbhost = System.Environment.GetEnvironmentVariable("DBHOST") ?? "192.168.28.86";
             var dbuser = System.Environment.GetEnvironmentVariable("DBUSER") ?? "sa";
             var dbpass = System.Environment.GetEnvironmentVariable("DBPASS") ?? "xA6UCjFY";
-            optionsBuilder.UseSqlServer("Data Source=" + dbhost + ";Database=ContextDb;User ID=" + dbuser + ";Password=" + dbpass + ";TrustServerCertificate=Yes;");
+            optionsBuilder.UseSqlServer("Data Source=" + dbhost + ";Database=ContinentalTestDb;User ID=" + dbuser + ";Password=" + dbpass + ";TrustServerCertificate=Yes;");
         }
 
         public DbSet<Component> Components { get; set; }

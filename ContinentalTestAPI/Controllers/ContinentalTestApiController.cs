@@ -20,22 +20,23 @@ namespace ContinentalTestAPI.Controllers
         public async Task<IActionResult> GetComponents(DateTime? InicialDate)
         {
             List<Component> components = new List<Component>();
-            
-            if(InicialDate != null)
+
+            if (InicialDate != null)
             {
-                foreach(var c in _context.Components)
+                foreach (var c in _context.Components)
                 {
-                    if(c.LastUpdate.CompareTo(InicialDate) > 0)
+                    if (c.LastUpdate.CompareTo(InicialDate) > 0)
                     {
                         components.Add(c);
                     }
-                }              
+                }
                 return Ok(components);
             }
             else
             {
                 return Ok(_context.Components.ToList());
             }
+
         }
 
         [HttpGet]

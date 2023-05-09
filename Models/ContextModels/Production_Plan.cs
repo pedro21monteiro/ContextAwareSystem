@@ -27,16 +27,16 @@ namespace Models.ContextModels
         public int Shift { get; set; }
         public DateTime LastUpdate { get; set; }
 
-        //------
-        [JsonIgnore]
-        [IgnoreDataMember]
-        public virtual ICollection<Production> Productions { get; set; }
-
         public Product Product { get; set; } = new Product();
         public int ProductId { get; set; }
 
         public Line Line { get; set; } = new Line();
         public int LineId { get; set; }
+
+        //------
+        [JsonIgnore]
+        [IgnoreDataMember]
+        public virtual ICollection<Production> Productions { get; set; }
 
     }
 }

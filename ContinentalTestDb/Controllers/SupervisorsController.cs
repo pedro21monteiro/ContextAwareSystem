@@ -69,7 +69,7 @@ namespace ContinentalTestDb.Controllers
                 supervisor.LastUpdate = DateTime.Now;
                 _context.Add(supervisor);
                 await _context.SaveChangesAsync();
-                await _rabbit.PublishMessage(JsonConvert.SerializeObject(supervisor), "create.supervisor");
+                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(supervisor), "create.supervisor");
                 return RedirectToAction(nameof(Index));
             }
             ViewData["WorkerId"] = new SelectList(_context.Workers, "Id", "UserName", supervisor.WorkerId);
@@ -112,7 +112,7 @@ namespace ContinentalTestDb.Controllers
                     supervisor.LastUpdate = DateTime.Now;
                     _context.Update(supervisor);
                     await _context.SaveChangesAsync();
-                    await _rabbit.PublishMessage(JsonConvert.SerializeObject(supervisor), "update.supervisor");
+                    //await _rabbit.PublishMessage(JsonConvert.SerializeObject(supervisor), "update.supervisor");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -163,7 +163,7 @@ namespace ContinentalTestDb.Controllers
             if (supervisor != null)
             {
                 _context.Supervisors.Remove(supervisor);
-                await _rabbit.PublishMessage(JsonConvert.SerializeObject(supervisor), "delete.supervisor");
+                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(supervisor), "delete.supervisor");
             }
             
             await _context.SaveChangesAsync();

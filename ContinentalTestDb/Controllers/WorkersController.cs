@@ -65,7 +65,7 @@ namespace ContinentalTestDb.Controllers
                 worker.LastUpdate = DateTime.Now;
                 _context.Add(worker);
                 await _context.SaveChangesAsync();
-                await _rabbit.PublishMessage(JsonConvert.SerializeObject(worker), "create.worker");
+                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(worker), "create.worker");
                 return RedirectToAction(nameof(Index));
             }
             return View(worker);
@@ -106,7 +106,7 @@ namespace ContinentalTestDb.Controllers
                     worker.LastUpdate = DateTime.Now;
                     _context.Update(worker);
                     await _context.SaveChangesAsync();
-                    await _rabbit.PublishMessage(JsonConvert.SerializeObject(worker), "update.worker");
+                    //await _rabbit.PublishMessage(JsonConvert.SerializeObject(worker), "update.worker");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -155,7 +155,7 @@ namespace ContinentalTestDb.Controllers
             if (worker != null)
             {
                 _context.Workers.Remove(worker);
-                await _rabbit.PublishMessage(JsonConvert.SerializeObject(worker), "delete.worker");
+                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(worker), "delete.worker");
             }
             
             await _context.SaveChangesAsync();

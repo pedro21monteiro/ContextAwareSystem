@@ -78,7 +78,7 @@ namespace ContinentalTestDb.Controllers
                 stop.LastUpdate = DateTime.Now;
                 _context.Add(stop);
                 await _context.SaveChangesAsync();
-                await _rabbit.PublishMessage(JsonConvert.SerializeObject(stop), "create.stop");
+                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(stop), "create.stop");
                 return RedirectToAction(nameof(Index));
             }
             ViewData["LineId"] = new SelectList(_context.Lines, "Id", "Name", stop.LineId);
@@ -130,7 +130,7 @@ namespace ContinentalTestDb.Controllers
                     stop.LastUpdate = DateTime.Now;
                     _context.Update(stop);
                     await _context.SaveChangesAsync();
-                    await _rabbit.PublishMessage(JsonConvert.SerializeObject(stop), "update.stop");
+                    //await _rabbit.PublishMessage(JsonConvert.SerializeObject(stop), "update.stop");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -183,7 +183,7 @@ namespace ContinentalTestDb.Controllers
             if (stop != null)
             {
                 _context.Stops.Remove(stop);
-                await _rabbit.PublishMessage(JsonConvert.SerializeObject(stop), "delete.stop");
+                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(stop), "delete.stop");
             }
             
             await _context.SaveChangesAsync();

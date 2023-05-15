@@ -65,7 +65,7 @@ namespace ContinentalTestDb.Controllers
                 reason.LastUpdate = DateTime.Now;
                 _context.Add(reason);
                 await _context.SaveChangesAsync();
-                await _rabbit.PublishMessage(JsonConvert.SerializeObject(reason), "create.reason");
+                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(reason), "create.reason");
 
                 return RedirectToAction(nameof(Index));
             }
@@ -107,7 +107,7 @@ namespace ContinentalTestDb.Controllers
                     reason.LastUpdate = DateTime.Now;
                     _context.Update(reason);
                     await _context.SaveChangesAsync();
-                    await _rabbit.PublishMessage(JsonConvert.SerializeObject(reason), "update.reason");
+                    //await _rabbit.PublishMessage(JsonConvert.SerializeObject(reason), "update.reason");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -156,7 +156,7 @@ namespace ContinentalTestDb.Controllers
             if (reason != null)
             {
                 _context.Reasons.Remove(reason);
-                await _rabbit.PublishMessage(JsonConvert.SerializeObject(reason), "delete.reason");
+                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(reason), "delete.reason");
             }
             
             await _context.SaveChangesAsync();

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Context_aware_System.Migrations
 {
     [DbContext(typeof(ContextAwareDb))]
-    [Migration("20230505170952_firstContext")]
+    [Migration("20230515095912_firstContext")]
     partial class firstContext
     {
         /// <inheritdoc />
@@ -308,10 +308,7 @@ namespace Context_aware_System.Migrations
             modelBuilder.Entity("Models.ContextModels.Request", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");

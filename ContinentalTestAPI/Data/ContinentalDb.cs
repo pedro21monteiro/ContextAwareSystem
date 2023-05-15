@@ -5,7 +5,7 @@ namespace ContinentalTestAPI.Data
 {
     public class ContinentalDb : DbContext
     {
-        public ContinentalDb()
+        public ContinentalDb(DbContextOptions<ContinentalDb> opt) : base(opt)
         {
 
         }

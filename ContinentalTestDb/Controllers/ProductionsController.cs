@@ -70,7 +70,7 @@ namespace ContinentalTestDb.Controllers
                 production.LastUpdate = DateTime.Now;
                 _context.Add(production);
                 await _context.SaveChangesAsync();
-                await _rabbit.PublishMessage(JsonConvert.SerializeObject(production), "create.production");
+                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(production), "create.production");
 
                 return RedirectToAction(nameof(Index));
             }
@@ -115,7 +115,7 @@ namespace ContinentalTestDb.Controllers
                     production.Prod_Plan = pp;
                     production.LastUpdate = DateTime.Now;
                     _context.Update(production);
-                    await _rabbit.PublishMessage(JsonConvert.SerializeObject(production), "update.production");
+                    //await _rabbit.PublishMessage(JsonConvert.SerializeObject(production), "update.production");
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -167,7 +167,7 @@ namespace ContinentalTestDb.Controllers
             if (production != null)
             {
                 _context.Productions.Remove(production);
-                await _rabbit.PublishMessage(JsonConvert.SerializeObject(production), "delete.production");
+                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(production), "delete.production");
             }
             
             await _context.SaveChangesAsync();

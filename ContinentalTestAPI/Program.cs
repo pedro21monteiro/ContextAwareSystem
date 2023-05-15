@@ -1,4 +1,5 @@
 using ContinentalTestAPI.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +10,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<ContinentalDb>();
+builder.Services.AddDbContext<ContinentalDb>(options =>
+{
+    var dbhost = System.Environment.GetEnvironmentVariable("DBHOST") ?? "192.168.28.86";
+    var dbuser = System.Environment.GetEnvironmentVariable("DBUSER") ?? "sa";
+    var dbpass = System.Environment.GetEnvironmentVariable("DBPASS") ?? "xA6UCjFY";
+    options.UseSqlServer("Data Source=" + dbhost + ";Database=ContinentalTestDb;User ID=" + dbuser + ";Password=" + dbpass + ";TrustServerCertificate=Yes;");
+});
 
 var app = builder.Build();
 

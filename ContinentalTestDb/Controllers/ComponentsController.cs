@@ -66,7 +66,7 @@ namespace ContinentalTestDb.Controllers
                 _context.Add(component);
                 await _context.SaveChangesAsync();
 
-                await _rabbit.PublishMessage(JsonConvert.SerializeObject(component),"create.component");
+                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(component),"create.component");
 
                 return RedirectToAction(nameof(Index));
             }
@@ -108,7 +108,7 @@ namespace ContinentalTestDb.Controllers
                     component.LastUpdate = DateTime.Now;
                     _context.Update(component);
                     await _context.SaveChangesAsync();
-                    await _rabbit.PublishMessage(JsonConvert.SerializeObject(component), "update.component");
+                    //await _rabbit.PublishMessage(JsonConvert.SerializeObject(component), "update.component");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -157,7 +157,7 @@ namespace ContinentalTestDb.Controllers
             if (component != null)
             {   
                 _context.Components.Remove(component);
-                await _rabbit.PublishMessage(JsonConvert.SerializeObject(component), "delete.component");
+                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(component), "delete.component");
             }            
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -228,7 +228,7 @@ namespace ContinentalTestDb.Controllers
                 _context.Update(product);
                 
                 await _context.SaveChangesAsync();
-                await _rabbit.PublishMessage(JsonConvert.SerializeObject(product), "update.product");
+                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(product), "update.product");
             }
             
             return RedirectToAction("EditComponentProducts", "Components", new { id = idProd });
@@ -259,7 +259,7 @@ namespace ContinentalTestDb.Controllers
                 product.LastUpdate = DateTime.Now;
                 _context.Update(product);
                 await _context.SaveChangesAsync();
-                await _rabbit.PublishMessage(JsonConvert.SerializeObject(product), "update.product");
+                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(product), "update.product");
             }
 
             return RedirectToAction("EditComponentProducts", "Components", new { id = idProd });

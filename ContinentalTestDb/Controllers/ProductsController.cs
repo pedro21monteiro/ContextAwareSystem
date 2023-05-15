@@ -67,7 +67,7 @@ namespace ContinentalTestDb.Controllers
                 product.LastUpdate = DateTime.Now;
                 _context.Add(product);
                 await _context.SaveChangesAsync();
-                await _rabbit.PublishMessage(JsonConvert.SerializeObject(product), "create.product");
+                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(product), "create.product");
 
                 return RedirectToAction("EditComponentProducts", "Components", new { id = product.Id });
             }
@@ -110,7 +110,7 @@ namespace ContinentalTestDb.Controllers
                     product.LastUpdate = DateTime.Now;
                     _context.Update(product);
                     await _context.SaveChangesAsync();
-                    await _rabbit.PublishMessage(JsonConvert.SerializeObject(product), "update.product");
+                    //await _rabbit.PublishMessage(JsonConvert.SerializeObject(product), "update.product");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -159,7 +159,7 @@ namespace ContinentalTestDb.Controllers
             if (product != null)
             {
                 _context.Products.Remove(product);
-                await _rabbit.PublishMessage(JsonConvert.SerializeObject(product), "delete.product");
+                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(product), "delete.product");
             }
             
             await _context.SaveChangesAsync();

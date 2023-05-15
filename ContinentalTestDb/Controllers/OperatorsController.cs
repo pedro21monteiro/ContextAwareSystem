@@ -69,7 +69,7 @@ namespace ContinentalTestDb.Controllers
                 _operator.LastUpdate = DateTime.Now;
                 _context.Add(_operator);
                 await _context.SaveChangesAsync();
-                await _rabbit.PublishMessage(JsonConvert.SerializeObject(_operator), "create.operator");
+                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(_operator), "create.operator");
                 return RedirectToAction(nameof(Index));
             }
             ViewData["WorkerId"] = new SelectList(_context.Workers, "Id", "UserName", _operator.WorkerId);
@@ -111,7 +111,7 @@ namespace ContinentalTestDb.Controllers
                 try
                 {
                     @operator.LastUpdate = DateTime.Now;
-                    await _rabbit.PublishMessage(JsonConvert.SerializeObject(@operator), "update.operator");
+                    //await _rabbit.PublishMessage(JsonConvert.SerializeObject(@operator), "update.operator");
                     _context.Update(@operator);
                     await _context.SaveChangesAsync();
                 }
@@ -164,7 +164,7 @@ namespace ContinentalTestDb.Controllers
             if (@operator != null)
             {
                 _context.Operators.Remove(@operator);
-                await _rabbit.PublishMessage(JsonConvert.SerializeObject(@operator), "delete.operator");
+               // await _rabbit.PublishMessage(JsonConvert.SerializeObject(@operator), "delete.operator");
             }
             
             await _context.SaveChangesAsync();

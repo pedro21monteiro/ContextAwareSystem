@@ -24,8 +24,6 @@ namespace Models.ContextModels
         public TimeSpan Cycle { get; set; }
         public DateTime LastUpdate { get; set; }
 
-        [JsonIgnore]
-        [IgnoreDataMember]
         public virtual ICollection<Component> Components { get; set; }
         [JsonIgnore]
         [IgnoreDataMember]

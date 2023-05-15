@@ -1150,70 +1150,67 @@ namespace ContextAcquisition.Services
             }
             //---------------------
             //agora só tem de fazer o update do product pois apartir daqui o coordinador já existe
+            var pExistInContext = _context.Products.SingleOrDefault(p => p.Id == product.Id);
+            if (pExistInContext == null)
+            {
+                //create product
+                try
+                {
+                    List<Component> listComponents = new List<Component>();
+                    if (product.Components.Any())
+                    {
+                        foreach (var comp1 in product.Components)
+                        {
+                            listComponents.Add(comp1);
+                        }
+                        product.Components.Clear();
+
+                        foreach (var comp2 in listComponents)
+                        {
+                            var c = _context.Components.SingleOrDefault(c => c.Id == comp2.Id);
+                            if (c != null)
+                            {
+                                product.Components.Add(c);
+                            }
+                        }
+                    }
+                    _context.Add(product);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine("product: " + product.Id.ToString() + " - Adicionado com suceso");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+            }
             else
             {
-                var pExistInContext = _context.Products.SingleOrDefault(p => p.Id == product.Id);
-                if (pExistInContext == null)
+                //fazer update
+                try
                 {
-                    //create product
-                    try
-                    {
-                        List<Component> listComponents = new List<Component>();
-                        if (product.Components.Any())
-                        {
-                            foreach(var comp1 in product.Components)
-                            {
-                                listComponents.Add(comp1);
-                            }
-                            product.Components.Clear();
 
-                            foreach (var comp2 in listComponents)
-                            {
-                                var c = _context.Components.SingleOrDefault(c => c.Id == comp2.Id);
-                                if (c != null)
-                                {
-                                    product.Components.Add(c);
-                                }
-                            }
-                        }
-                        _context.Add(product);
-                        await _context.SaveChangesAsync();
-                        Console.WriteLine("product: " + product.Id.ToString() + " - Adicionado com suceso");
-                    }
-                    catch (Exception ex)
+                    pExistInContext.Components.Clear();
+                    foreach (var comp3 in product.Components)
                     {
-                        Console.WriteLine(ex.ToString());
+                        var co = _context.Components.SingleOrDefault(c => c.Id == comp3.Id);
+                        if (co != null)
+                        {
+                            pExistInContext.Components.Add(co);
+                        }
                     }
+                    //resto
+                    pExistInContext.Name = product.Name;
+                    pExistInContext.LabelReference = product.LabelReference;
+                    pExistInContext.Cycle = product.Cycle;
+                    pExistInContext.LastUpdate = product.LastUpdate;
+
+                    _context.Update(pExistInContext);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine("product: " + pExistInContext.Id.ToString() + " - Atualizado com suceso");
                 }
-                else
+                catch (Exception ex)
                 {
-                    //fazer update
-                    try
-                    {
-                        
-                        pExistInContext.Components.Clear();
-                        foreach (var comp3 in product.Components)
-                        {
-                            var co = _context.Components.SingleOrDefault(c => c.Id == comp3.Id);
-                            if (co != null)
-                            {
-                                pExistInContext.Components.Add(co);
-                            }
-                        }
-                        //resto
-                        pExistInContext.Name = product.Name;
-                        pExistInContext.LabelReference = product.LabelReference;
-                        pExistInContext.Cycle = product.Cycle;
-                        pExistInContext.LastUpdate = product.LastUpdate;
-
-                        _context.Update(pExistInContext);
-                        await _context.SaveChangesAsync();
-                        Console.WriteLine("product: " + pExistInContext.Id.ToString() + " - Atualizado com suceso");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                    }
+                    Console.WriteLine(ex.ToString());
                 }
             }
         }

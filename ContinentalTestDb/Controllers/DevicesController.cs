@@ -70,7 +70,7 @@ namespace ContinentalTestDb.Controllers
                 device.LastUpdate = DateTime.Now;
                 _context.Add(device);
                 await _context.SaveChangesAsync();
-                await _rabbit.PublishMessage(JsonConvert.SerializeObject(device), "create.device");
+               // await _rabbit.PublishMessage(JsonConvert.SerializeObject(device), "create.device");
                 return RedirectToAction(nameof(Index));
             }
             ViewData["LineId"] = new SelectList(_context.Lines, "Id", "Name", device.LineId);
@@ -115,7 +115,7 @@ namespace ContinentalTestDb.Controllers
                     device.Line = l;
                     _context.Update(device);
                     await _context.SaveChangesAsync();
-                    await _rabbit.PublishMessage(JsonConvert.SerializeObject(device), "update.device");
+                    //await _rabbit.PublishMessage(JsonConvert.SerializeObject(device), "update.device");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -166,7 +166,7 @@ namespace ContinentalTestDb.Controllers
             if (device != null)
             {
                 _context.Devices.Remove(device);
-                await _rabbit.PublishMessage(JsonConvert.SerializeObject(device), "delete.device");
+                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(device), "delete.device");
             }
             
             await _context.SaveChangesAsync();

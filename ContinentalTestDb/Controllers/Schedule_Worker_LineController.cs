@@ -85,7 +85,7 @@ namespace ContinentalTestDb.Controllers
                 schedule_Worker_Line.LastUpdate = DateTime.Now;
                 _context.Add(schedule_Worker_Line);
                 await _context.SaveChangesAsync();
-                await _rabbit.PublishMessage(JsonConvert.SerializeObject(schedule_Worker_Line), "create.swl");
+                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(schedule_Worker_Line), "create.swl");
                 return RedirectToAction(nameof(Index));
             }
             ViewData["LineId"] = new SelectList(_context.Lines, "Id", "Name", schedule_Worker_Line.LineId);
@@ -143,7 +143,7 @@ namespace ContinentalTestDb.Controllers
                     }
                     schedule_Worker_Line.LastUpdate = DateTime.Now;
                     _context.Update(schedule_Worker_Line);
-                    await _rabbit.PublishMessage(JsonConvert.SerializeObject(schedule_Worker_Line), "update.swl");
+                    //await _rabbit.PublishMessage(JsonConvert.SerializeObject(schedule_Worker_Line), "update.swl");
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -199,7 +199,7 @@ namespace ContinentalTestDb.Controllers
             if (schedule_Worker_Line != null)
             {
                 _context.Schedule_Worker_Lines.Remove(schedule_Worker_Line);
-                await _rabbit.PublishMessage(JsonConvert.SerializeObject(schedule_Worker_Line), "delete.swl");
+                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(schedule_Worker_Line), "delete.swl");
 
             }
             

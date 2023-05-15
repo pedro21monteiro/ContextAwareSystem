@@ -1,5 +1,6 @@
 ﻿using ContinentalTestAPI.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Models.ContinentalModels;
 
 namespace ContinentalTestAPI.Controllers
@@ -139,18 +140,21 @@ namespace ContinentalTestAPI.Controllers
 
             if (InicialDate != null)
             {
-                foreach (var p in _context.Products)
+                foreach (var p in _context.Products.Include(s => s.Components).ToList())
                 {
                     if (p.LastUpdate.CompareTo(InicialDate) > 0)
                     {
-                        products.Add(p);
+                            products.Add(p);
                     }
                 }
+                //Agora a cada produto adicionar a lista dos componentes
+
+
                 return Ok(products);
             }
             else
             {
-                return Ok(_context.Products.ToList());
+                return Ok(_context.Products.Include(s => s.Components).ToList());
             }
         }
 

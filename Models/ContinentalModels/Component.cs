@@ -26,6 +26,8 @@ namespace Models.ContinentalModels
         public virtual ICollection<Product> Products { get; set; }
 
         //parametros que não estão na bd
+        [JsonIgnore]
+        [IgnoreDataMember]
         [NotMapped]
         public bool IsSelected { get; set; } = false;
     }

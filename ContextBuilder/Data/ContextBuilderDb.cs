@@ -1,11 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Models.ContextModels;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace ContextBuider.Data
+namespace ContextBuilder.Data
 {
-    public class ContextAwareDb : DbContext
+    public class ContextBuilderDb : DbContext
     {
-        public ContextAwareDb()
+        public ContextBuilderDb(DbContextOptions<ContextBuilderDb> opt) : base(opt)
         {
 
         }
@@ -32,6 +37,6 @@ namespace ContextBuider.Data
         public DbSet<Supervisor> Supervisors { get; set; }
         public DbSet<Worker> Workers { get; set; }
         public DbSet<Request> Requests { get; set; }
-        public DbSet<LastVerificationRegist> lastVerificationRegists { get; set; }
+        public DbSet<LastVerificationRegist> LastVerificationRegists { get; set; }
     }
 }

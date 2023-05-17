@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace ContinentalTestDb.Controllers
 {
@@ -12,11 +13,13 @@ namespace ContinentalTestDb.Controllers
     {
         private readonly ContinentalTestDbContext _context;
         private readonly RabbitMqService _rabbit;
+        private readonly HttpClient httpClient;
 
-        public RequestsController(ContinentalTestDbContext context, RabbitMqService rabbit)
+        public RequestsController(ContinentalTestDbContext context, RabbitMqService rabbit, HttpClient _httpClient)
         {
             _context = context;
             _rabbit = rabbit;
+            httpClient = _httpClient;
         }
 
         public async Task<IActionResult> Index()
@@ -44,7 +47,29 @@ namespace ContinentalTestDb.Controllers
                 request.LastUpdate = DateTime.Now;
                 _context.Add(request);
                 await _context.SaveChangesAsync();
-                await _rabbit.PublishMessage(JsonConvert.SerializeObject(request), "create.request");
+
+                try { 
+                    string json = JsonConvert.SerializeObject(request);
+
+                    HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                    HttpResponseMessage response = await httpClient.PostAsync("https://localhost:7284/api/ContextBuilder/CreateResquest", content);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        Console.WriteLine("OK");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Erro");
+                    }
+                }catch(Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+
+                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(request), "create.request");
+
                 return RedirectToAction(nameof(Index));
             }
             ViewData["WorkerId"] = new SelectList(_context.Workers, "Id", "UserName", request.WorkerId);

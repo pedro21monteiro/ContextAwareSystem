@@ -17,7 +17,8 @@ builder.Services.AddDbContext<ContinentalTestDbContext>(options =>
 });
 
 builder.Services.AddSingleton<RabbitMqService>();
-
+builder.Services.AddHttpClient();
+builder.Services.AddSingleton<HttpClient>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

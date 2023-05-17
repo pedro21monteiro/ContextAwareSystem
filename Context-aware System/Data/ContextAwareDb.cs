@@ -5,7 +5,7 @@ namespace ContextServer.Data
 {
     public class ContextAwareDb : DbContext
     {
-        public ContextAwareDb()
+        public ContextAwareDb(DbContextOptions<ContextAwareDb> opt) : base(opt)
         {
 
         }

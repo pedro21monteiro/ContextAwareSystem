@@ -15,6 +15,7 @@ namespace Models.ContextModels
 
         public Worker Worker { get; set; } 
         public int WorkerId { get; set; }
+        public string Device { get; set; } = string.Empty;
         public DateTime LastUpdate { get; set; }
 
     }

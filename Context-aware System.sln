@@ -9,11 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "Models\Models.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContinentalTestDb", "ContinentalTestDb\ContinentalTestDb.csproj", "{AAECF5E9-F41F-4A00-891E-FCF61C803EE5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContextBuider", "ContextBuider\ContextBuider.csproj", "{13237901-0C36-4CEF-9548-F397C702AA29}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContinentalTestAPI", "ContinentalTestAPI\ContinentalTestAPI.csproj", "{7A4FDEB8-1341-467C-A995-9DC2DA3B9D07}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContextAcquisition", "ContextAcquisition\ContextAcquisition.csproj", "{195737E2-2F6B-49BB-A422-23C074563C53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContextAcquisition", "ContextAcquisition\ContextAcquisition.csproj", "{195737E2-2F6B-49BB-A422-23C074563C53}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContextBuilder", "ContextBuilder\ContextBuilder.csproj", "{12DFE950-1A4F-4BE4-A566-CDEE08DEB805}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,10 +33,6 @@ Global
 		{AAECF5E9-F41F-4A00-891E-FCF61C803EE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AAECF5E9-F41F-4A00-891E-FCF61C803EE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AAECF5E9-F41F-4A00-891E-FCF61C803EE5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{13237901-0C36-4CEF-9548-F397C702AA29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{13237901-0C36-4CEF-9548-F397C702AA29}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{13237901-0C36-4CEF-9548-F397C702AA29}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{13237901-0C36-4CEF-9548-F397C702AA29}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7A4FDEB8-1341-467C-A995-9DC2DA3B9D07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7A4FDEB8-1341-467C-A995-9DC2DA3B9D07}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A4FDEB8-1341-467C-A995-9DC2DA3B9D07}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -45,6 +41,10 @@ Global
 		{195737E2-2F6B-49BB-A422-23C074563C53}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{195737E2-2F6B-49BB-A422-23C074563C53}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{195737E2-2F6B-49BB-A422-23C074563C53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12DFE950-1A4F-4BE4-A566-CDEE08DEB805}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12DFE950-1A4F-4BE4-A566-CDEE08DEB805}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12DFE950-1A4F-4BE4-A566-CDEE08DEB805}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12DFE950-1A4F-4BE4-A566-CDEE08DEB805}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,5 +1,4 @@
-using ContextServer.Data;
-using ContextServer.Services;
+using ContextBuilder.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,14 +10,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//-----------------
-//builder.Services.AddSingleton(typeof(Service));
-
-//builder.Services.AddSingleton<Service>();
-//builder.Services.AddHttpClient<IService, Service>();
-//para o context database
-//builder.Services.AddSingleton<ContextAwareDb>();
-builder.Services.AddDbContext<ContextAwareDb>(options =>
+builder.Services.AddDbContext<ContextBuilderDb>(options =>
 {
     var dbhost = System.Environment.GetEnvironmentVariable("DBHOST") ?? "192.168.28.86";
     var dbuser = System.Environment.GetEnvironmentVariable("DBUSER") ?? "sa";
@@ -26,18 +18,16 @@ builder.Services.AddDbContext<ContextAwareDb>(options =>
     options.UseSqlServer("Data Source=" + dbhost + ";Database=ContextDb;User ID=" + dbuser + ";Password=" + dbpass + ";TrustServerCertificate=Yes;");
 });
 
-//Singleton para a logica do sistema
-builder.Services.AddSingleton<SystemLogic>();
-
-
-//----------------
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
-app.UseSwagger();
-app.UseSwaggerUI();
-
+app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

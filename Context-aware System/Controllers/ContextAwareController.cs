@@ -11,9 +11,9 @@ namespace Context_aware_System.Controllers
 {
     [Route("api/ContextAware")]
     [ApiController]
+
     public class ContextAwareController : Controller
     {
-
         private readonly ContextAwareDb _context;
         private readonly SystemLogic _systemLogic;
         //para experimentar os datetimes 2023-11-20T11:11:11Z

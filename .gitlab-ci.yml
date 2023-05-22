@@ -2,6 +2,7 @@ stages:
     - build-testdb
     - build-cbuilder
     - build-cserver
+    - build-cacquisition
     - deploy
 
 build-testdb:
@@ -18,6 +19,13 @@ build-cbuilder:
         - if [[ $(docker ps -aq --filter 'ancestor=contextbuilderservice:latest') ]]; then docker rm --force $(docker ps -aq --filter 'ancestor=contextbuilderservice:latest'); else echo 'deleted';fi
         - docker build . -f Dockerfile_cb -t contextbuilderservice
 
+build-cacquisition:
+    stage: build-cacquisition
+    script:
+        - echo "Starting build Context Acquisition"
+        - if [[ $(docker ps -aq --filter 'ancestor=contextacquisition:latest') ]]; then docker rm --force $(docker ps -aq --filter 'ancestor=contextacquisition:latest'); else echo 'deleted';fi
+        - docker build . -t contextacquisition -f Dockerfile_ca
+
 build-cserver:
     stage: build-cserver
     script:
@@ -33,3 +41,4 @@ deploy:
         - docker run -d -p 8180:80 --name testdbservice -e DBHOST=192.168.28.86 -e DBUSER=sa -e DBPASS=xA6UCjFY -e INTEGRATIONHOST=192.168.28.86:8089 -e GRAPHGENERATORHOST=192.168.28.86:8098 -e NOTIFICATIONSHOST=192.168.28.86:8091 -e RABBITHOST=192.168.28.86 testdbservice
         - docker run -d -p 8181:80 --name contextbuilderservice -e DBHOST=192.168.28.86 -e DBUSER=sa -e DBPASS=xA6UCjFY -e INTEGRATIONHOST=192.168.28.86:8089 -e GRAPHGENERATORHOST=192.168.28.86:8098 -e NOTIFICATIONSHOST=192.168.28.86:8091 -e RABBITHOST=192.168.28.86 contextbuilderservice
         - docker run -d -p 8182:80 --name contextservice -e DBHOST=192.168.28.86 -e DBUSER=sa -e DBPASS=xA6UCjFY -e INTEGRATIONHOST=192.168.28.86:8089 -e GRAPHGENERATORHOST=192.168.28.86:8098 -e NOTIFICATIONSHOST=192.168.28.86:8091 -e RABBITHOST=192.168.28.86 contextservice
+        - docker run -d -p 8183:80 --name contextacquisition -e DBHOST=192.168.28.86 -e DBUSER=sa -e DBPASS=xA6UCjFY -e INTEGRATIONHOST=192.168.28.86:8089 -e GRAPHGENERATORHOST=192.168.28.86:8098 -e NOTIFICATIONSHOST=192.168.28.86:8091 -e RABBITHOST=192.168.28.86 contextacquisition

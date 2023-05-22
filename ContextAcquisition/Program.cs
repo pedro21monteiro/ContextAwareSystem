@@ -55,7 +55,7 @@ namespace ContextAcquisition
             ITU.productions = _service.GetProductions(lvr.ProductionsVerification).Result;
             ITU.production_Plans = _service.GetProductionPlans(lvr.ProductionPlansVerification).Result;
             ITU.reasons = _service.GetReasons(lvr.ReasonsVerification).Result;
-            ITU.requests = _service.GetRequests(lvr.RequestsVerification).Result;
+            //ITU.requests = _service.GetRequests(lvr.RequestsVerification).Result;
             ITU.schedules = _service.GetSchedule_Worker_Lines(lvr.Schedule_worker_linesVerification).Result;
             ITU.stops = _service.GetStops(lvr.StopsVerification).Result;
             ITU.supervisors = _service.GetSupervisors(lvr.SupervisorsVerification).Result;

@@ -1,5 +1,6 @@
 ﻿using ContextAcquisition.Data;
 using Models.ContextModels;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +13,10 @@ namespace ContextAcquisition.Services
     public class Service : IService
     {
         private readonly HttpClient httpClient;
-
+        private static string connectionString = "https://localhost:7284/api/ContextBuilder/";
         public Service(HttpClient _httpClient)
         {
-            this.httpClient = _httpClient;
+            httpClient = _httpClient;
         }
 
         //Lista de serviços que podem ser pedidos à camada de integração com as bases de dados
@@ -561,14 +562,14 @@ namespace ContextAcquisition.Services
             {
                 Console.WriteLine("0 reasons novos/atualizados detetados");
             }
-            if (ITU.requests != null)
-            {
-                Console.WriteLine(ITU.requests.Count.ToString() + " requests novos/atualizados detetados");
-            }
-            else
-            {
-                Console.WriteLine("0 requests novos/atualizados detetados");
-            }
+            //if (ITU.requests != null)
+            //{
+            //    Console.WriteLine(ITU.requests.Count.ToString() + " requests novos/atualizados detetados");
+            //}
+            //else
+            //{
+            //    Console.WriteLine("0 requests novos/atualizados detetados");
+            //}
             //schedules
             if (ITU.schedules != null)
             {
@@ -664,14 +665,14 @@ namespace ContextAcquisition.Services
                 }
             }
             //requests
-            if (ITU.requests != null)
-            {
-                //enviar para o messagem broker
-                foreach (var r in ITU.requests)
-                {
-                    await UpdateRequest(r, _context);
-                }
-            }
+            //if (ITU.requests != null)
+            //{
+            //    //enviar para o messagem broker
+            //    foreach (var r in ITU.requests)
+            //    {
+            //        await UpdateRequest(r, _context);
+            //    }
+            //}
             //lines
             if (ITU.lines != null)
             {
@@ -766,6 +767,8 @@ namespace ContextAcquisition.Services
         }
 
         //-------------------------
+        //Os Updates todos
+
         public static async Task UpdateComponent(Component component, ContextAcquisitonDb _context)
         {
             var cExistInContext = _context.Components.SingleOrDefault(c => c.Id == component.Id);
@@ -802,8 +805,8 @@ namespace ContextAcquisition.Services
                     Console.WriteLine(ex.ToString());
                 }
             }
-            
-            
+
+
         }
 
         public static async Task UpdateCoordinator(Coordinator coordinator, ContextAcquisitonDb _context)
@@ -863,7 +866,7 @@ namespace ContextAcquisition.Services
                     catch (Exception ex)
                     {
                         Console.WriteLine(ex.ToString());
-                    }                    
+                    }
                 }
             }
         }
@@ -992,70 +995,70 @@ namespace ContextAcquisition.Services
             }
         }
 
-        public static async Task UpdateRequest(Request request, ContextAcquisitonDb _context)
-        {
-            //Em primeiro lugar vai ver se as outras classes que estão dentro do coordinator já existem
-            //neste caso o worker
-            var workercontext = _context.Workers.SingleOrDefault(s => s.Id == request.WorkerId);
-            if (workercontext == null)
-            {
-                //vai criar o worker e depois mandar fazer esta função de novo
-                try
-                {
-                    //vai criar o worker
-                    await UpdateWorker(request.Worker, _context);
-                    //depois de dar o update do worker retira da lista pois já foi atualizado
-                    await UpdateRequest(request, _context);
-                    return;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.ToString());
-                }
-            }
-            //---------------------
-            //agora só tem de fazer o update do coordinator pois apartir daqui o worker já existe
-            else
-            {
-                var rExistInContext = _context.Requests.SingleOrDefault(r => r.Id == request.Id);
-                if (rExistInContext == null)
-                {
-                    try
-                    {
-                        request.Worker = workercontext;
-                        request.WorkerId = workercontext.Id;
-                        _context.Add(request);
-                        await _context.SaveChangesAsync();
-                        Console.WriteLine("request: " + request.Id.ToString() + " - Adicionado com suceso");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                    }
-                }
-                else
-                {
-                    //fazer update
-                    try
-                    {
-                        rExistInContext.Worker = workercontext;
-                        rExistInContext.WorkerId = workercontext.Id;
-                        //aqui já vai buscar ao request
-                        rExistInContext.LastUpdate = request.LastUpdate;
-                        rExistInContext.Type = request.Type;
-                        rExistInContext.Date = request.Date;
+        //public static async Task UpdateRequest(Request request, ContextAcquisitonDb _context)
+        //{
+        //    //Em primeiro lugar vai ver se as outras classes que estão dentro do coordinator já existem
+        //    //neste caso o worker
+        //    var workercontext = _context.Workers.SingleOrDefault(s => s.Id == request.WorkerId);
+        //    if (workercontext == null)
+        //    {
+        //        //vai criar o worker e depois mandar fazer esta função de novo
+        //        try
+        //        {
+        //            //vai criar o worker
+        //            await UpdateWorker(request.Worker, _context);
+        //            //depois de dar o update do worker retira da lista pois já foi atualizado
+        //            await UpdateRequest(request, _context);
+        //            return;
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Console.WriteLine(ex.ToString());
+        //        }
+        //    }
+        //    //---------------------
+        //    //agora só tem de fazer o update do coordinator pois apartir daqui o worker já existe
+        //    else
+        //    {
+        //        var rExistInContext = _context.Requests.SingleOrDefault(r => r.Id == request.Id);
+        //        if (rExistInContext == null)
+        //        {
+        //            try
+        //            {
+        //                request.Worker = workercontext;
+        //                request.WorkerId = workercontext.Id;
+        //                _context.Add(request);
+        //                await _context.SaveChangesAsync();
+        //                Console.WriteLine("request: " + request.Id.ToString() + " - Adicionado com suceso");
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                Console.WriteLine(ex.ToString());
+        //            }
+        //        }
+        //        else
+        //        {
+        //            //fazer update
+        //            try
+        //            {
+        //                rExistInContext.Worker = workercontext;
+        //                rExistInContext.WorkerId = workercontext.Id;
+        //                //aqui já vai buscar ao request
+        //                rExistInContext.LastUpdate = request.LastUpdate;
+        //                rExistInContext.Type = request.Type;
+        //                rExistInContext.Date = request.Date;
 
-                        _context.Update(rExistInContext);
-                        await _context.SaveChangesAsync();
-                        Console.WriteLine("request: " + rExistInContext.Id.ToString() + " - Atualizado com suceso");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                    }
-                }
-            }
-        }
+        //                _context.Update(rExistInContext);
+        //                await _context.SaveChangesAsync();
+        //                Console.WriteLine("request: " + rExistInContext.Id.ToString() + " - Atualizado com suceso");
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                Console.WriteLine(ex.ToString());
+        //            }
+        //        }
+        //    }
+        //}
 
         public static async Task UpdateLine(Line line, ContextAcquisitonDb _context)
         {
@@ -1303,7 +1306,7 @@ namespace ContextAcquisition.Services
             //vai ter de ver tbm se existe a reason e esta pode ser null
             var reasoncontext = _context.Reasons.SingleOrDefault(r => r.Id == stop.ReasonId);
             if (stop.Reason != null)
-            {               
+            {
                 if (reasoncontext == null)
                 {
                     //vai criar a line e depois mandar fazer esta função de novo
@@ -1330,7 +1333,7 @@ namespace ContextAcquisition.Services
                 {
                     try
                     {
-                       if(stop.Reason != null)
+                        if (stop.Reason != null)
                         {
                             stop.Reason = reasoncontext;
                             stop.ReasonId = reasoncontext.Id;
@@ -1369,7 +1372,7 @@ namespace ContextAcquisition.Services
                         sExistInContext.InitialDate = stop.InitialDate;
                         sExistInContext.EndDate = stop.EndDate;
                         sExistInContext.Duration = stop.Duration;
-                        sExistInContext.Shift = stop.Shift; 
+                        sExistInContext.Shift = stop.Shift;
                         sExistInContext.LastUpdate = stop.LastUpdate;
 
                         _context.Update(sExistInContext);

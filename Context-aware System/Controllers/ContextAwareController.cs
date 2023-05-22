@@ -378,7 +378,7 @@ namespace Context_aware_System.Controllers
                 //var listproductions = _context.Productions.Where(p=>p.Production_PlanId)
                 foreach (var pp in listpordPlans)
                 {
-                    foreach(var production in _context.Productions)
+                    foreach(var production in _context.Productions.Include(p=>p.Prod_Plan))
                     {
                         if(production.Production_PlanId == pp.Id && _systemLogic.IsAtributeInDatetime(dtInitial,dtFinal,production.Day) == true)
                         {

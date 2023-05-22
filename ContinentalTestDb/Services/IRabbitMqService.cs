@@ -4,6 +4,6 @@
 
     public interface IRabbitMqService
     {
-        Task PublishMessage(string message, string topic);
+        //Task PublishMessage(string message, string topic);
     }
 }

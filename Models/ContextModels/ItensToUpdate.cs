@@ -17,7 +17,7 @@ namespace Models.ContextModels
         public List<Production> productions { get; set; }
         public List<Production_Plan> production_Plans { get; set; }
         public List<Reason> reasons { get; set; }
-        public List<Request> requests { get; set; }
+//        public List<Request> requests { get; set; }
         public List<Schedule_Worker_Line> schedules { get; set; }
         public List<Stop> stops { get; set; }
         public List<Supervisor> supervisors { get; set; }

@@ -1,5 +1,6 @@
 ﻿using ContextBuilder.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Models.ContextModels;
 
 namespace ContextBuilder.Controllers
@@ -15,10 +16,6 @@ namespace ContextBuilder.Controllers
         {
             _context = context;
         }
-
-        //https://localhost:7284/swagger/index.html
-
-
 
         [HttpPost]
         [Route("CreateResquest")]
@@ -49,10 +46,9 @@ namespace ContextBuilder.Controllers
                 Console.WriteLine("Request: " + request.Id.ToString() + " - Erro ao adicionar");
                 return BadRequest();                
             }
-
-            //_context.Clientes.Add(cliente);
-            //await _context.SaveChangesAsync();
-            //return CreatedAtRouteResult(nameof(GetCliente), new { id = cliente.Id }, cliente);
         }
-    }
+
+
+      
+    }    
 }

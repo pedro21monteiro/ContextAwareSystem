@@ -832,41 +832,38 @@ namespace ContextAcquisition.Services
             }
             //---------------------
             //agora só tem de fazer o update do coordinator pois apartir daqui o worker já existe
+            var cExistInContext = _context.Coordinators.SingleOrDefault(c => c.Id == coordinator.Id);
+            if (cExistInContext == null)
+            {
+                try
+                {
+                    coordinator.Worker = workercontext;
+                    coordinator.WorkerId = workercontext.Id;
+                    _context.Add(coordinator);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine("Coordinator: " + coordinator.Id.ToString() + " - Adicionado com suceso");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+            }
             else
             {
-                var cExistInContext = _context.Coordinators.SingleOrDefault(c => c.Id == coordinator.Id);
-                if (cExistInContext == null)
+                //fazer update
+                try
                 {
-                    try
-                    {
-                        coordinator.Worker = workercontext;
-                        coordinator.WorkerId = workercontext.Id;
-                        _context.Add(coordinator);
-                        await _context.SaveChangesAsync();
-                        Console.WriteLine("Coordinator: " + coordinator.Id.ToString() + " - Adicionado com suceso");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                    }
-                }
-                else
-                {
-                    //fazer update
-                    try
-                    {
-                        cExistInContext.Worker = workercontext;
-                        cExistInContext.WorkerId = workercontext.Id;
-                        cExistInContext.LastUpdate = coordinator.LastUpdate;
+                    cExistInContext.Worker = workercontext;
+                    cExistInContext.WorkerId = workercontext.Id;
+                    cExistInContext.LastUpdate = coordinator.LastUpdate;
 
-                        _context.Update(cExistInContext);
-                        await _context.SaveChangesAsync();
-                        Console.WriteLine("coordinator: " + cExistInContext.Id.ToString() + " - Atualizado com suceso");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                    }
+                    _context.Update(cExistInContext);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine("coordinator: " + cExistInContext.Id.ToString() + " - Atualizado com suceso");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
                 }
             }
         }
@@ -894,41 +891,38 @@ namespace ContextAcquisition.Services
             }
             //---------------------
             //agora só tem de fazer o update do coordinator pois apartir daqui o worker já existe
+            var sExistInContext = _context.Supervisors.SingleOrDefault(s => s.Id == supervisor.Id);
+            if (sExistInContext == null)
+            {
+                try
+                {
+                    supervisor.Worker = workercontext;
+                    supervisor.WorkerId = workercontext.Id;
+                    _context.Add(supervisor);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine("supervisor: " + supervisor.Id.ToString() + " - Adicionado com suceso");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+            }
             else
             {
-                var sExistInContext = _context.Supervisors.SingleOrDefault(s => s.Id == supervisor.Id);
-                if (sExistInContext == null)
+                //fazer update
+                try
                 {
-                    try
-                    {
-                        supervisor.Worker = workercontext;
-                        supervisor.WorkerId = workercontext.Id;
-                        _context.Add(supervisor);
-                        await _context.SaveChangesAsync();
-                        Console.WriteLine("supervisor: " + supervisor.Id.ToString() + " - Adicionado com suceso");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                    }
-                }
-                else
-                {
-                    //fazer update
-                    try
-                    {
-                        sExistInContext.Worker = workercontext;
-                        sExistInContext.WorkerId = workercontext.Id;
-                        sExistInContext.LastUpdate = supervisor.LastUpdate;
+                    sExistInContext.Worker = workercontext;
+                    sExistInContext.WorkerId = workercontext.Id;
+                    sExistInContext.LastUpdate = supervisor.LastUpdate;
 
-                        _context.Update(sExistInContext);
-                        await _context.SaveChangesAsync();
-                        Console.WriteLine("supervisor: " + sExistInContext.Id.ToString() + " - Atualizado com suceso");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                    }
+                    _context.Update(sExistInContext);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine("supervisor: " + sExistInContext.Id.ToString() + " - Atualizado com suceso");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
                 }
             }
         }
@@ -956,41 +950,38 @@ namespace ContextAcquisition.Services
             }
             //---------------------
             //agora só tem de fazer o update do coordinator pois apartir daqui o worker já existe
+            var oExistInContext = _context.Operators.SingleOrDefault(s => s.Id == ope.Id);
+            if (oExistInContext == null)
+            {
+                try
+                {
+                    ope.Worker = workercontext;
+                    ope.WorkerId = workercontext.Id;
+                    _context.Add(ope);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine("operator: " + ope.Id.ToString() + " - Adicionado com suceso");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+            }
             else
             {
-                var oExistInContext = _context.Operators.SingleOrDefault(s => s.Id == ope.Id);
-                if (oExistInContext == null)
+                //fazer update
+                try
                 {
-                    try
-                    {
-                        ope.Worker = workercontext;
-                        ope.WorkerId = workercontext.Id;
-                        _context.Add(ope);
-                        await _context.SaveChangesAsync();
-                        Console.WriteLine("operator: " + ope.Id.ToString() + " - Adicionado com suceso");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                    }
-                }
-                else
-                {
-                    //fazer update
-                    try
-                    {
-                        oExistInContext.Worker = workercontext;
-                        oExistInContext.WorkerId = workercontext.Id;
-                        oExistInContext.LastUpdate = ope.LastUpdate;
+                    oExistInContext.Worker = workercontext;
+                    oExistInContext.WorkerId = workercontext.Id;
+                    oExistInContext.LastUpdate = ope.LastUpdate;
 
-                        _context.Update(oExistInContext);
-                        await _context.SaveChangesAsync();
-                        Console.WriteLine("operator: " + oExistInContext.Id.ToString() + " - Atualizado com suceso");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                    }
+                    _context.Update(oExistInContext);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine("operator: " + oExistInContext.Id.ToString() + " - Atualizado com suceso");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
                 }
             }
         }
@@ -1083,44 +1074,41 @@ namespace ContextAcquisition.Services
             }
             //---------------------
             //agora só tem de fazer o update da line pois apartir daqui o coordinador já existe
+            var lExistInContext = _context.Lines.SingleOrDefault(l => l.Id == line.Id);
+            if (lExistInContext == null)
+            {
+                try
+                {
+                    line.Coordinator = coordinatorcontext;
+                    line.CoordinatorId = coordinatorcontext.Id;
+                    _context.Add(line);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine("line: " + line.Id.ToString() + " - Adicionado com suceso");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+            }
             else
             {
-                var lExistInContext = _context.Lines.SingleOrDefault(l => l.Id == line.Id);
-                if (lExistInContext == null)
+                //fazer update
+                try
                 {
-                    try
-                    {
-                        line.Coordinator = coordinatorcontext;
-                        line.CoordinatorId = coordinatorcontext.Id;
-                        _context.Add(line);
-                        await _context.SaveChangesAsync();
-                        Console.WriteLine("line: " + line.Id.ToString() + " - Adicionado com suceso");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                    }
-                }
-                else
-                {
-                    //fazer update
-                    try
-                    {
-                        lExistInContext.Coordinator = coordinatorcontext;
-                        lExistInContext.CoordinatorId = coordinatorcontext.Id;
-                        //aqui já vai buscar ao line
-                        lExistInContext.LastUpdate = line.LastUpdate;
-                        lExistInContext.Name = line.Name;
-                        lExistInContext.Priority = line.Priority;
+                    lExistInContext.Coordinator = coordinatorcontext;
+                    lExistInContext.CoordinatorId = coordinatorcontext.Id;
+                    //aqui já vai buscar ao line
+                    lExistInContext.LastUpdate = line.LastUpdate;
+                    lExistInContext.Name = line.Name;
+                    lExistInContext.Priority = line.Priority;
 
-                        _context.Update(lExistInContext);
-                        await _context.SaveChangesAsync();
-                        Console.WriteLine("line: " + lExistInContext.Id.ToString() + " - Atualizado com suceso");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                    }
+                    _context.Update(lExistInContext);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine("line: " + lExistInContext.Id.ToString() + " - Atualizado com suceso");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
                 }
             }
         }
@@ -1241,45 +1229,42 @@ namespace ContextAcquisition.Services
             }
             //---------------------
             //agora só tem de fazer o update do coordinator pois apartir daqui o worker já existe
+            var dExistInContext = _context.Devices.SingleOrDefault(d => d.Id == device.Id);
+            if (dExistInContext == null)
+            {
+                //Create
+                try
+                {
+                    device.Line = linecontext;
+                    device.LineId = linecontext.Id;
+
+                    _context.Add(device);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine("device: " + device.Id.ToString() + " - Adicionado com suceso");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+            }
             else
             {
-                var dExistInContext = _context.Devices.SingleOrDefault(d => d.Id == device.Id);
-                if (dExistInContext == null)
+                //fazer update
+                try
                 {
-                    //Create
-                    try
-                    {
-                        device.Line = linecontext;
-                        device.LineId = linecontext.Id;
+                    dExistInContext.Line = linecontext;
+                    dExistInContext.LineId = linecontext.Id;
+                    //outras
+                    dExistInContext.LastUpdate = device.LastUpdate;
+                    dExistInContext.Type = device.Type;
 
-                        _context.Add(device);
-                        await _context.SaveChangesAsync();
-                        Console.WriteLine("device: " + device.Id.ToString() + " - Adicionado com suceso");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                    }
+                    _context.Update(dExistInContext);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine("line: " + dExistInContext.Id.ToString() + " - Atualizado com suceso");
                 }
-                else
+                catch (Exception ex)
                 {
-                    //fazer update
-                    try
-                    {
-                        dExistInContext.Line = linecontext;
-                        dExistInContext.LineId = linecontext.Id;
-                        //outras
-                        dExistInContext.LastUpdate = device.LastUpdate;
-                        dExistInContext.Type = device.Type;
-
-                        _context.Update(dExistInContext);
-                        await _context.SaveChangesAsync();
-                        Console.WriteLine("line: " + dExistInContext.Id.ToString() + " - Atualizado com suceso");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                    }
+                    Console.WriteLine(ex.ToString());
                 }
             }
         }
@@ -1326,63 +1311,61 @@ namespace ContextAcquisition.Services
             }
             //---------------------
             //agora só tem de fazer o update do stop 
+            //criar
+            var sExistInContext = _context.Stops.SingleOrDefault(s => s.Id == stop.Id);
+            if (sExistInContext == null)
+            {
+                try
+                {
+                    if (stop.Reason != null)
+                    {
+                        stop.Reason = reasoncontext;
+                        stop.ReasonId = reasoncontext.Id;
+                    }
+                    else
+                    {
+                        stop.Reason = null;
+                        stop.ReasonId = null;
+                    }
+                    stop.Line = linecontext;
+                    stop.LineId = linecontext.Id;
+
+                    _context.Add(stop);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine("stop: " + stop.Id.ToString() + " - Adicionado com suceso");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+            }
             else
             {
-                var sExistInContext = _context.Stops.SingleOrDefault(s => s.Id == stop.Id);
-                if (sExistInContext == null)
+                //fazer update
+                try
                 {
-                    try
+                    if (stop.Reason != null)
                     {
-                        if (stop.Reason != null)
-                        {
-                            stop.Reason = reasoncontext;
-                            stop.ReasonId = reasoncontext.Id;
-                        }
-                        else
-                        {
-                            stop.Reason = null;
-                            stop.ReasonId = null;
-                        }
-                        stop.Line = linecontext;
-                        stop.LineId = linecontext.Id;
+                        sExistInContext.Reason = reasoncontext;
+                        sExistInContext.ReasonId = reasoncontext.Id;
+                    }
+                    sExistInContext.Line = linecontext;
+                    sExistInContext.LineId = linecontext.Id;
+                    //o resto do stop
+                    sExistInContext.Planned = stop.Planned;
+                    sExistInContext.InitialDate = stop.InitialDate;
+                    sExistInContext.EndDate = stop.EndDate;
+                    sExistInContext.Duration = stop.Duration;
+                    sExistInContext.Shift = stop.Shift;
+                    sExistInContext.LastUpdate = stop.LastUpdate;
 
-                        _context.Add(stop);
-                        await _context.SaveChangesAsync();
-                        Console.WriteLine("stop: " + stop.Id.ToString() + " - Adicionado com suceso");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                    }
+                    _context.Update(sExistInContext);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine("stop: " + sExistInContext.Id.ToString() + " - Atualizado com suceso");
                 }
-                else
+                catch (Exception ex)
                 {
-                    //fazer update
-                    try
-                    {
-                        if (stop.Reason != null)
-                        {
-                            sExistInContext.Reason = reasoncontext;
-                            sExistInContext.ReasonId = reasoncontext.Id;
-                        }
-                        sExistInContext.Line = linecontext;
-                        sExistInContext.LineId = linecontext.Id;
-                        //o resto do stop
-                        sExistInContext.Planned = stop.Planned;
-                        sExistInContext.InitialDate = stop.InitialDate;
-                        sExistInContext.EndDate = stop.EndDate;
-                        sExistInContext.Duration = stop.Duration;
-                        sExistInContext.Shift = stop.Shift;
-                        sExistInContext.LastUpdate = stop.LastUpdate;
-
-                        _context.Update(sExistInContext);
-                        await _context.SaveChangesAsync();
-                        Console.WriteLine("stop: " + sExistInContext.Id.ToString() + " - Atualizado com suceso");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                    }
+                    Console.WriteLine(ex.ToString());
                 }
             }
         }
@@ -1438,7 +1421,7 @@ namespace ContextAcquisition.Services
                 {
                     _context.Add(reason);
                     await _context.SaveChangesAsync();
-                    Console.WriteLine("Componente: " + reason.Id.ToString() + " - Adicionado com suceso");
+                    Console.WriteLine("Reason: " + reason.Id.ToString() + " - Adicionado com suceso");
                 }
                 catch (Exception ex)
                 {
@@ -1455,7 +1438,7 @@ namespace ContextAcquisition.Services
 
                     _context.Update(rExistInContext);
                     await _context.SaveChangesAsync();
-                    Console.WriteLine("Componente: " + rExistInContext.Id.ToString() + " - Atualizado com suceso");
+                    Console.WriteLine("Reason: " + rExistInContext.Id.ToString() + " - Atualizado com suceso");
                 }
                 catch (Exception ex)
                 {
@@ -1506,53 +1489,50 @@ namespace ContextAcquisition.Services
             }
             //---------------------
             //agora só tem de fazer o update do stop 
+            //create
+            var pExistInContext = _context.Production_Plans.SingleOrDefault(p => p.Id == production_Plan.Id);
+            if (pExistInContext == null)
+            {
+                try
+                {
+                    production_Plan.Product = productcontext;
+                    production_Plan.ProductId = productcontext.Id;
+                    production_Plan.Line = linecontext;
+                    production_Plan.LineId = linecontext.Id;
+
+                    _context.Add(production_Plan);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine("ProductionPlan: " + production_Plan.Id.ToString() + " - Adicionado com suceso");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+            }
             else
             {
-                //create
-                var pExistInContext = _context.Production_Plans.SingleOrDefault(p => p.Id == production_Plan.Id);
-                if (pExistInContext == null)
+                //fazer update
+                try
                 {
-                    try
-                    {
-                        production_Plan.Product = productcontext;
-                        production_Plan.ProductId = productcontext.Id;
-                        production_Plan.Line = linecontext;
-                        production_Plan.LineId = linecontext.Id;
+                    pExistInContext.Product = productcontext;
+                    pExistInContext.ProductId = productcontext.Id;
+                    pExistInContext.Line = linecontext;
+                    pExistInContext.LineId = linecontext.Id;
+                    //o resto do stop
+                    pExistInContext.Goal = production_Plan.Goal;
+                    pExistInContext.Name = production_Plan.Name;
+                    pExistInContext.InitialDate = production_Plan.InitialDate;
+                    pExistInContext.EndDate = production_Plan.EndDate;
+                    pExistInContext.Shift = production_Plan.Shift;
+                    pExistInContext.LastUpdate = production_Plan.LastUpdate;
 
-                        _context.Add(production_Plan);
-                        await _context.SaveChangesAsync();
-                        Console.WriteLine("ProductionPlan: " + production_Plan.Id.ToString() + " - Adicionado com suceso");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                    }
+                    _context.Update(pExistInContext);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine("ProductionPlan: " + pExistInContext.Id.ToString() + " - Atualizado com suceso");
                 }
-                else
+                catch (Exception ex)
                 {
-                    //fazer update
-                    try
-                    {
-                        pExistInContext.Product = productcontext;
-                        pExistInContext.ProductId = productcontext.Id;
-                        pExistInContext.Line = linecontext;
-                        pExistInContext.LineId = linecontext.Id;
-                        //o resto do stop
-                        pExistInContext.Goal = production_Plan.Goal;
-                        pExistInContext.Name = production_Plan.Name;
-                        pExistInContext.InitialDate = production_Plan.InitialDate;
-                        pExistInContext.EndDate = production_Plan.EndDate;
-                        pExistInContext.Shift = production_Plan.Shift;
-                        pExistInContext.LastUpdate = production_Plan.LastUpdate;
-
-                        _context.Update(pExistInContext);
-                        await _context.SaveChangesAsync();
-                        Console.WriteLine("ProductionPlan: " + pExistInContext.Id.ToString() + " - Atualizado com suceso");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                    }
+                    Console.WriteLine(ex.ToString());
                 }
             }
         }
@@ -1580,46 +1560,43 @@ namespace ContextAcquisition.Services
             }
             //---------------------
             //agora só tem de fazer o update da Production pois apartir daqui o 
+            var pExistInContext = _context.Productions.SingleOrDefault(p => p.Id == production.Id);
+            if (pExistInContext == null)
+            {
+                try
+                {
+                    production.Prod_Plan = proPlancontext;
+                    production.Production_PlanId = proPlancontext.Id;
+
+                    _context.Add(production);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine("Production: " + production.Id.ToString() + " - Adicionado com suceso");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+            }
             else
             {
-                var pExistInContext = _context.Productions.SingleOrDefault(p => p.Id == production.Id);
-                if (pExistInContext == null)
+                //fazer update
+                try
                 {
-                    try
-                    {
-                        production.Prod_Plan = proPlancontext;
-                        production.Production_PlanId = proPlancontext.Id;
+                    pExistInContext.Prod_Plan = proPlancontext;
+                    pExistInContext.Production_PlanId = proPlancontext.Id;
+                    //resto
+                    pExistInContext.Hour = production.Hour;
+                    pExistInContext.Day = production.Day;
+                    pExistInContext.Quantity = production.Quantity;
+                    pExistInContext.LastUpdate = production.LastUpdate;
 
-                        _context.Add(production);
-                        await _context.SaveChangesAsync();
-                        Console.WriteLine("Production: " + production.Id.ToString() + " - Adicionado com suceso");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                    }
+                    _context.Update(pExistInContext);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine("Production: " + pExistInContext.Id.ToString() + " - Atualizado com suceso");
                 }
-                else
+                catch (Exception ex)
                 {
-                    //fazer update
-                    try
-                    {
-                        pExistInContext.Prod_Plan = proPlancontext;
-                        pExistInContext.Production_PlanId = proPlancontext.Id;
-                        //resto
-                        pExistInContext.Hour = production.Hour;
-                        pExistInContext.Day = production.Day;
-                        pExistInContext.Quantity = production.Quantity;
-                        pExistInContext.LastUpdate = production.LastUpdate;
-
-                        _context.Update(pExistInContext);
-                        await _context.SaveChangesAsync();
-                        Console.WriteLine("Production: " + pExistInContext.Id.ToString() + " - Atualizado com suceso");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                    }
+                    Console.WriteLine(ex.ToString());
                 }
             }
         }
@@ -1688,78 +1665,75 @@ namespace ContextAcquisition.Services
             }
             //---------------------
             //agora só tem de fazer o update do stop 
+            var sExistInContext = _context.Schedule_Worker_Lines.SingleOrDefault(s => s.Id == schedule.Id);
+            if (sExistInContext == null)
+            {
+                try
+                {
+                    //Create
+                    if (schedule.Operator != null)
+                    {
+                        schedule.Operator = operatorcontext;
+                        schedule.OperatorId = operatorcontext.Id;
+                    }
+                    if (schedule.Supervisor != null)
+                    {
+                        schedule.Supervisor = supervisorcontext;
+                        schedule.SupervisorId = supervisorcontext.Id;
+                    }
+
+                    schedule.Line = linecontext;
+                    schedule.LineId = linecontext.Id;
+
+                    _context.Add(schedule);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine("Schedule: " + schedule.Id.ToString() + " - Adicionado com suceso");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+            }
             else
             {
-                var sExistInContext = _context.Schedule_Worker_Lines.SingleOrDefault(s => s.Id == schedule.Id);
-                if (sExistInContext == null)
+                //fazer update
+                try
                 {
-                    try
+                    if (schedule.Operator != null)
                     {
-                        //Create
-                        if (schedule.Operator != null)
-                        {
-                            schedule.Operator = operatorcontext;
-                            schedule.OperatorId = operatorcontext.Id;
-                        }
-                        if (schedule.Supervisor != null)
-                        {
-                            schedule.Supervisor = supervisorcontext;
-                            schedule.SupervisorId = supervisorcontext.Id;
-                        }
-
-                        schedule.Line = linecontext;
-                        schedule.LineId = linecontext.Id;
-
-                        _context.Add(schedule);
-                        await _context.SaveChangesAsync();
-                        Console.WriteLine("Schedule: " + schedule.Id.ToString() + " - Adicionado com suceso");
+                        sExistInContext.Operator = operatorcontext;
+                        sExistInContext.OperatorId = operatorcontext.Id;
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        Console.WriteLine(ex.ToString());
+                        sExistInContext.Operator = null;
+                        sExistInContext.OperatorId = null;
                     }
+                    if (schedule.Supervisor != null)
+                    {
+                        sExistInContext.Supervisor = supervisorcontext;
+                        sExistInContext.SupervisorId = supervisorcontext.Id;
+                    }
+                    else
+                    {
+                        sExistInContext.Supervisor = null;
+                        sExistInContext.SupervisorId = null;
+                    }
+
+                    sExistInContext.Line = linecontext;
+                    sExistInContext.LineId = linecontext.Id;
+                    //outros
+                    sExistInContext.Day = schedule.Day;
+                    sExistInContext.Shift = schedule.Shift;
+                    sExistInContext.LastUpdate = schedule.LastUpdate;
+
+                    _context.Update(sExistInContext);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine("stop: " + sExistInContext.Id.ToString() + " - Atualizado com suceso");
                 }
-                else
+                catch (Exception ex)
                 {
-                    //fazer update
-                    try
-                    {
-                        if (schedule.Operator != null)
-                        {
-                            sExistInContext.Operator = operatorcontext;
-                            sExistInContext.OperatorId = operatorcontext.Id;
-                        }
-                        else
-                        {
-                            sExistInContext.Operator = null;
-                            sExistInContext.OperatorId = null;
-                        }
-                        if (schedule.Supervisor != null)
-                        {
-                            sExistInContext.Supervisor = supervisorcontext;
-                            sExistInContext.SupervisorId = supervisorcontext.Id;
-                        }
-                        else
-                        {
-                            sExistInContext.Supervisor = null;
-                            sExistInContext.SupervisorId = null;
-                        }
-
-                        sExistInContext.Line = linecontext;
-                        sExistInContext.LineId = linecontext.Id;
-                        //outros
-                        sExistInContext.Day = schedule.Day;
-                        sExistInContext.Shift = schedule.Shift;
-                        sExistInContext.LastUpdate = schedule.LastUpdate;
-
-                        _context.Update(sExistInContext);
-                        await _context.SaveChangesAsync();
-                        Console.WriteLine("stop: " + sExistInContext.Id.ToString() + " - Atualizado com suceso");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                    }
+                    Console.WriteLine(ex.ToString());
                 }
             }
         }

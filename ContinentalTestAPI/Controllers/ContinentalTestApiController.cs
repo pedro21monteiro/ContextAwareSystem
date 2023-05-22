@@ -281,7 +281,7 @@ namespace ContinentalTestAPI.Controllers
 
             if (InicialDate != null)
             {
-                foreach (var s in _context.Stops)
+                foreach (var s in _context.Stops.Include(s=>s.Reason))
                 {
                     if (s.LastUpdate.CompareTo(InicialDate) > 0)
                     {

@@ -6,9 +6,9 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["Context-aware System/ContextAwareService.csproj", "./"]
+COPY ["Context-aware System/ContextAwareService.csproj", "Context-aware System/"]
 COPY ["Models/Models.csproj", "Models/"]
-RUN dotnet restore "./ContextAwareService.csproj"
+RUN dotnet restore "Context-aware System/ContextAwareService.csproj"
 COPY . .
 WORKDIR "/src/Context-aware System"
 RUN dotnet build "ContextAwareService.csproj" -c Release -o /app/build

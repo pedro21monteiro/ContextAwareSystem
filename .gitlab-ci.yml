@@ -9,7 +9,7 @@ build-testdb:
     script:
         - echo "Starting build test db"
         - if [[ $(docker ps -aq --filter 'ancestor=testdbservice:latest') ]]; then docker rm --force $(docker ps -aq --filter 'ancestor=testdbservice:latest'); else echo 'deleted';fi
-        - docker build ./ContinentalTestDb/ -t testdbservice
+        - docker build . -t testdbservice
 
 build-cbuilder:
     stage: build-cbuilder

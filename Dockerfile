@@ -7,20 +7,20 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["../Models/Models.csproj", "./"]
-RUN dotnet restore "./Models.csproj"
-COPY ../Models .
-WORKDIR /src
-COPY ["ContinentalTestDb.csproj", "./"]
-RUN dotnet restore "./ContinentalTestDb.csproj"
+COPY ["./Models/Models.csproj", "./"]
+RUN dotnet restore "Models.csproj"
 COPY . .
+WORKDIR /src
+COPY ["./ContinentalTestDb/ContinentalTestDb.csproj", "./"]
+RUN dotnet restore "./ContinentalTestDb/ContinentalTestDb.csproj"
+
 WORKDIR "/src/."
-RUN dotnet build "ContinentalTestDb.csproj" -c Release -o /app/build
+RUN dotnet build "ContinentalTestDb/ContinentalTestDb.csproj" -c Release -o /app/build
 
 
 
 FROM build AS publish
-RUN dotnet publish "ContinentalTestDb.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "ContinentalTestDb/ContinentalTestDb.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

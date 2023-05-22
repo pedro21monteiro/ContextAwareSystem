@@ -16,7 +16,7 @@ build-cbuilder:
     script:
         - echo "Starting build contextbuilder"
         - if [[ $(docker ps -aq --filter 'ancestor=contextbuilderservice:latest') ]]; then docker rm --force $(docker ps -aq --filter 'ancestor=contextbuilderservice:latest'); else echo 'deleted';fi
-        - docker build ./ContextBuider/ -t contextbuilderservice
+        - docker build ./ContextBuilder/ -t contextbuilderservice
 
 build-cserver:
     stage: build-cserver

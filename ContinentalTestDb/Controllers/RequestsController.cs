@@ -24,7 +24,7 @@ namespace ContinentalTestDb.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var continentalTestDbContext = _context.Requests.Include(r => r.Worker);
+            var continentalTestDbContext = _context.Requests;
             return View(await continentalTestDbContext.ToListAsync());
         }
 
@@ -39,7 +39,7 @@ namespace ContinentalTestDb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Type,Date,WorkerId,LineId,Device")] Request request)
+        public async Task<IActionResult> Create([Bind("Id,Type,Date,WorkerId,LineId")] Request request)
         {
             var r = _context.Workers.SingleOrDefault(w => w.Id == request.WorkerId);
             if (r != null)

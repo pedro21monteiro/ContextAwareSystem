@@ -48,7 +48,7 @@ namespace ContinentalTestAPI.Controllers
 
             if (InicialDate != null)
             {
-                foreach (var c in _context.Coordinators)
+                foreach (var c in _context.Coordinators.Include(c => c.Worker))
                 {
                     if (c.LastUpdate.CompareTo(InicialDate) > 0)
                     {
@@ -71,7 +71,7 @@ namespace ContinentalTestAPI.Controllers
 
             if (InicialDate != null)
             {
-                foreach (var d in _context.Devices)
+                foreach (var d in _context.Devices.Include(d=>d.Line))
                 {
                     if (d.LastUpdate.CompareTo(InicialDate) > 0)
                     {
@@ -94,7 +94,7 @@ namespace ContinentalTestAPI.Controllers
 
             if (InicialDate != null)
             {
-                foreach (var l in _context.Lines)
+                foreach (var l in _context.Lines.Include(c=>c.Coordinator))
                 {
                     if (l.LastUpdate.CompareTo(InicialDate) > 0)
                     {
@@ -117,7 +117,7 @@ namespace ContinentalTestAPI.Controllers
 
             if (InicialDate != null)
             {
-                foreach (var o in _context.Operators)
+                foreach (var o in _context.Operators.Include(c=>c.Worker))
                 {
                     if (o.LastUpdate.CompareTo(InicialDate) > 0)
                     {
@@ -166,7 +166,7 @@ namespace ContinentalTestAPI.Controllers
 
             if (InicialDate != null)
             {
-                foreach (var p in _context.Productions)
+                foreach (var p in _context.Productions.Include(p=>p.Prod_Plan))
                 {
                     if (p.LastUpdate.CompareTo(InicialDate) > 0)
                     {
@@ -189,7 +189,7 @@ namespace ContinentalTestAPI.Controllers
 
             if (InicialDate != null)
             {
-                foreach (var p in _context.Production_Plans)
+                foreach (var p in _context.Production_Plans.Include(p=>p.Line).Include(p=>p.Product))
                 {
                     if (p.LastUpdate.CompareTo(InicialDate) > 0)
                     {
@@ -258,7 +258,7 @@ namespace ContinentalTestAPI.Controllers
 
             if (InicialDate != null)
             {
-                foreach (var s in _context.Schedule_Worker_Lines)
+                foreach (var s in _context.Schedule_Worker_Lines.Include(s=>s.Line))
                 {
                     if (s.LastUpdate.CompareTo(InicialDate) > 0)
                     {
@@ -304,7 +304,7 @@ namespace ContinentalTestAPI.Controllers
 
             if (InicialDate != null)
             {
-                foreach (var s in _context.Supervisors)
+                foreach (var s in _context.Supervisors.Include(s=>s.Worker))
                 {
                     if (s.LastUpdate.CompareTo(InicialDate) > 0)
                     {

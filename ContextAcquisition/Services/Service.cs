@@ -1260,7 +1260,7 @@ namespace ContextAcquisition.Services
 
                     _context.Update(dExistInContext);
                     await _context.SaveChangesAsync();
-                    Console.WriteLine("line: " + dExistInContext.Id.ToString() + " - Atualizado com suceso");
+                    Console.WriteLine("device: " + dExistInContext.Id.ToString() + " - Atualizado com suceso");
                 }
                 catch (Exception ex)
                 {
@@ -1379,7 +1379,7 @@ namespace ContextAcquisition.Services
                 {
                     _context.Add(worker);
                     await _context.SaveChangesAsync();
-                    Console.WriteLine("Componente: " + worker.Id.ToString() + " - Adicionado com suceso");
+                    Console.WriteLine("Worker: " + worker.Id.ToString() + " - Adicionado com suceso");
                 }
                 catch (Exception ex)
                 {
@@ -1400,7 +1400,7 @@ namespace ContextAcquisition.Services
 
                     _context.Update(wExistInContext);
                     await _context.SaveChangesAsync();
-                    Console.WriteLine("Componente: " + wExistInContext.Id.ToString() + " - Atualizado com suceso");
+                    Console.WriteLine("Worker: " + wExistInContext.Id.ToString() + " - Atualizado com suceso");
                 }
                 catch (Exception ex)
                 {
@@ -1729,7 +1729,7 @@ namespace ContextAcquisition.Services
 
                     _context.Update(sExistInContext);
                     await _context.SaveChangesAsync();
-                    Console.WriteLine("stop: " + sExistInContext.Id.ToString() + " - Atualizado com suceso");
+                    Console.WriteLine("Schedule: " + sExistInContext.Id.ToString() + " - Atualizado com suceso");
                 }
                 catch (Exception ex)
                 {

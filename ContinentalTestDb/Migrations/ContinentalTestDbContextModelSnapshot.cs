@@ -288,10 +288,6 @@ namespace ContinentalTestDb.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Device")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("LastUpdate")
                         .HasColumnType("datetime2");
 
@@ -305,8 +301,6 @@ namespace ContinentalTestDb.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("WorkerId");
 
                     b.ToTable("Requests");
                 });
@@ -528,17 +522,6 @@ namespace ContinentalTestDb.Migrations
                     b.Navigation("Line");
 
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Models.ContinentalModels.Request", b =>
-                {
-                    b.HasOne("Models.ContinentalModels.Worker", "Worker")
-                        .WithMany()
-                        .HasForeignKey("WorkerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Worker");
                 });
 
             modelBuilder.Entity("Models.ContinentalModels.Schedule_Worker_Line", b =>

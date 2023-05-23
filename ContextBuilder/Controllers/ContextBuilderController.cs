@@ -21,30 +21,18 @@ namespace ContextBuilder.Controllers
         [Route("CreateResquest")]
         public async Task<ActionResult> CreateResquest([FromBody] Request request)
         {
-            var wor = _context.Workers.SingleOrDefault(w => w.Id == request.WorkerId);
-            if (wor != null)
+            try
             {
-                request.Worker = wor;
-                request.WorkerId = wor.Id;
-                try
-                {
-                    _context.Add(request);
-                    await _context.SaveChangesAsync();
-                    Console.WriteLine("Request: " + request.Id.ToString() + " - Adicionado com Sucesso");
-                    return Ok();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Request: " + request.Id.ToString() + " - Erro ao adicionar");
-                    Console.WriteLine(ex.ToString());
-                    return BadRequest();
-                }
-
+                _context.Add(request);
+                await _context.SaveChangesAsync();
+                Console.WriteLine("Request: " + request.Id.ToString() + " - Adicionado com Sucesso");
+                return Ok();
             }
-            else
+            catch (Exception ex)
             {
                 Console.WriteLine("Request: " + request.Id.ToString() + " - Erro ao adicionar");
-                return BadRequest();                
+                Console.WriteLine(ex.ToString());
+                return BadRequest();
             }
         }
 

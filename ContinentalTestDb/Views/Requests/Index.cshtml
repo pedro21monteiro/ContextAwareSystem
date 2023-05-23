@@ -16,13 +16,10 @@
                 @Html.DisplayNameFor(model => model.Date)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Worker)
+                @Html.DisplayNameFor(model => model.WorkerId)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.LineId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Device)
             </th>
 
         </tr>
@@ -37,13 +34,10 @@
                 @Html.DisplayFor(modelItem => item.Date)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Worker.UserName)
+                @Html.DisplayFor(modelItem => item.WorkerId)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.LineId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Device)
             </td>
         </tr>
 }

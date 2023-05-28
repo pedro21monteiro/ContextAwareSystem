@@ -288,9 +288,6 @@ namespace ContinentalTestDb.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("LastUpdate")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("LineId")
                         .HasColumnType("int");
 

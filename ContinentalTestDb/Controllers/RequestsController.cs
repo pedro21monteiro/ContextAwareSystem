@@ -44,7 +44,6 @@ namespace ContinentalTestDb.Controllers
             var r = _context.Workers.SingleOrDefault(w => w.Id == request.WorkerId);
             if (r != null)
             {   
-                request.LastUpdate = DateTime.Now;
                 _context.Add(request);
                 await _context.SaveChangesAsync();
 

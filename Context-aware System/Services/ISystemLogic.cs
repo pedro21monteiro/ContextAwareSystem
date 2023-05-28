@@ -10,5 +10,9 @@ namespace ContextServer.Services
 
         bool IsAtributeInDatetime(DateTime? dtSearchInitial, DateTime? dtSearchFinal, DateTime dtInitial, DateTime dtFinal);
         bool IsAtributeInDatetime(DateTime? dtSearchInitial, DateTime? dtSearchFinal, DateTime Day);
+
+        int GetShiftSplit(DateTime dt);
+
+        int GetShiftHourByShiftAndPart(int shift, int part);
     }
 }

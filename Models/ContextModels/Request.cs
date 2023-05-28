@@ -13,7 +13,6 @@ namespace Models.ContextModels
         [Required]
         public DateTime Date { get; set; }
         public int WorkerId { get; set; }
-        public DateTime LastUpdate { get; set; }
 
     }
 }

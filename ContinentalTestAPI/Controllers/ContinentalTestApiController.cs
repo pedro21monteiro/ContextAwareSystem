@@ -227,28 +227,28 @@ namespace ContinentalTestAPI.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("GetRequests")]
-        public async Task<IActionResult> GetRequests(DateTime? InicialDate)
-        {
-            List<Request> requests = new List<Request>();
+        //[HttpGet]
+        //[Route("GetRequests")]
+        //public async Task<IActionResult> GetRequests(DateTime? InicialDate)
+        //{
+        //    List<Request> requests = new List<Request>();
 
-            if (InicialDate != null)
-            {
-                foreach (var r in _context.requests)
-                {
-                    if (r.LastUpdate.CompareTo(InicialDate) > 0)
-                    {
-                        requests.Add(r);
-                    }
-                }
-                return Ok(requests);
-            }
-            else
-            {
-                return Ok(_context.requests.ToList());
-            }
-        }
+        //    if (InicialDate != null)
+        //    {
+        //        foreach (var r in _context.requests)
+        //        {
+        //            if (r.LastUpdate.CompareTo(InicialDate) > 0)
+        //            {
+        //                requests.Add(r);
+        //            }
+        //        }
+        //        return Ok(requests);
+        //    }
+        //    else
+        //    {
+        //        return Ok(_context.requests.ToList());
+        //    }
+        //}
 
         [HttpGet]
         [Route("GetSchedule_Worker_Lines")]
@@ -258,7 +258,7 @@ namespace ContinentalTestAPI.Controllers
 
             if (InicialDate != null)
             {
-                foreach (var s in _context.Schedule_Worker_Lines.Include(s=>s.Line))
+                foreach (var s in _context.Schedule_Worker_Lines.Include(s=>s.Line).Include(s=>s.Supervisor).Include(s => s.Operator))
                 {
                     if (s.LastUpdate.CompareTo(InicialDate) > 0)
                     {

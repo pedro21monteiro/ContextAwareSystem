@@ -119,5 +119,95 @@ namespace ContextServer.Services
             }
             return false;
         }
+
+        public int GetShiftSplit(DateTime dt)
+        {
+            //cada turno é de 8 horas e irá ser dividido em 2 partes na primeira metade e na segunda metade
+
+            //turno 1
+            if(dt.Hour >= 0 && dt.Hour <3)
+            {
+                return 1;
+            }
+            if (dt.Hour >= 2 && dt.Hour < 6)
+            {
+                return 2;
+            }
+            //turno 2
+            if (dt.Hour >= 6 && dt.Hour < 11)
+            {
+                return 1;
+            }
+            if (dt.Hour >= 11 && dt.Hour < 15)
+            {
+                return 2;
+            }
+            //turno 3
+            if (dt.Hour >= 15 && dt.Hour < 20)
+            {
+                return 1;
+            }
+            if (dt.Hour >= 20 && dt.Hour < 24)
+            {
+                return 2;
+            }
+            else { return 0; }
+
+        }
+
+        public int GetShiftHourByShiftAndPart(int shift, int part)
+        {
+            //vai mandar sempre a meio de cada parte do turno
+            //retorna -1 caso dê erro
+            if (shift == 1)
+            {
+                if(part == 1)
+                {
+                    return 1;
+                }
+                if (part == 2)
+                {
+                    return 4;
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+            if (shift == 2)
+            {
+                if (part == 1)
+                {
+                    return 8;
+                }
+                if (part == 2)
+                {
+                    return 13;
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+            if (shift == 3)
+            {
+                if (part == 1)
+                {
+                    return 17;
+                }
+                if (part == 2)
+                {
+                    return 22;
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+            else
+            {
+                return -1;
+            }
+        }
     }
 }

@@ -12,7 +12,6 @@ namespace Models.ContinentalModels
         public DateTime Date { get; set; }
         public int WorkerId { get; set; }
         public int LineId { get; set; }
-        public DateTime LastUpdate { get; set; }
 
     }
 }

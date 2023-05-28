@@ -6,6 +6,8 @@ using Models.FunctionModels;
 using Microsoft.EntityFrameworkCore;
 using Models.ContextModels;
 
+
+
 namespace Context_aware_System.Controllers
 
 {
@@ -510,10 +512,172 @@ namespace Context_aware_System.Controllers
         }
 
         [HttpGet]
-        [Route("GetRequests")]
-        public async Task<IActionResult> GetRequests()
+        [Route("NotificationRecommendation")]
+        public async Task<IActionResult> NotificationRecommendation(int type, int workerId)
         {
-            return Ok(_context.requests.ToList());
+            //2023-06-22T00:00:00
+
+            //vou fazer o código por mim pois não encontrei um algoritmo próprio
+            ResponseNotificationRecommendation rnr = new ResponseNotificationRecommendation();
+            //verificar se existe esse worker
+            var wor = _context.Workers.SingleOrDefault(w => w.Id == workerId);
+            if (wor == null)
+            {
+                rnr.Message = "Erro ao identificar o Worker!!";
+                return NotFound();
+            }
+            //primeiro vou a todos os requests e ver se existe pelo menos 3
+            var requests = _context.requests.Where(r => r.WorkerId == workerId && r.Type == type).ToList();
+            if (!requests.Any() || requests.Count < 3)
+            {
+                rnr.Message = "É necessário um mínimo de 3 datas para realizar a previsão";
+                return NotFound();
+            }
+            //Parametros para calcular a data
+            float parte1 = 0;
+            float parte2 = 0;
+            //data anterior no foreach
+            DateTime anterior = new DateTime();
+            int days = -1;
+            //lista de inteiros de dias entre pedidos para fazer a média
+            List<int> diasInt = new List<int>();
+            foreach (var request in requests.OrderBy(r=>r.Date))
+            {
+                //garantir que as datas dos requests são menores que as datas atuais
+                if(request.Date.CompareTo(DateTime.Now) < 0)
+                {
+                    //vamos ver em que parte do turno é mais frequente ver
+                    int ParteTurno = _systemLogic.GetShiftSplit(request.Date);
+                    TimeSpan timeSpanMounths = DateTime.Now.Subtract(request.Date);
+                    int MounthsLaps = Convert.ToInt32(timeSpanMounths.Days / 30);
+                    if (MounthsLaps == 0 || MounthsLaps == 1)
+                    {
+                        if (ParteTurno == 1)
+                        {
+                            parte1++;
+                        }
+                        if (ParteTurno == 2)
+                        {
+                            parte2++;
+                        }
+                    }
+                    if (MounthsLaps > 1)
+                    {
+                        if (ParteTurno == 1)
+                        {
+                            parte1 = (float)(parte1 + (1 - (0.05 * MounthsLaps)));
+                        }
+                        if (ParteTurno == 2)
+                        {
+                            parte2 = (float)(parte2 + (1 - (0.05 * MounthsLaps)));
+                        }
+                    }
+                    //vamos ver o timelaps medio entre cada request em dias
+                    TimeSpan timeSpanBetweenRequests;
+                    if (anterior != new DateTime())
+                    {
+                        timeSpanBetweenRequests = request.Date.Subtract(anterior);
+                        days = timeSpanBetweenRequests.Days;
+                        diasInt.Add(days);
+                    }
+                    anterior = request.Date;
+                }
+                
+            }
+            rnr.Message = "Info obtida com sucesso";
+            //escolher a parte do turno
+            if (parte1 > parte2)
+            {
+                rnr.ShiftSlipt = 1;
+            }
+            else
+            {
+                rnr.ShiftSlipt = 2;
+            }
+            //--------
+            //fazer a média de dias
+            int soma = 0;
+            foreach (int numero in diasInt)
+            {
+                soma += numero;
+            }
+            int media = Convert.ToInt32(soma/diasInt.Count);
+            rnr.days = media;
+            //ver à quantos dias foi o ultimo pedido
+            int lastRequestDays = DateTime.Now.Subtract(anterior).Days;
+            //obrigar o sistema a enviar a notificação pelo menos uma vez pôr mês
+            if (media > 31)
+            {
+                media = 31;
+            }
+            //ver a data para enviar a recomendação
+            //o anterior vai ser a ultima data
+            anterior = anterior.Date;
+            anterior = anterior.AddDays(media);
+            //não permitir que a data recomendada seja num domingo
+            if (anterior.DayOfWeek == DayOfWeek.Sunday)
+            {
+                anterior.AddDays(1);
+            }
+            //Se o next date for menor que a data atual o sistema vai mandar a data atua e meter uma notificação a dizer que já
+            //devia ter mandado a notificação
+            if (anterior.CompareTo(DateTime.Now) < 0 || lastRequestDays > 31)
+            {
+                anterior = DateTime.Now;
+                rnr.Message = "Já devia ter mandado a notificação";
+                return Ok(rnr);
+            }
+            //vai definir a parte do turno que vai enviar o aviso
+            rnr.ParteTurno1 = parte1;
+            rnr.ParteTurno2 = parte2;
+            if(parte1 >= parte2)
+            {
+                //se forem iguais vai definir a parte 1
+                rnr.ParteTurno = 1;
+            }
+            else
+            {
+                rnr.ParteTurno = 2;
+            }
+            //para depois ver se realmente existe
+            rnr.ExistSchedule = false;
+            //vai verificar se o worker tem algum horario de trabalho nesse dia para saber o turno
+            //primeiro vai ter de ver se o woker é supervisor ou operator
+            var ope = _context.Operators.SingleOrDefault(o => o.WorkerId == workerId);
+            var sup = _context.Supervisors.SingleOrDefault(s => s.WorkerId == workerId);
+            if(ope != null)
+            {
+                //vai ver se tem horario naquele dia
+                var scheduleope = _context.Schedule_Worker_Lines.FirstOrDefault(s => s.OperatorId == ope.Id && s.Day.Date.Equals(anterior.Date));
+                if(scheduleope != null)
+                {
+                    //vai ver o schedule e vai atribuir a hora dependente do shift
+
+                    //vai definir a hora para enviar
+                    anterior = anterior.AddHours(_systemLogic.GetShiftHourByShiftAndPart(scheduleope.Shift, rnr.ParteTurno));
+
+                    //defir os parametros
+                    rnr.ExistSchedule = true;
+
+                }
+            }
+            if (sup != null)
+            {
+                //vai ver se tem horario naquele dia
+                var schedulesup = _context.Schedule_Worker_Lines.FirstOrDefault(s => s.SupervisorId == sup.Id && s.Day.Date.Equals(anterior.Date));
+                if (schedulesup != null)
+                {
+                    //vai ver o schedule e vai atribuir a hora dependente do shift
+                    //vai definir a hora para enviar
+                    anterior = anterior.AddHours(_systemLogic.GetShiftHourByShiftAndPart(schedulesup.Shift,rnr.ParteTurno));
+
+                    rnr.ExistSchedule = true;
+                }
+
+            }
+            rnr.nextDate = anterior;
+
+            return Ok(rnr);
         }
     }
 }

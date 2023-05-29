@@ -129,7 +129,7 @@ namespace ContextServer.Services
             {
                 return 1;
             }
-            if (dt.Hour >= 2 && dt.Hour < 6)
+            if (dt.Hour >= 3 && dt.Hour < 6)
             {
                 return 2;
             }

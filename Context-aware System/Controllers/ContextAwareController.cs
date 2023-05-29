@@ -602,7 +602,6 @@ namespace Context_aware_System.Controllers
                 soma += numero;
             }
             int media = Convert.ToInt32(soma/diasInt.Count);
-            rnr.days = media;
             //ver à quantos dias foi o ultimo pedido
             int lastRequestDays = DateTime.Now.Subtract(anterior).Days;
             //obrigar o sistema a enviar a notificação pelo menos uma vez pôr mês
@@ -627,17 +626,14 @@ namespace Context_aware_System.Controllers
                 rnr.Message = "Já devia ter mandado a notificação";
                 return Ok(rnr);
             }
-            //vai definir a parte do turno que vai enviar o aviso
-            rnr.ParteTurno1 = parte1;
-            rnr.ParteTurno2 = parte2;
             if(parte1 >= parte2)
             {
                 //se forem iguais vai definir a parte 1
-                rnr.ParteTurno = 1;
+                rnr.ShiftSlipt = 1;
             }
             else
             {
-                rnr.ParteTurno = 2;
+                rnr.ShiftSlipt = 2;
             }
             //para depois ver se realmente existe
             rnr.ExistSchedule = false;
@@ -654,7 +650,7 @@ namespace Context_aware_System.Controllers
                     //vai ver o schedule e vai atribuir a hora dependente do shift
 
                     //vai definir a hora para enviar
-                    anterior = anterior.AddHours(_systemLogic.GetShiftHourByShiftAndPart(scheduleope.Shift, rnr.ParteTurno));
+                    anterior = anterior.AddHours(_systemLogic.GetShiftHourByShiftAndPart(scheduleope.Shift, rnr.ShiftSlipt));
 
                     //defir os parametros
                     rnr.ExistSchedule = true;
@@ -669,14 +665,13 @@ namespace Context_aware_System.Controllers
                 {
                     //vai ver o schedule e vai atribuir a hora dependente do shift
                     //vai definir a hora para enviar
-                    anterior = anterior.AddHours(_systemLogic.GetShiftHourByShiftAndPart(schedulesup.Shift,rnr.ParteTurno));
+                    anterior = anterior.AddHours(_systemLogic.GetShiftHourByShiftAndPart(schedulesup.Shift,rnr.ShiftSlipt));
 
                     rnr.ExistSchedule = true;
                 }
 
             }
             rnr.nextDate = anterior;
-
             return Ok(rnr);
         }
     }

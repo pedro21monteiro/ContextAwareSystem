@@ -674,5 +674,8 @@ namespace Context_aware_System.Controllers
             rnr.nextDate = anterior;
             return Ok(rnr);
         }
+
+
+       
     }
 }

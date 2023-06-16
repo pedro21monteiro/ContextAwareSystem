@@ -14,6 +14,7 @@ namespace ContextAcquisition.Services
     {
         private readonly HttpClient httpClient;
         private static string connectionString = "https://localhost:7284/api/ContextBuilder/";
+        private static string continentalTestAPIHost = System.Environment.GetEnvironmentVariable("CONTAPI") ?? "https://localhost:7013";
         public Service(HttpClient _httpClient)
         {
             httpClient = _httpClient;
@@ -30,7 +31,7 @@ namespace ContextAcquisition.Services
             {
                 try
                 {
-                    return await httpClient.GetFromJsonAsync<List<Component>>("https://localhost:7013/api/ContinentalAPI/GetComponents");
+                return await httpClient.GetFromJsonAsync<List<Component>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetComponents");
 
                 }
                 catch (Exception e)
@@ -44,7 +45,7 @@ namespace ContextAcquisition.Services
             {
                 try
                 {
-                    return await httpClient.GetFromJsonAsync<List<Component>>($"https://localhost:7013/api/ContinentalAPI/GetComponents/" + "?InicialDate=" + ((DateTime)DataInicial).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
+                    return await httpClient.GetFromJsonAsync<List<Component>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetComponents/" + "?InicialDate=" + ((DateTime)DataInicial).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
                     
                 }
                 catch (Exception e)
@@ -63,7 +64,7 @@ namespace ContextAcquisition.Services
             {
                 try
                 {
-                    return await httpClient.GetFromJsonAsync<List<Coordinator>>("https://localhost:7013/api/ContinentalAPI/GetCoordinators");
+                    return await httpClient.GetFromJsonAsync<List<Coordinator>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetCoordinators");
                 }
                 catch (Exception e)
                 {
@@ -77,7 +78,7 @@ namespace ContextAcquisition.Services
                 try
                 {
                     //GetComponents?InicialDate=2020-05-05
-                    return await httpClient.GetFromJsonAsync<List<Coordinator>>($"https://localhost:7013/api/ContinentalAPI/GetCoordinators/" + "?InicialDate=" +  ((DateTime)DataInicial).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
+                    return await httpClient.GetFromJsonAsync<List<Coordinator>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetCoordinators/" + "?InicialDate=" +  ((DateTime)DataInicial).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
                 }
                 catch (Exception e)
                 {
@@ -96,7 +97,7 @@ namespace ContextAcquisition.Services
             {
                 try
                 {
-                    return await httpClient.GetFromJsonAsync<List<Device>>("https://localhost:7013/api/ContinentalAPI/GetDevices");
+                    return await httpClient.GetFromJsonAsync<List<Device>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetDevices");
                 }
                 catch (Exception e)
                 {
@@ -110,7 +111,7 @@ namespace ContextAcquisition.Services
                 try
                 {
                     //GetComponents?InicialDate=2020-05-05
-                    return await httpClient.GetFromJsonAsync<List<Device>>($"https://localhost:7013/api/ContinentalAPI/GetDevices/" + "?InicialDate=" + ((DateTime)DataInicial).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
+                    return await httpClient.GetFromJsonAsync<List<Device>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetDevices/" + "?InicialDate=" + ((DateTime)DataInicial).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
                 }
                 catch (Exception e)
                 {
@@ -129,7 +130,7 @@ namespace ContextAcquisition.Services
             {
                 try
                 {
-                    return await httpClient.GetFromJsonAsync<List<Line>>("https://localhost:7013/api/ContinentalAPI/GetLines");
+                    return await httpClient.GetFromJsonAsync<List<Line>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetLines");
                 }
                 catch (Exception e)
                 {
@@ -143,7 +144,7 @@ namespace ContextAcquisition.Services
                 try
                 {
                     //GetComponents?InicialDate=2020-05-05
-                    return await httpClient.GetFromJsonAsync<List<Line>>($"https://localhost:7013/api/ContinentalAPI/GetLines/" + "?InicialDate=" + ((DateTime)DataInicial).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
+                    return await httpClient.GetFromJsonAsync<List<Line>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetLines/" + "?InicialDate=" + ((DateTime)DataInicial).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
                 }
                 catch (Exception e)
                 {
@@ -161,7 +162,7 @@ namespace ContextAcquisition.Services
             {
                 try
                 {
-                    return await httpClient.GetFromJsonAsync<List<Operator>>("https://localhost:7013/api/ContinentalAPI/GetOperators");
+                    return await httpClient.GetFromJsonAsync<List<Operator>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetOperators");
                 }
                 catch (Exception e)
                 {
@@ -175,7 +176,7 @@ namespace ContextAcquisition.Services
                 try
                 {
                     //GetComponents?InicialDate=2020-05-05
-                    return await httpClient.GetFromJsonAsync<List<Operator>>($"https://localhost:7013/api/ContinentalAPI/GetOperators/" + "?InicialDate=" + ((DateTime)DataInicial).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
+                    return await httpClient.GetFromJsonAsync<List<Operator>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetOperators/" + "?InicialDate=" + ((DateTime)DataInicial).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
                 }
                 catch (Exception e)
                 {
@@ -193,7 +194,7 @@ namespace ContextAcquisition.Services
             {
                 try
                 {
-                    return await httpClient.GetFromJsonAsync<List<Product>>("https://localhost:7013/api/ContinentalAPI/GetProducts");
+                    return await httpClient.GetFromJsonAsync<List<Product>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetProducts");
                 }
                 catch (Exception e)
                 {
@@ -207,7 +208,7 @@ namespace ContextAcquisition.Services
                 try
                 {
                     //GetComponents?InicialDate=2020-05-05
-                    return await httpClient.GetFromJsonAsync<List<Product>>($"https://localhost:7013/api/ContinentalAPI/GetProducts/" + "?InicialDate=" + ((DateTime)DataInicial).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
+                    return await httpClient.GetFromJsonAsync<List<Product>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetProducts/" + "?InicialDate=" + ((DateTime)DataInicial).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
                 }
                 catch (Exception e)
                 {
@@ -225,7 +226,7 @@ namespace ContextAcquisition.Services
             {
                 try
                 {
-                    return await httpClient.GetFromJsonAsync<List<Production>>("https://localhost:7013/api/ContinentalAPI/GetProductions");
+                    return await httpClient.GetFromJsonAsync<List<Production>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetProductions");
                 }
                 catch (Exception e)
                 {
@@ -239,7 +240,7 @@ namespace ContextAcquisition.Services
                 try
                 {
                     //GetComponents?InicialDate=2020-05-05
-                    return await httpClient.GetFromJsonAsync<List<Production>>($"https://localhost:7013/api/ContinentalAPI/GetProductions/"  + "?InicialDate=" +  ((DateTime)DataInicial).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
+                    return await httpClient.GetFromJsonAsync<List<Production>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetProductions/"  + "?InicialDate=" +  ((DateTime)DataInicial).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
                 }
                 catch (Exception e)
                 {
@@ -257,7 +258,7 @@ namespace ContextAcquisition.Services
             {
                 try
                 {
-                    return await httpClient.GetFromJsonAsync<List<Production_Plan>>("https://localhost:7013/api/ContinentalAPI/GetProductionPlans");
+                    return await httpClient.GetFromJsonAsync<List<Production_Plan>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetProductionPlans");
                 }
                 catch (Exception e)
                 {
@@ -271,7 +272,7 @@ namespace ContextAcquisition.Services
                 try
                 {
                     //GetComponents?InicialDate=2020-05-05
-                    return await httpClient.GetFromJsonAsync<List<Production_Plan>>($"https://localhost:7013/api/ContinentalAPI/GetProductionPlans/"  + "?InicialDate=" +  ((DateTime)DataInicial).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
+                    return await httpClient.GetFromJsonAsync<List<Production_Plan>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetProductionPlans/"  + "?InicialDate=" +  ((DateTime)DataInicial).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
                 }
                 catch (Exception e)
                 {
@@ -289,7 +290,7 @@ namespace ContextAcquisition.Services
             {
                 try
                 {
-                    return await httpClient.GetFromJsonAsync<List<Reason>>("https://localhost:7013/api/ContinentalAPI/GetReasons");
+                    return await httpClient.GetFromJsonAsync<List<Reason>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetReasons");
                 }
                 catch (Exception e)
                 {
@@ -303,7 +304,7 @@ namespace ContextAcquisition.Services
                 try
                 {
                     //GetComponents?InicialDate=2020-05-05
-                    return await httpClient.GetFromJsonAsync<List<Reason>>($"https://localhost:7013/api/ContinentalAPI/GetReasons/"  + "?InicialDate=" +  ((DateTime)DataInicial).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
+                    return await httpClient.GetFromJsonAsync<List<Reason>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetReasons/"  + "?InicialDate=" +  ((DateTime)DataInicial).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
                 }
                 catch (Exception e)
                 {
@@ -321,7 +322,7 @@ namespace ContextAcquisition.Services
             {
                 try
                 {
-                    return await httpClient.GetFromJsonAsync<List<Request>>("https://localhost:7013/api/ContinentalAPI/GetRequests");
+                    return await httpClient.GetFromJsonAsync<List<Request>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetRequests");
                 }
                 catch (Exception e)
                 {
@@ -335,7 +336,7 @@ namespace ContextAcquisition.Services
                 try
                 {
                     //GetComponents?InicialDate=2020-05-05
-                    return await httpClient.GetFromJsonAsync<List<Request>>($"https://localhost:7013/api/ContinentalAPI/GetRequest/"  + "?InicialDate=" +  ((DateTime)DataInicial).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
+                    return await httpClient.GetFromJsonAsync<List<Request>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetRequest/"  + "?InicialDate=" +  ((DateTime)DataInicial).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
                 }
                 catch (Exception e)
                 {
@@ -353,7 +354,7 @@ namespace ContextAcquisition.Services
             {
                 try
                 {
-                    return await httpClient.GetFromJsonAsync<List<Schedule_Worker_Line>>("https://localhost:7013/api/ContinentalAPI/GetSchedule_Worker_Lines");
+                    return await httpClient.GetFromJsonAsync<List<Schedule_Worker_Line>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetSchedule_Worker_Lines");
                 }
                 catch (Exception e)
                 {
@@ -367,7 +368,7 @@ namespace ContextAcquisition.Services
                 try
                 {
                     //GetComponents?InicialDate=2020-05-05
-                    return await httpClient.GetFromJsonAsync<List<Schedule_Worker_Line>>($"https://localhost:7013/api/ContinentalAPI/GetSchedule_Worker_Lines/"  + "?InicialDate=" +  ((DateTime)DataInicial).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
+                    return await httpClient.GetFromJsonAsync<List<Schedule_Worker_Line>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetSchedule_Worker_Lines/"  + "?InicialDate=" +  ((DateTime)DataInicial).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
                 }
                 catch (Exception e)
                 {
@@ -385,7 +386,7 @@ namespace ContextAcquisition.Services
             {
                 try
                 {
-                    return await httpClient.GetFromJsonAsync<List<Stop>>("https://localhost:7013/api/ContinentalAPI/GetStops");
+                    return await httpClient.GetFromJsonAsync<List<Stop>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetStops");
                 }
                 catch (Exception e)
                 {
@@ -399,7 +400,7 @@ namespace ContextAcquisition.Services
                 try
                 {
                     //GetComponents?InicialDate=2020-05-05
-                    return await httpClient.GetFromJsonAsync<List<Stop>>($"https://localhost:7013/api/ContinentalAPI/GetStops/"  + "?InicialDate=" +  ((DateTime)DataInicial).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
+                    return await httpClient.GetFromJsonAsync<List<Stop>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetStops/"  + "?InicialDate=" +  ((DateTime)DataInicial).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
                 }
                 catch (Exception e)
                 {
@@ -417,7 +418,7 @@ namespace ContextAcquisition.Services
             {
                 try
                 {
-                    return await httpClient.GetFromJsonAsync<List<Supervisor>>("https://localhost:7013/api/ContinentalAPI/GetSupervisors");
+                    return await httpClient.GetFromJsonAsync<List<Supervisor>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetSupervisors");
                 }
                 catch (Exception e)
                 {
@@ -431,7 +432,7 @@ namespace ContextAcquisition.Services
                 try
                 {
                     //GetComponents?InicialDate=2020-05-05
-                    return await httpClient.GetFromJsonAsync<List<Supervisor>>($"https://localhost:7013/api/ContinentalAPI/GetSupervisors/"  + "?InicialDate=" +  ((DateTime)DataInicial).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
+                    return await httpClient.GetFromJsonAsync<List<Supervisor>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetSupervisors/"  + "?InicialDate=" +  ((DateTime)DataInicial).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
                 }
                 catch (Exception e)
                 {
@@ -449,7 +450,7 @@ namespace ContextAcquisition.Services
             {
                 try
                 {
-                    return await httpClient.GetFromJsonAsync<List<Worker>>("https://localhost:7013/api/ContinentalAPI/GetWorkers");
+                    return await httpClient.GetFromJsonAsync<List<Worker>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetWorkers");
                 }
                 catch (Exception e)
                 {
@@ -463,7 +464,7 @@ namespace ContextAcquisition.Services
                 try
                 {
                     //GetComponents?InicialDate=2020-05-05
-                    return await httpClient.GetFromJsonAsync<List<Worker>>($"https://localhost:7013/api/ContinentalAPI/GetWorkers/"  + "?InicialDate=" +  ((DateTime)DataInicial).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
+                    return await httpClient.GetFromJsonAsync<List<Worker>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetWorkers/"  + "?InicialDate=" +  ((DateTime)DataInicial).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
                 }
                 catch (Exception e)
                 {

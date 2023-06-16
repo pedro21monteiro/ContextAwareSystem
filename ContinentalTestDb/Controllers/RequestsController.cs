@@ -14,6 +14,7 @@ namespace ContinentalTestDb.Controllers
         private readonly ContinentalTestDbContext _context;
         private readonly RabbitMqService _rabbit;
         private readonly HttpClient httpClient;
+        private static string builderHost = System.Environment.GetEnvironmentVariable("BUILDER") ?? "https://localhost:7284";
 
         public RequestsController(ContinentalTestDbContext context, RabbitMqService rabbit, HttpClient _httpClient)
         {
@@ -52,7 +53,7 @@ namespace ContinentalTestDb.Controllers
 
                     HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                    HttpResponseMessage response = await httpClient.PostAsync("https://localhost:7284/api/ContextBuilder/CreateResquest", content);
+                    HttpResponseMessage response = await httpClient.PostAsync($"{builderHost}/api/ContextBuilder/CreateResquest", content);
 
                     if (response.IsSuccessStatusCode)
                     {

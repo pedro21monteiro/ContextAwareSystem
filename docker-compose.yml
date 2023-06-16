@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  continentaltestapi:
+    image: ${DOCKER_REGISTRY-}continentaltestapi
+    build:
+      context: .
+      dockerfile: ContinentalTestAPI/Dockerfile

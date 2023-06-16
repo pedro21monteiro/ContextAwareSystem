@@ -19,7 +19,7 @@ namespace ContextAcquisition
         {
             //inicializar o contexto para haver uma primeira data de pesquisa
             DbInitializer.Initalize(_context);
-            _context.Database.Migrate();
+            
 
             //Inicialmente vou começar com um Timer para todas as funções esse timer será de 30 em 30 segundos
             Console.WriteLine(DateTime.Now);

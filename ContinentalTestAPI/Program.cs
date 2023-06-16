@@ -13,7 +13,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ContinentalDb>(options =>
 {
-    var dbname = System.Environment.GetEnvironmentVariable("DBNAME") ?? "ContextDb";
+    var dbname = System.Environment.GetEnvironmentVariable("DBNAME") ?? "ContinentalTestDb";
     var dbhost = System.Environment.GetEnvironmentVariable("DBHOST") ?? "192.168.28.86";
     var dbuser = System.Environment.GetEnvironmentVariable("DBUSER") ?? "sa";
     var dbpass = System.Environment.GetEnvironmentVariable("DBPASS") ?? "xA6UCjFY";

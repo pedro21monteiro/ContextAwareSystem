@@ -10,17 +10,24 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<ContinentalTestDbContext>(options =>
 {
+    var dbname = System.Environment.GetEnvironmentVariable("DBNAME") ?? "ContinentalTestDb";
     var dbhost = System.Environment.GetEnvironmentVariable("DBHOST") ?? "192.168.28.86";
     var dbuser = System.Environment.GetEnvironmentVariable("DBUSER") ?? "sa";
     var dbpass = System.Environment.GetEnvironmentVariable("DBPASS") ?? "xA6UCjFY";
-    options.UseSqlServer("Data Source=" + dbhost + ";Database=ContinentalTestDb;User ID=" + dbuser + ";Password=" + dbpass + ";TrustServerCertificate=Yes;");
+    options.UseSqlServer("Data Source=" + dbhost + $";Database={dbname};User ID=" + dbuser + ";Password=" + dbpass + ";TrustServerCertificate=Yes;");
 });
 
 builder.Services.AddSingleton<RabbitMqService>();
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<HttpClient>();
 var app = builder.Build();
+using (IServiceScope serviceScope = app.Services.GetService<IServiceScopeFactory>()!.CreateScope())
+{
+    Console.WriteLine(System.Environment.GetEnvironmentVariable("DBHOST"));
+    var context = serviceScope.ServiceProvider.GetRequiredService<ContinentalTestDbContext>();
 
+    context.Database.Migrate();
+}
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

@@ -14,13 +14,21 @@ builder.Services.AddHostedService<DataManagement>();
 
 builder.Services.AddDbContext<ContextBuilderDb>(options =>
 {
+    var dbname = System.Environment.GetEnvironmentVariable("DBNAME") ?? "ContextDb";
     var dbhost = System.Environment.GetEnvironmentVariable("DBHOST") ?? "192.168.28.86";
     var dbuser = System.Environment.GetEnvironmentVariable("DBUSER") ?? "sa";
     var dbpass = System.Environment.GetEnvironmentVariable("DBPASS") ?? "xA6UCjFY";
-    options.UseSqlServer("Data Source=" + dbhost + ";Database=ContextDb;User ID=" + dbuser + ";Password=" + dbpass + ";TrustServerCertificate=Yes;");
+    options.UseSqlServer("Data Source=" + dbhost + $";Database={dbname};User ID=" + dbuser + ";Password=" + dbpass + ";TrustServerCertificate=Yes;");
 });
 
 var app = builder.Build();
+using (IServiceScope serviceScope = app.Services.GetService<IServiceScopeFactory>()!.CreateScope())
+{
+    Console.WriteLine(System.Environment.GetEnvironmentVariable("DBHOST"));
+    var context = serviceScope.ServiceProvider.GetRequiredService<ContextBuilderDb>();
+
+    context.Database.Migrate();
+}
 
 app.UseSwagger();
 app.UseSwaggerUI();

@@ -1,3 +1,4 @@
+using System.Xml.Linq;
 using ContextServer.Data;
 using ContextServer.Services;
 using Microsoft.EntityFrameworkCore;
@@ -20,10 +21,11 @@ builder.Services.AddSwaggerGen();
 //builder.Services.AddSingleton<ContextAwareDb>();
 builder.Services.AddDbContext<ContextAwareDb>(options =>
 {
+    var dbname = System.Environment.GetEnvironmentVariable("DBNAME") ?? "ContextDb";
     var dbhost = System.Environment.GetEnvironmentVariable("DBHOST") ?? "192.168.28.86";
     var dbuser = System.Environment.GetEnvironmentVariable("DBUSER") ?? "sa";
     var dbpass = System.Environment.GetEnvironmentVariable("DBPASS") ?? "xA6UCjFY";
-    options.UseSqlServer("Data Source=" + dbhost + ";Database=ContextDb;User ID=" + dbuser + ";Password=" + dbpass + ";TrustServerCertificate=Yes;");
+    options.UseSqlServer("Data Source=" + dbhost + $";Database={dbname};User ID=" + dbuser + ";Password=" + dbpass + ";TrustServerCertificate=Yes;");
 });
 
 //Singleton para a logica do sistema

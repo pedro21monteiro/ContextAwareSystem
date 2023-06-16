@@ -17,7 +17,6 @@ namespace ContextBuilder
             while(!stoppingToken.IsCancellationRequested)
             {
                 await Task.Delay(generalDelay, stoppingToken);
-
                 //de 24 em 24 horas vai ver os requests e eliminar os que foram à mais de 1 ano e 8 meses
                 Console.WriteLine(DateTime.Now.ToString());
                 try
@@ -30,7 +29,6 @@ namespace ContextBuilder
                 }
             }
         }
-
 
         private Task CleanRequests()
         {

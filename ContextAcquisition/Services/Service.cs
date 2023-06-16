@@ -830,8 +830,7 @@ namespace ContextAcquisition.Services
                     Console.WriteLine(ex.ToString());
                 }
             }
-            //---------------------
-            //agora só tem de fazer o update do coordinator pois apartir daqui o worker já existe
+            //agora só tem de fazer o update/add do coordinator pois apartir daqui o worker já existe
             var cExistInContext = _context.Coordinators.SingleOrDefault(c => c.Id == coordinator.Id);
             if (cExistInContext == null)
             {

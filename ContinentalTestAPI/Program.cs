@@ -21,13 +21,7 @@ builder.Services.AddDbContext<ContinentalDb>(options =>
 });
 
 var app = builder.Build();
-using (IServiceScope serviceScope = app.Services.GetService<IServiceScopeFactory>()!.CreateScope())
-{
-    Console.WriteLine(System.Environment.GetEnvironmentVariable("DBHOST"));
-    var context = serviceScope.ServiceProvider.GetRequiredService<ContinentalDb>();
 
-    context.Database.Migrate();
-}
 
 
 app.UseSwagger();

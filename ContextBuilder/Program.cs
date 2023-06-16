@@ -22,14 +22,6 @@ builder.Services.AddDbContext<ContextBuilderDb>(options =>
 });
 
 var app = builder.Build();
-using (IServiceScope serviceScope = app.Services.GetService<IServiceScopeFactory>()!.CreateScope())
-{
-    Console.WriteLine(System.Environment.GetEnvironmentVariable("DBHOST"));
-    var context = serviceScope.ServiceProvider.GetRequiredService<ContextBuilderDb>();
-
-    context.Database.Migrate();
-}
-
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseHttpsRedirection();

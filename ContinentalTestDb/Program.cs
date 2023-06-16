@@ -21,13 +21,7 @@ builder.Services.AddSingleton<RabbitMqService>();
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<HttpClient>();
 var app = builder.Build();
-using (IServiceScope serviceScope = app.Services.GetService<IServiceScopeFactory>()!.CreateScope())
-{
-    Console.WriteLine(System.Environment.GetEnvironmentVariable("DBHOST"));
-    var context = serviceScope.ServiceProvider.GetRequiredService<ContinentalTestDbContext>();
 
-    context.Database.Migrate();
-}
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

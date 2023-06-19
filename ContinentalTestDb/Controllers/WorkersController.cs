@@ -64,6 +64,31 @@ namespace ContinentalTestDb.Controllers
             {
                 worker.LastUpdate = DateTime.Now;
                 _context.Add(worker);
+                //criar coordenador ou supervisor relativamente ao role Role (1-coordenador , 2-Operador , 3-Supervisor)
+                if(worker.Role == 1)
+                {
+                    Coordinator coordinator = new Coordinator();
+                    coordinator.Worker = worker;
+                    coordinator.WorkerId = worker.Id;
+                    coordinator.LastUpdate = DateTime.Now;
+                    _context.Add(coordinator);
+                }
+                if (worker.Role == 2)
+                {
+                    Operator @operator = new Operator();
+                    @operator.Worker = worker;
+                    @operator.WorkerId = worker.Id;
+                    _context.Add(@operator);
+                    @operator.LastUpdate = DateTime.Now;
+                }
+                if (worker.Role == 3)
+                {
+                    Supervisor supervisor = new Supervisor();
+                    supervisor.Worker = worker;
+                    supervisor.WorkerId = worker.Id;
+                    _context.Add(supervisor);
+                    supervisor.LastUpdate = DateTime.Now;
+                }
                 await _context.SaveChangesAsync();
                 //await _rabbit.PublishMessage(JsonConvert.SerializeObject(worker), "create.worker");
                 return RedirectToAction(nameof(Index));
@@ -105,6 +130,44 @@ namespace ContinentalTestDb.Controllers
                 {
                     worker.LastUpdate = DateTime.Now;
                     _context.Update(worker);
+
+                    //criar coordenador ou supervisor relativamente ao role Role (1-coordenador , 2-Operador , 3-Supervisor)
+                    if (worker.Role == 1)
+                    {
+                        Coordinator coordinator = new Coordinator();
+                        coordinator.Worker = worker;
+                        coordinator.WorkerId = worker.Id;
+                        _context.Add(coordinator);
+                        coordinator.LastUpdate = DateTime.Now;
+                        //remover sup e ope
+                        await RemoveSupervisor(worker.Id);
+                        await RemoveOperator(worker.Id);
+                    }
+                    if (worker.Role == 2)
+                    {
+                        Operator @operator = new Operator();
+                        @operator.Worker = worker;
+                        @operator.WorkerId = worker.Id;
+                        @operator.LastUpdate = DateTime.Now;
+                        _context.Add(@operator);
+                        //remover sup e coord
+                        await RemoveSupervisor(worker.Id);
+                        await RemoveCoordinator(worker.Id);
+                    }
+                    if (worker.Role == 3)
+                    {
+                        Supervisor supervisor = new Supervisor();
+                        supervisor.Worker = worker;
+                        supervisor.WorkerId = worker.Id;
+                        supervisor.LastUpdate = DateTime.Now;
+                        _context.Add(supervisor);
+                        //remover ope e coord
+                        await RemoveOperator(worker.Id);
+                        await RemoveCoordinator(worker.Id);
+                    }
+                    //remover outro que exista
+
+
                     await _context.SaveChangesAsync();
                     //await _rabbit.PublishMessage(JsonConvert.SerializeObject(worker), "update.worker");
                 }
@@ -166,5 +229,37 @@ namespace ContinentalTestDb.Controllers
         {
           return _context.Workers.Any(e => e.Id == id);
         }
+
+        public async Task RemoveOperator(int workerId)
+        {
+            var ope = _context.Operators.First(o=>o.WorkerId == workerId);
+            if(ope != null)
+            {
+               _context.Remove(ope);
+               await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task RemoveSupervisor(int workerId)
+        {
+            var sup = _context.Supervisors.First(s => s.WorkerId == workerId);
+            if (sup != null)
+            {
+                _context.Remove(sup);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task RemoveCoordinator(int workerId)
+        {
+            var coordinator = _context.Coordinators.First(c => c.WorkerId == workerId);
+            if (coordinator != null)
+            {
+                _context.Remove(coordinator);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+
     }
 }

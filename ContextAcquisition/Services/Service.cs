@@ -15,6 +15,8 @@ namespace ContextAcquisition.Services
         private readonly HttpClient httpClient;
         private static string connectionString = "https://localhost:7284/api/ContextBuilder/";
         private static string continentalTestAPIHost = System.Environment.GetEnvironmentVariable("CONTAPI") ?? "https://localhost:7013";
+        private static int UrgentStopTime = 15;
+        private static string AlertAppConnectionString = "https://192.168.28.86:8091/api/Alert/SendNotification/";
         public Service(HttpClient _httpClient)
         {
             httpClient = _httpClient;
@@ -1333,6 +1335,9 @@ namespace ContextAcquisition.Services
                     _context.Add(stop);
                     await _context.SaveChangesAsync();
                     Console.WriteLine("stop: " + stop.Id.ToString() + " - Adicionado com suceso");
+
+                    //verificar se é para enviar aviso
+                    await CheckIfIsUrgentStop(stop , _context);
                 }
                 catch (Exception ex)
                 {
@@ -1735,6 +1740,54 @@ namespace ContextAcquisition.Services
                 {
                     Console.WriteLine(ex.ToString());
                 }
+            }
+        }
+
+        public static async Task CheckIfIsUrgentStop(Stop stop, ContextAcquisitonDb _context)
+        {
+            try
+            {
+                TimeSpan ts = stop.EndDate.Subtract(stop.InitialDate);
+                if(ts.TotalMinutes >= UrgentStopTime)
+                {
+                    //soar o aviso
+                    AlertRequest ar = new AlertRequest();
+                    ar.type = 0;//alerta de paragens
+                    ar.line = stop.LineId;
+                    ar.shift = stop.Shift;
+                    ar.dateStart = stop.InitialDate;
+                    ar.dateEnd = stop.EndDate;
+                    if(stop.ReasonId != null)
+                    {
+                        var reason = _context.Reasons.First(r => r.Id == stop.ReasonId);
+                        if(reason != null)
+                        {
+                            ar.message = reason.Description;
+                        }                     
+                    }
+
+                    HttpClient client = new HttpClient();
+                    HttpResponseMessage response = await client.PostAsJsonAsync(AlertAppConnectionString, ar);
+                    response.EnsureSuccessStatusCode();
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        Console.WriteLine("Alerta da paragem - "+stop.Id.ToString()+ " Enviado com sucesso");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Alerta da paragem - " + stop.Id.ToString() + " Erro ao enviar Alerta");
+                    }
+                }
+                else
+                {
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                Console.WriteLine("Alerta da paragem - " + stop.Id.ToString() + " Erro ao enviar Alerta");
             }
         }
     }

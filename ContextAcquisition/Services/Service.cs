@@ -1790,5 +1790,9 @@ namespace ContextAcquisition.Services
                 Console.WriteLine("Alerta da paragem - " + stop.Id.ToString() + " Erro ao enviar Alerta");
             }
         }
+
+        
+
+
     }
 }

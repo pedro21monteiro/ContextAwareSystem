@@ -1,4 +1,5 @@
-﻿using Models.ContextModels;
+﻿using ContextAcquisition.Data;
+using Models.ContextModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,9 +24,6 @@ namespace ContextAcquisition.Services
         Task<List<Stop>> GetStops(DateTime? DataInicial);
         Task<List<Supervisor>> GetSupervisors(DateTime? DataInicial);
         Task<List<Worker>> GetWorkers(DateTime? DataInicial);
-
-
-
 
     }
 }

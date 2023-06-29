@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="Accord.MachineLearning" Version="3.8.0" />
+    <PackageReference Include="EntityFramework" Version="6.4.4" />
     <PackageReference Include="FireSharp" Version="2.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.4">

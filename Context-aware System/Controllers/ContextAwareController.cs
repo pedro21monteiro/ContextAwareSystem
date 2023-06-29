@@ -5,8 +5,7 @@ using Models.CustomModels;
 using Models.FunctionModels;
 using Microsoft.EntityFrameworkCore;
 using Models.ContextModels;
-
-
+using Context_aware_System.Data;
 
 namespace Context_aware_System.Controllers
 
@@ -16,11 +15,11 @@ namespace Context_aware_System.Controllers
 
     public class ContextAwareController : Controller
     {
-        private readonly ContextAwareDb _context;
+        private readonly IContextAwareDb _context;
         private readonly SystemLogic _systemLogic;
         //para experimentar os datetimes 2023-11-20T11:11:11Z
 
-        public ContextAwareController(ContextAwareDb context, SystemLogic systemLogic)
+        public ContextAwareController(IContextAwareDb context, SystemLogic systemLogic)
         {
             _context = context;
             _systemLogic = systemLogic;
@@ -45,8 +44,7 @@ namespace Context_aware_System.Controllers
             //ver qual o tipo do device se é 1- weareble dos operadors, os outros para já vao ser dos coordenadores, exe: 2-tablet
             //se for wearable
             //adicionar as listas necessárias para esta função
-
-            
+           
             //encontrar a linha
             var _line = _context.Lines.Where(l => l.Id == device.LineId)
                 .Include(l=> l.Coordinator)
@@ -220,7 +218,7 @@ namespace Context_aware_System.Controllers
 
             if (!stops.Any())
             {
-                rnsi.Message = "Não existe paragens nessas datas";
+                rnsi.Message = "Não existe paragens nessas datas!!";
                 return NotFound(rnsi);
             }
             foreach (var stop in stops)
@@ -230,8 +228,17 @@ namespace Context_aware_System.Controllers
                     rnsi.listNewStops.Add(stop);
                 }
             }
-            rnsi.Message = "Info obtida com sucesso!!";
-            return Ok(rnsi);
+            if(rnsi.listNewStops.Any())
+            {
+                rnsi.Message = "Info obtida com sucesso!!";
+                return Ok(rnsi);
+            }
+            else
+            {
+                rnsi.Message = "Não existe paragens nessas datas!!";
+                return NotFound(rnsi);
+            }
+
         }
 
         [HttpGet]
@@ -501,10 +508,11 @@ namespace Context_aware_System.Controllers
                 .FirstOrDefault();
             if (coord == null)
             {
-                rci.Message = "Erro ao identificar o Supervisor!!";
+                rci.Message = "Erro ao identificar o Coordinator!!";
 
                 return NotFound(rci);
             }
+            rci.Message = "Info obtida com sucesso!!";
             rci.Coordinator = coord;
             rci.listLine = coord.Lines.ToList();
             

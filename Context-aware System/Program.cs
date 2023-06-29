@@ -1,4 +1,5 @@
 using System.Xml.Linq;
+using Context_aware_System.Data;
 using ContextServer.Data;
 using ContextServer.Services;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +20,7 @@ builder.Services.AddSwaggerGen();
 //builder.Services.AddHttpClient<IService, Service>();
 //para o context database
 //builder.Services.AddSingleton<ContextAwareDb>();
-builder.Services.AddDbContext<ContextAwareDb>(options =>
+builder.Services.AddDbContext<IContextAwareDb, ContextAwareDb>(options =>
 {
     var dbname = System.Environment.GetEnvironmentVariable("DBNAME") ?? "ContextDb";
     var dbhost = System.Environment.GetEnvironmentVariable("DBHOST") ?? "192.168.28.86";

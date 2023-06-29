@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContinentalTestAPI", "Conti
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContextAcquisition", "ContextAcquisition\ContextAcquisition.csproj", "{195737E2-2F6B-49BB-A422-23C074563C53}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContextBuilder", "ContextBuilder\ContextBuilder.csproj", "{12DFE950-1A4F-4BE4-A566-CDEE08DEB805}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContextBuilder", "ContextBuilder\ContextBuilder.csproj", "{12DFE950-1A4F-4BE4-A566-CDEE08DEB805}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testes", "Testes\Testes.csproj", "{510E245E-FD4A-4EA5-9169-C27ECFD8132D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{12DFE950-1A4F-4BE4-A566-CDEE08DEB805}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12DFE950-1A4F-4BE4-A566-CDEE08DEB805}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12DFE950-1A4F-4BE4-A566-CDEE08DEB805}.Release|Any CPU.Build.0 = Release|Any CPU
+		{510E245E-FD4A-4EA5-9169-C27ECFD8132D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{510E245E-FD4A-4EA5-9169-C27ECFD8132D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{510E245E-FD4A-4EA5-9169-C27ECFD8132D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{510E245E-FD4A-4EA5-9169-C27ECFD8132D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

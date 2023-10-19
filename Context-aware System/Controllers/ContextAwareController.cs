@@ -25,106 +25,106 @@ namespace Context_aware_System.Controllers
             _systemLogic = systemLogic;
         }
 
-        [HttpGet]
-        [Route("DeviceInfo")]
-        public async Task<IActionResult> DeviceInfo(int deviceId)
-        {
-            //Formato da resposta
-            ResponseDeviceInfo rdi = new ResponseDeviceInfo();
+        //[HttpGet]
+        //[Route("DeviceInfo")]
+        //public async Task<IActionResult> DeviceInfo(int deviceId)
+        //{
+        //    //Formato da resposta
+        //    ResponseDeviceInfo rdi = new ResponseDeviceInfo();
 
-            //encontrar o device
-            var device = _context.Devices.Where(d => d.Id== deviceId).FirstOrDefault();
-            if (device == null)
-            {
-                rdi.Message = "Erro ao identificar o Device!!";
-                return NotFound(rdi);
-            }
-            //O line id já esta no device
+        //    //encontrar o device
+        //    var device = _context.Devices.Where(d => d.Id== deviceId).FirstOrDefault();
+        //    if (device == null)
+        //    {
+        //        rdi.Message = "Erro ao identificar o Device!!";
+        //        return NotFound(rdi);
+        //    }
+        //    //O line id já esta no device
 
-            //ver qual o tipo do device se é 1- weareble dos operadors, os outros para já vao ser dos coordenadores, exe: 2-tablet
-            //se for wearable
-            //adicionar as listas necessárias para esta função
+        //    //ver qual o tipo do device se é 1- weareble dos operadors, os outros para já vao ser dos coordenadores, exe: 2-tablet
+        //    //se for wearable
+        //    //adicionar as listas necessárias para esta função
            
-            //encontrar a linha
-            var _line = _context.Lines.Where(l => l.Id == device.LineId)
-                .Include(l=> l.Coordinator)
-                .FirstOrDefault();
-            if (_line == null)
-            {
-                rdi.Message = "Erro ao identificar a linha de produção!!";
-                return NotFound(rdi);
-            }
-            rdi.line = _line;
+        //    //encontrar a linha
+        //    var _line = _context.Lines.Where(l => l.Id == device.LineId)
+        //        .Include(l=> l.Coordinator)
+        //        .FirstOrDefault();
+        //    if (_line == null)
+        //    {
+        //        rdi.Message = "Erro ao identificar a linha de produção!!";
+        //        return NotFound(rdi);
+        //    }
+        //    rdi.line = _line;
 
-            if (device.Type == 1)
-            {
+        //    if (device.Type == 1)
+        //    {
 
-                rdi.Type = "Weareble-Operator";
-                //ver o workshift do operador
-                WorkShift ws = _systemLogic.GetAtualWorkShift(DateTime.Now);
-                rdi.WorkShift = ws.Shift;
-                rdi.WorkShiftString = ws.ShiftString;
+        //        rdi.Type = "Weareble-Operator";
+        //        //ver o workshift do operador
+        //        WorkShift ws = _systemLogic.GetAtualWorkShift(DateTime.Now);
+        //        rdi.WorkShift = ws.Shift;
+        //        rdi.WorkShiftString = ws.ShiftString;
 
-                //encontrar o product reference
-                Production_Plan production_Plan = new Production_Plan();
-                var _production_plan = _context.Production_Plans.Where(p => p.LineId == _line.Id).ToList();
-                if (_production_plan.Any())
-                {
-                    foreach (var productionPlan in _production_plan)
-                    {
-                        if (_systemLogic.dateTimeIsActiveNow(productionPlan.InitialDate, productionPlan.EndDate))
-                        {
-                            production_Plan = productionPlan;
-                        }
-                    }
-                }
+        //        //encontrar o product reference
+        //        Production_Plan production_Plan = new Production_Plan();
+        //        var _production_plan = _context.Production_Plans.Where(p => p.LineId == _line.Id).ToList();
+        //        if (_production_plan.Any())
+        //        {
+        //            foreach (var productionPlan in _production_plan)
+        //            {
+        //                if (_systemLogic.dateTimeIsActiveNow(productionPlan.InitialDate, productionPlan.EndDate))
+        //                {
+        //                    production_Plan = productionPlan;
+        //                }
+        //            }
+        //        }
 
-                if (production_Plan.Name == "")
-                {
-                    rdi.Message = "Erro ao identificar o plano de produção!!";
-                    return NotFound(rdi);
-                }
+        //        if (production_Plan.Name == "")
+        //        {
+        //            rdi.Message = "Erro ao identificar o plano de produção!!";
+        //            return NotFound(rdi);
+        //        }
                 
-                //encontrar o product pois é lá que tem a a product reference
-                var product = _context.Products.Where(p => p.Id == production_Plan.ProductId)
-                    .Include(p=>p.Components)
-                    .FirstOrDefault();
-                if (product == null)
-                {
-                    rdi.Message = "Erro ao identificar o product!!";
-                    return NotFound(rdi);
-                }
-                //aqui já temos a referencia do produto
-                rdi.ProductName = product.Name;
+        //        //encontrar o product pois é lá que tem a a product reference
+        //        var product = _context.Products.Where(p => p.Id == production_Plan.ProductId)
+        //            .Include(p=>p.Components)
+        //            .FirstOrDefault();
+        //        if (product == null)
+        //        {
+        //            rdi.Message = "Erro ao identificar o product!!";
+        //            return NotFound(rdi);
+        //        }
+        //        //aqui já temos a referencia do produto
+        //        rdi.ProductName = product.Name;
 
-                //Agora aqui vou ter de encher a lista de missing componentes que para já vou meter todos e encontrar a tag
-                //para já vai ser os componentes do produto
-                foreach(var component in product.Components)
-                {
-                    rdi.listMissingComponentes.Add(component);
-                }
-            }
-            else
-            {
-                //se não for wearable vai ser operado por um coordenador
-                rdi.Type = "Tablet/Outro-Coordenator";
+        //        //Agora aqui vou ter de encher a lista de missing componentes que para já vou meter todos e encontrar a tag
+        //        //para já vai ser os componentes do produto
+        //        foreach(var component in product.Components)
+        //        {
+        //            rdi.listMissingComponentes.Add(component);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        //se não for wearable vai ser operado por um coordenador
+        //        rdi.Type = "Tablet/Outro-Coordenator";
 
-                //encontrar o worker
-                var coordinator = _context.Coordinators.Where(c => c.Id == _line.CoordinatorId)
-                    .Include(c=>c.Worker)
-                    .Include(c=>c.Lines)
-                    .FirstOrDefault();
-                if (coordinator == null)
-                {
-                    rdi.Message = "Erro ao identificar o worker!!";
-                    return NotFound(rdi);
-                }
-                rdi.Coordinator = coordinator;
+        //        //encontrar o worker
+        //        var coordinator = _context.Coordinators.Where(c => c.Id == _line.CoordinatorId)
+        //            .Include(c=>c.Worker)
+        //            .Include(c=>c.Lines)
+        //            .FirstOrDefault();
+        //        if (coordinator == null)
+        //        {
+        //            rdi.Message = "Erro ao identificar o worker!!";
+        //            return NotFound(rdi);
+        //        }
+        //        rdi.Coordinator = coordinator;
 
-            }
-            rdi.Message = "Info obtida com sucesso!!";
-            return Ok(rdi);
-        }
+        //    }
+        //    rdi.Message = "Info obtida com sucesso!!";
+        //    return Ok(rdi);
+        //}
 
         [HttpGet]
         [Route("OperatorInfo")]
@@ -407,49 +407,49 @@ namespace Context_aware_System.Controllers
         }
 
 
-        ////método que retorna a lista de components a partir do id do device
-        [HttpGet]
-        [Route("GetComponentsDeviceInfo")]
-        public async Task<IActionResult> GetComponentsDeviceInfo(int deviceId)
-        {
-            ResponseGetComponentsDeviceInfo rgcdi = new ResponseGetComponentsDeviceInfo();
-            //encontrar o device
-            var device = _context.Devices.Where(d => d.Id == deviceId).FirstOrDefault();
-            if (device == null)
-            {
-                rgcdi.Message = "Erro ao identificar o Device!!";
-                return NotFound(rgcdi);
-            }
-            var _line = _context.Lines.Where(l => l.Id == device.LineId).FirstOrDefault();
-            if (_line == null)
-            {
-                rgcdi.Message = "Erro ao identificar a linha de produção!!";
-                return NotFound(rgcdi);
-            }
-            var _productions = _context.Production_Plans.Where(p => p.LineId == _line.Id)
-                .Include(p => p.Product)
-                .ToList();
+        //////método que retorna a lista de components a partir do id do device
+        //[HttpGet]
+        //[Route("GetComponentsDeviceInfo")]
+        //public async Task<IActionResult> GetComponentsDeviceInfo(int deviceId)
+        //{
+        //    ResponseGetComponentsDeviceInfo rgcdi = new ResponseGetComponentsDeviceInfo();
+        //    //encontrar o device
+        //    var device = _context.Devices.Where(d => d.Id == deviceId).FirstOrDefault();
+        //    if (device == null)
+        //    {
+        //        rgcdi.Message = "Erro ao identificar o Device!!";
+        //        return NotFound(rgcdi);
+        //    }
+        //    var _line = _context.Lines.Where(l => l.Id == device.LineId).FirstOrDefault();
+        //    if (_line == null)
+        //    {
+        //        rgcdi.Message = "Erro ao identificar a linha de produção!!";
+        //        return NotFound(rgcdi);
+        //    }
+        //    var _productions = _context.Production_Plans.Where(p => p.LineId == _line.Id)
+        //        .Include(p => p.Product)
+        //        .ToList();
 
-            var production = _productions.Where(p => _systemLogic.IsAtributeInDatetime(p.InitialDate, p.EndDate, DateTime.Now) == true).FirstOrDefault();
+        //    var production = _productions.Where(p => _systemLogic.IsAtributeInDatetime(p.InitialDate, p.EndDate, DateTime.Now) == true).FirstOrDefault();
             
-            if (production == null)
-            {
-                rgcdi.Message = "O device não se encontra em nenhuma linha no momento!!";
-                return NotFound(rgcdi);
-            }
-            //encontrar o product pois é lá que tem a a product reference
-            var product = _context.Products.Where(p => p.Id == production.ProductId)
-                .Include(p => p.Components)
-                .FirstOrDefault();
-            if (product == null)
-            {
-                rgcdi.Message = "Erro ao identificar a product!!";
-                return NotFound(rgcdi);
-            }
-            rgcdi.listComponents = product.Components.ToList();
-            rgcdi.Message = "Info obtida com sucesso!!";
-            return Ok(rgcdi);
-        }
+        //    if (production == null)
+        //    {
+        //        rgcdi.Message = "O device não se encontra em nenhuma linha no momento!!";
+        //        return NotFound(rgcdi);
+        //    }
+        //    //encontrar o product pois é lá que tem a a product reference
+        //    var product = _context.Products.Where(p => p.Id == production.ProductId)
+        //        .Include(p => p.Components)
+        //        .FirstOrDefault();
+        //    if (product == null)
+        //    {
+        //        rgcdi.Message = "Erro ao identificar a product!!";
+        //        return NotFound(rgcdi);
+        //    }
+        //    rgcdi.listComponents = product.Components.ToList();
+        //    rgcdi.Message = "Info obtida com sucesso!!";
+        //    return Ok(rgcdi);
+        //}
 
         [HttpGet]
         [Route("ProductInfo")]

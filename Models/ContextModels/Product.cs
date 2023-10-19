@@ -9,8 +9,9 @@ namespace Models.ContextModels
     {
         public Product()
         {
-            this.Components = new HashSet<Component>();
+            //this.Components = new HashSet<Component>();
             this.Production_Plans = new HashSet<Production_Plan>();
+            this.ComponentProducts = new HashSet<ComponentProduct>();
         }
 
         [Key]
@@ -24,9 +25,15 @@ namespace Models.ContextModels
         public TimeSpan Cycle { get; set; }
         public DateTime LastUpdate { get; set; }
 
-        public virtual ICollection<Component> Components { get; set; }
         [JsonIgnore]
         [IgnoreDataMember]
+        [NotMapped]
+        public virtual ICollection<ComponentProduct> ComponentProducts { get; set; }
+
+        //public virtual ICollection<Component> Components { get; set; }
+        [JsonIgnore]
+        [IgnoreDataMember]
+        [NotMapped]
         public virtual ICollection<Production_Plan> Production_Plans { get; set; }
 
     }

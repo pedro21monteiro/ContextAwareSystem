@@ -32,10 +32,11 @@ namespace ContextAcquisition.Data
             lvr.StopsVerification = new DateTime(1, 1, 1, 1, 1, 1);
             lvr.SupervisorsVerification = new DateTime(1, 1, 1, 1, 1, 1);
             lvr.WorkersVerification = new DateTime(1, 1, 1, 1, 1, 1);
+            lvr.ComponentProductsVerification = new DateTime(1, 1, 1, 1, 1, 1);
             context.LastVerificationRegists.Add(lvr);
             context.SaveChanges();
 
-
+            
         }
     }
 }

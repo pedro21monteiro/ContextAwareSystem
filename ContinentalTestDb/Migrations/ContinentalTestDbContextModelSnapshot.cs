@@ -22,21 +22,6 @@ namespace ContinentalTestDb.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("ComponentProduct", b =>
-                {
-                    b.Property<int>("ComponentsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ComponentsId", "ProductsId");
-
-                    b.HasIndex("ProductsId");
-
-                    b.ToTable("ComponentProduct");
-                });
-
             modelBuilder.Entity("Models.ContinentalModels.Component", b =>
                 {
                     b.Property<int>("Id")
@@ -62,6 +47,35 @@ namespace ContinentalTestDb.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Components");
+                });
+
+            modelBuilder.Entity("Models.ContinentalModels.ComponentProduct", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("ComponentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastUpdate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantidade")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ComponentId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ComponentProducts");
                 });
 
             modelBuilder.Entity("Models.ContinentalModels.Coordinator", b =>
@@ -432,19 +446,23 @@ namespace ContinentalTestDb.Migrations
                     b.ToTable("Workers");
                 });
 
-            modelBuilder.Entity("ComponentProduct", b =>
+            modelBuilder.Entity("Models.ContinentalModels.ComponentProduct", b =>
                 {
-                    b.HasOne("Models.ContinentalModels.Component", null)
-                        .WithMany()
-                        .HasForeignKey("ComponentsId")
+                    b.HasOne("Models.ContinentalModels.Component", "Component")
+                        .WithMany("ComponentProducts")
+                        .HasForeignKey("ComponentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Models.ContinentalModels.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductsId")
+                    b.HasOne("Models.ContinentalModels.Product", "Product")
+                        .WithMany("ComponentProducts")
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Component");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Models.ContinentalModels.Coordinator", b =>
@@ -572,6 +590,11 @@ namespace ContinentalTestDb.Migrations
                     b.Navigation("Worker");
                 });
 
+            modelBuilder.Entity("Models.ContinentalModels.Component", b =>
+                {
+                    b.Navigation("ComponentProducts");
+                });
+
             modelBuilder.Entity("Models.ContinentalModels.Coordinator", b =>
                 {
                     b.Navigation("Lines");
@@ -595,6 +618,8 @@ namespace ContinentalTestDb.Migrations
 
             modelBuilder.Entity("Models.ContinentalModels.Product", b =>
                 {
+                    b.Navigation("ComponentProducts");
+
                     b.Navigation("Production_Plans");
                 });
 

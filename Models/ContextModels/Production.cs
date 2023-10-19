@@ -21,7 +21,9 @@ namespace Models.ContextModels
         //---
         //[JsonIgnore]
         //[IgnoreDataMember]
+        [NotMapped]
         public Production_Plan Prod_Plan { get; set; } = new Production_Plan();
+        [ForeignKey("Production_PlanId")]
         public int Production_PlanId { get; set; }
     }
 }

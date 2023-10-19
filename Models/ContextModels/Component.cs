@@ -9,7 +9,8 @@ namespace Models.ContextModels
     {
         public Component()
         {
-            this.Products = new HashSet<Product>();
+            //this.Products = new HashSet<Product>();
+            this.ComponentProducts = new HashSet<ComponentProduct>();
         }
 
         [Key]
@@ -25,7 +26,12 @@ namespace Models.ContextModels
 
         [JsonIgnore]
         [IgnoreDataMember]
-        public virtual ICollection<Product> Products { get; set; }
+        [NotMapped]
+        public virtual ICollection<ComponentProduct> ComponentProducts { get; set; }
+
+        //[JsonIgnore]
+        //[IgnoreDataMember]
+        //public virtual ICollection<Product> Products { get; set; }
 
     }
 }

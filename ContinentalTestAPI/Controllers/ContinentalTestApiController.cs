@@ -140,21 +140,18 @@ namespace ContinentalTestAPI.Controllers
 
             if (InicialDate != null)
             {
-                foreach (var p in _context.Products.Include(s => s.Components).ToList())
+                foreach (var p in _context.Products.ToList())
                 {
                     if (p.LastUpdate.CompareTo(InicialDate) > 0)
                     {
-                            products.Add(p);
+                        products.Add(p);
                     }
                 }
-                //Agora a cada produto adicionar a lista dos componentes
-
-
                 return Ok(products);
             }
             else
             {
-                return Ok(_context.Products.Include(s => s.Components).ToList());
+                return Ok(_context.Products.ToList());
             }
         }
 
@@ -339,6 +336,30 @@ namespace ContinentalTestAPI.Controllers
             else
             {
                 return Ok(_context.Workers.ToList());
+            }
+        }
+
+
+        [HttpGet]
+        [Route("GetComponentProducts")]
+        public async Task<IActionResult> GetComponentProducts(DateTime? InicialDate)
+        {
+            List<ComponentProduct> componentProducts = new List<ComponentProduct>();
+
+            if (InicialDate != null)
+            {
+                foreach (var p in _context.ComponentProducts.ToList())
+                {
+                    if (p.LastUpdate.CompareTo(InicialDate) > 0)
+                    {
+                        componentProducts.Add(p);
+                    }
+                }
+                return Ok(componentProducts);
+            }
+            else
+            {
+                return Ok(_context.ComponentProducts.ToList());
             }
         }
 

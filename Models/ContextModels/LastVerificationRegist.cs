@@ -27,5 +27,7 @@ namespace Models.ContextModels
         public DateTime StopsVerification { get; set; }
         public DateTime SupervisorsVerification { get; set; }
         public DateTime WorkersVerification { get; set; }
+        public DateTime ComponentProductsVerification { get; set; }
+
     }
 }

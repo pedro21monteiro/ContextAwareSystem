@@ -22,21 +22,6 @@ namespace Context_aware_System.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("ComponentProduct", b =>
-                {
-                    b.Property<int>("ComponentsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ComponentsId", "ProductsId");
-
-                    b.HasIndex("ProductsId");
-
-                    b.ToTable("ComponentProduct");
-                });
-
             modelBuilder.Entity("Models.ContextModels.Component", b =>
                 {
                     b.Property<int>("Id")
@@ -59,6 +44,32 @@ namespace Context_aware_System.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Components");
+                });
+
+            modelBuilder.Entity("Models.ContextModels.ComponentProduct", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ComponentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastUpdate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantidade")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ComponentId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ComponentProducts");
                 });
 
             modelBuilder.Entity("Models.ContextModels.Coordinator", b =>
@@ -104,6 +115,9 @@ namespace Context_aware_System.Migrations
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("ComponentProductsVerification")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("ComponentsVerification")
                         .HasColumnType("datetime2");
@@ -439,17 +453,17 @@ namespace Context_aware_System.Migrations
                     b.ToTable("Workers");
                 });
 
-            modelBuilder.Entity("ComponentProduct", b =>
+            modelBuilder.Entity("Models.ContextModels.ComponentProduct", b =>
                 {
                     b.HasOne("Models.ContextModels.Component", null)
-                        .WithMany()
-                        .HasForeignKey("ComponentsId")
+                        .WithMany("ComponentProducts")
+                        .HasForeignKey("ComponentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Models.ContextModels.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductsId")
+                        .WithMany("ComponentProducts")
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -579,6 +593,11 @@ namespace Context_aware_System.Migrations
                     b.Navigation("Worker");
                 });
 
+            modelBuilder.Entity("Models.ContextModels.Component", b =>
+                {
+                    b.Navigation("ComponentProducts");
+                });
+
             modelBuilder.Entity("Models.ContextModels.Coordinator", b =>
                 {
                     b.Navigation("Lines");
@@ -602,6 +621,8 @@ namespace Context_aware_System.Migrations
 
             modelBuilder.Entity("Models.ContextModels.Product", b =>
                 {
+                    b.Navigation("ComponentProducts");
+
                     b.Navigation("Production_Plans");
                 });
 

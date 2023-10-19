@@ -9,7 +9,8 @@ namespace Models.ContinentalModels
     {
         public Component()
         {
-            this.Products = new HashSet<Product>();
+            //this.Products = new HashSet<Product>();
+            this.ComponentProducts = new HashSet<ComponentProduct>();
         }
 
         [Key]
@@ -21,9 +22,14 @@ namespace Models.ContinentalModels
         [Required]
         public int Category { get; set; }//0 - Sem categoria, 1-Etiqueta , 2- parafusos / etc...
         public DateTime LastUpdate { get; set; }
+
         [JsonIgnore]
         [IgnoreDataMember]
-        public virtual ICollection<Product> Products { get; set; }
+        public virtual ICollection<ComponentProduct> ComponentProducts { get; set; }
+
+        //[JsonIgnore]
+        //[IgnoreDataMember]
+        //public virtual ICollection<Product> Products { get; set; }
 
         //parametros que não estão na bd
         [JsonIgnore]

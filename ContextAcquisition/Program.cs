@@ -62,6 +62,7 @@ namespace ContextAcquisition
             ITU.stops = _service.GetStops(lvr.StopsVerification).Result;
             ITU.supervisors = _service.GetSupervisors(lvr.SupervisorsVerification).Result;
             ITU.workers = _service.GetWorkers(lvr.WorkersVerification).Result;
+            ITU.ComponentProducts = _service.GetComponentProducts(lvr.WorkersVerification).Result;
 
             //Atualizar a lista da base de dados
             await Service.UpdateItens(ITU, _context);

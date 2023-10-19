@@ -39,5 +39,6 @@ namespace ContextAcquisition.Data
         public DbSet<Worker> Workers { get; set; }
         public DbSet<Request> Requests { get; set; }
         public DbSet<LastVerificationRegist> LastVerificationRegists { get; set; }
+        public DbSet<ComponentProduct> ComponentProducts { get; set; }
     }
 }

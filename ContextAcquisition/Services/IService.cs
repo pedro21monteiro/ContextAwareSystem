@@ -24,6 +24,7 @@ namespace ContextAcquisition.Services
         Task<List<Stop>> GetStops(DateTime? DataInicial);
         Task<List<Supervisor>> GetSupervisors(DateTime? DataInicial);
         Task<List<Worker>> GetWorkers(DateTime? DataInicial);
+        Task<List<ComponentProduct>> GetComponentProducts(DateTime? DataInicial);
 
     }
 }

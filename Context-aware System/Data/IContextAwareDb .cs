@@ -20,5 +20,6 @@ namespace Context_aware_System.Data
         public DbSet<Worker> Workers { get; set; }
         public DbSet<Request> requests { get; set; }
         public DbSet<LastVerificationRegist> lastVerificationRegists { get; set; }
+        public DbSet<ComponentProduct> ComponentProducts { get; set; }
     }
 }

@@ -12,7 +12,9 @@ namespace Models.ContextModels
         public int Type { get; set; }
 
         //---
+        [NotMapped]
         public Line Line { get; set; } = new Line();
+        [ForeignKey("LineId")]
         public int LineId { get; set; }
         public DateTime LastUpdate { get; set; }
     }

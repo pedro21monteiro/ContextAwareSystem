@@ -27,20 +27,26 @@ namespace Models.ContextModels
 
         [JsonIgnore]
         [IgnoreDataMember]
-        public Coordinator Coordinator { get; set; } 
+        [NotMapped]
+        public Coordinator Coordinator { get; set; }
+        [ForeignKey("CoordinatorId")]
         public int CoordinatorId { get; set; }
 
         [JsonIgnore]
         [IgnoreDataMember]
+        [NotMapped]
         public virtual ICollection<Production_Plan> Production_Plans { get; set; }
         [JsonIgnore]
         [IgnoreDataMember]
+        [NotMapped]
         public virtual ICollection<Device> Devices { get; set; }
         [JsonIgnore]
         [IgnoreDataMember]
+        [NotMapped]
         public virtual ICollection<Stop> Stops { get; set; }
         [JsonIgnore]
         [IgnoreDataMember]
+        [NotMapped]
         public virtual ICollection<Schedule_Worker_Line> Schedules { get; set; }
 
         

@@ -19,17 +19,20 @@ namespace Models.ContextModels
         //---
         [JsonIgnore]
         [IgnoreDataMember]
+        [NotMapped]
         public Line Line { get; set; } = new Line();
-
+        [ForeignKey("LineId")]
         public int LineId { get; set; }
 
         [JsonIgnore]
         [IgnoreDataMember]
+        [NotMapped]
         public Operator? Operator { get; set; }
 
         public int? OperatorId { get; set; }
         [JsonIgnore]
         [IgnoreDataMember]
+        [NotMapped]
         public Supervisor? Supervisor { get; set; }
  
         public int? SupervisorId { get; set; }

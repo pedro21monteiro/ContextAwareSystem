@@ -21,6 +21,7 @@ namespace Models.ContextModels
         //--
         [JsonIgnore]
         [IgnoreDataMember]
+        [NotMapped]
         public virtual ICollection<Stop> Stops{ get; set; }
     }
 }

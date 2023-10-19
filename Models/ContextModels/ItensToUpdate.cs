@@ -22,6 +22,7 @@ namespace Models.ContextModels
         public List<Stop> stops { get; set; }
         public List<Supervisor> supervisors { get; set; }
         public List<Worker> workers { get; set; }
+        public List<ComponentProduct> ComponentProducts { get; set; }
 
     }
 }

@@ -85,21 +85,21 @@ namespace Testes
             return fakeOperators;
         }
         //Product
-        public static List<Product> GetFakeProducts()
-        {
-            //componentes do product 1
-            List<Component> _components = new List<Component>();
-            //adicionar o componete 1 e 2
-            _components.AddRange(GetFakeComponentes().Where(c=>c.Id == 1 && c.Id == 2));
-            var fakeProducts = new List<Product>
-            {
-               new Product { Id = 1, LabelReference = "prod1", Cycle = new TimeSpan(0, 0, 0),
-               Components = _components
-               }
-            };
+        //public static List<Product> GetFakeProducts()
+        //{
+        //    //componentes do product 1
+        //    List<Component> _components = new List<Component>();
+        //    //adicionar o componete 1 e 2
+        //    _components.AddRange(GetFakeComponentes().Where(c=>c.Id == 1 && c.Id == 2));
+        //    var fakeProducts = new List<Product>
+        //    {
+        //       new Product { Id = 1, LabelReference = "prod1", Cycle = new TimeSpan(0, 0, 0),
+        //       Components = _components
+        //       }
+        //    };
 
-            return fakeProducts;
-        }
+        //    return fakeProducts;
+        //}
 
         //Productions
         public static List<Production> GetFakeProductions()

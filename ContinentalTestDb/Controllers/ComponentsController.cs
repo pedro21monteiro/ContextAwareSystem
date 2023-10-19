@@ -176,7 +176,7 @@ namespace ContinentalTestDb.Controllers
         public async Task<IActionResult> EditComponentProducts(int? id)
         {
             var product = await _context.Products
-               .Include(s => s.Components)
+                .Include(s => s.ComponentProducts)
                .FirstOrDefaultAsync(m => m.Id == id);
 
             if (product == null)
@@ -187,9 +187,9 @@ namespace ContinentalTestDb.Controllers
             listcomps = _context.Components.ToList();
             foreach (var comp in listcomps)
             {
-                foreach(var compprod in product.Components.ToList() )
+                foreach (var compprod in product.ComponentProducts.ToList())
                 {
-                    if(comp.Id == compprod.Id)
+                    if (comp.Id == compprod.ComponentId)
                     {
                         comp.IsSelected = true;
                     }
@@ -210,27 +210,32 @@ namespace ContinentalTestDb.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
-               .Include(s => s.Components)
-               .FirstOrDefaultAsync(m => m.Id == idProd);
-
-            var component = await _context.Components.FirstOrDefaultAsync(c=> c.Id == idComp);
-
+            var product = await _context.Products.FirstOrDefaultAsync(m => m.Id == idProd);
+            var component = await _context.Components.FirstOrDefaultAsync(c => c.Id == idComp);
             if (product == null || component == null)
             {
                 return NotFound();
             }
             else
             {
-                //adicionar component ao product
-                product.Components.Add(component);
-                product.LastUpdate = DateTime.Now;
-                _context.Update(product);
-                
+                //adicionar componentproduct à tabela de relação
+
+                ComponentProduct cp = new ComponentProduct();
+                cp.Product = product;
+                cp.Component = component;
+                cp.ProductId = product.Id;
+                cp.ComponentId = component.Id;
+                cp.Quantidade = 1;
+                cp.LastUpdate = DateTime.Now;
+
+                _context.Add(cp);
                 await _context.SaveChangesAsync();
-                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(product), "update.product");
             }
-            
+
+
+            //---------
+
+
             return RedirectToAction("EditComponentProducts", "Components", new { id = idProd });
         }
 
@@ -242,9 +247,7 @@ namespace ContinentalTestDb.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
-               .Include(s => s.Components)
-               .FirstOrDefaultAsync(m => m.Id == idProd);
+            var product = await _context.Products.FirstOrDefaultAsync(m => m.Id == idProd);
 
             var component = await _context.Components.FirstOrDefaultAsync(c => c.Id == idComp);
 
@@ -254,12 +257,12 @@ namespace ContinentalTestDb.Controllers
             }
             else
             {
-                //adicionar component ao product
-                product.Components.Remove(component);
-                product.LastUpdate = DateTime.Now;
-                _context.Update(product);
-                await _context.SaveChangesAsync();
-                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(product), "update.product");
+                var cp = await _context.ComponentProducts.FirstOrDefaultAsync(m => m.ComponentId == component.Id && m.ProductId == product.Id);
+                if(cp != null)
+                {
+                    _context.Remove(cp);
+                    await _context.SaveChangesAsync();
+                }
             }
 
             return RedirectToAction("EditComponentProducts", "Components", new { id = idProd });

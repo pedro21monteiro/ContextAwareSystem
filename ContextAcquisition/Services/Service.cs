@@ -478,6 +478,39 @@ namespace ContextAcquisition.Services
 
         }
 
+        public async Task<List<ComponentProduct>> GetComponentProducts(DateTime? DataInicial)
+        {
+            if (DataInicial == null)
+            {
+                try
+                {
+                    return await httpClient.GetFromJsonAsync<List<ComponentProduct>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetComponentProducts");
+                }
+                catch (Exception e)
+                {
+                    return null;
+                    Console.WriteLine(e.ToString());
+                }
+
+            }
+            else
+            {
+                try
+                {
+                    //GetComponents?InicialDate=2020-05-05
+                    return await httpClient.GetFromJsonAsync<List<ComponentProduct>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetComponentProducts/" + "?InicialDate=" + ((DateTime)DataInicial).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
+                }
+                catch (Exception e)
+                {
+                    return null;
+                    Console.WriteLine(e.ToString());
+                }
+
+            }
+
+        }
+
+
         //Update dos itens todos
         public static async Task UpdateItens(ItensToUpdate ITU, ContextAcquisitonDb _context)
         {
@@ -609,6 +642,15 @@ namespace ContextAcquisition.Services
             {
                 Console.WriteLine("0 workers novos/atualizados detetados");
             }
+            //ComponentProducts
+            if (ITU.ComponentProducts != null)
+            {
+                Console.WriteLine(ITU.ComponentProducts.Count.ToString() + " ComponentProducts novos/atualizados detetados");
+            }
+            else
+            {
+                Console.WriteLine("0 ComponentProducts novos/atualizados detetados");
+            }
             //EScrever o fim
             Console.WriteLine("---------------Atualizacao dos itens---------------------------");
 
@@ -739,6 +781,15 @@ namespace ContextAcquisition.Services
                     await UpdateSchedules(s, _context);
                 }
             }
+            //ComponentProducts
+            if (ITU.ComponentProducts != null)
+            {
+                //enviar para o messagem broker
+                foreach (var cp in ITU.ComponentProducts)
+                {
+                    await UpdateComponentProducts(cp, _context);
+                }
+            }
 
             //no fim
             //meter as classes todas com a data da ultima vizualização
@@ -758,6 +809,7 @@ namespace ContextAcquisition.Services
             lvr.StopsVerification = lastverification;
             lvr.SupervisorsVerification = lastverification;
             lvr.WorkersVerification = lastverification;
+            lvr.ComponentProductsVerification = lastverification;
 
             //falta meter o resto
             _context.LastVerificationRegists.Update(lvr);
@@ -1053,36 +1105,78 @@ namespace ContextAcquisition.Services
         //    }
         //}
 
+        //public static async Task UpdateLine(Line line, ContextAcquisitonDb _context)
+        //{
+        //    //Em primeiro lugar vai ver se as outras classes que estão dentro do coordinator já existem
+        //    //neste caso o worker
+        //    var coordinatorcontext = _context.Coordinators.SingleOrDefault(c => c.Id == line.CoordinatorId);
+        //    if (coordinatorcontext == null)
+        //    {
+        //        //vai criar o worker e depois mandar fazer esta função de novo
+        //        try
+        //        {
+        //            //vai criar o worker
+        //            await UpdateCoordinator(line.Coordinator, _context);
+        //            //depois de dar o update do worker retira da lista pois já foi atualizado
+        //            await UpdateLine(line, _context);
+        //            return;
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Console.WriteLine(ex.ToString());
+        //        }
+        //    }
+        //    //---------------------
+        //    //agora só tem de fazer o update da line pois apartir daqui o coordinador já existe
+        //    var lExistInContext = _context.Lines.SingleOrDefault(l => l.Id == line.Id);
+        //    if (lExistInContext == null)
+        //    {
+        //        try
+        //        {
+        //            line.Coordinator = coordinatorcontext;
+        //            line.CoordinatorId = coordinatorcontext.Id;
+        //            _context.Add(line);
+        //            await _context.SaveChangesAsync();
+        //            Console.WriteLine("line: " + line.Id.ToString() + " - Adicionado com suceso");
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Console.WriteLine(ex.ToString());
+        //        }
+        //    }
+        //    else
+        //    {
+        //        //fazer update
+        //        try
+        //        {
+        //            lExistInContext.Coordinator = coordinatorcontext;
+        //            lExistInContext.CoordinatorId = coordinatorcontext.Id;
+        //            //aqui já vai buscar ao line
+        //            lExistInContext.LastUpdate = line.LastUpdate;
+        //            lExistInContext.Name = line.Name;
+        //            lExistInContext.Priority = line.Priority;
+
+        //            _context.Update(lExistInContext);
+        //            await _context.SaveChangesAsync();
+        //            Console.WriteLine("line: " + lExistInContext.Id.ToString() + " - Atualizado com suceso");
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Console.WriteLine(ex.ToString());
+        //        }
+        //    }
+        //}
+
         public static async Task UpdateLine(Line line, ContextAcquisitonDb _context)
         {
-            //Em primeiro lugar vai ver se as outras classes que estão dentro do coordinator já existem
-            //neste caso o worker
-            var coordinatorcontext = _context.Coordinators.SingleOrDefault(c => c.Id == line.CoordinatorId);
-            if (coordinatorcontext == null)
-            {
-                //vai criar o worker e depois mandar fazer esta função de novo
-                try
-                {
-                    //vai criar o worker
-                    await UpdateCoordinator(line.Coordinator, _context);
-                    //depois de dar o update do worker retira da lista pois já foi atualizado
-                    await UpdateLine(line, _context);
-                    return;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.ToString());
-                }
-            }
-            //---------------------
-            //agora só tem de fazer o update da line pois apartir daqui o coordinador já existe
+
             var lExistInContext = _context.Lines.SingleOrDefault(l => l.Id == line.Id);
             if (lExistInContext == null)
             {
                 try
                 {
-                    line.Coordinator = coordinatorcontext;
-                    line.CoordinatorId = coordinatorcontext.Id;
+
+                    line.CoordinatorId = line.CoordinatorId;
                     _context.Add(line);
                     await _context.SaveChangesAsync();
                     Console.WriteLine("line: " + line.Id.ToString() + " - Adicionado com suceso");
@@ -1097,8 +1191,7 @@ namespace ContextAcquisition.Services
                 //fazer update
                 try
                 {
-                    lExistInContext.Coordinator = coordinatorcontext;
-                    lExistInContext.CoordinatorId = coordinatorcontext.Id;
+                    lExistInContext.CoordinatorId = line.CoordinatorId;
                     //aqui já vai buscar ao line
                     lExistInContext.LastUpdate = line.LastUpdate;
                     lExistInContext.Name = line.Name;
@@ -1117,59 +1210,105 @@ namespace ContextAcquisition.Services
 
         public static async Task UpdateProduct(Product product, ContextAcquisitonDb _context)
         {
-            //Em primeiro lugar vai ver se as outras classes, o product só tem uma lista de componentes, vamos ter de ver se todos já estão criados
-            if (product.Components.Any())
-            {
-                foreach (var comp in product.Components)
-                {
-                    var component = _context.Components.SingleOrDefault(c => c.Id == comp.Id);
-                    if (component == null)
-                    {
-                        //vai criar o component e depois mandar fazer esta função de novo
-                        try
-                        {
-                            //vai criar o component
-                            await UpdateComponent(comp, _context);
-                            //depois de dar o update do worker retira da lista pois já foi atualizado
-                            await UpdateProduct(product, _context);
-                            return;
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.ToString());
-                        }
-                    }
-                }
-            }
-            //---------------------
-            //agora só tem de fazer o update do product pois apartir daqui o coordinador já existe
+            //////Em primeiro lugar vai ver se as outras classes, o product só tem uma lista de componentes, vamos ter de ver se todos já estão criados
+            //if (product.Components.Any())
+            //{
+            //    foreach (var comp in product.Components)
+            //    {
+            //        var component = _context.Components.SingleOrDefault(c => c.Id == comp.Id);
+            //        if (component == null)
+            //        {
+            //            //vai criar o component e depois mandar fazer esta função de novo
+            //            try
+            //            {
+            //                //vai criar o component
+            //                await UpdateComponent(comp, _context);
+            //                //depois de dar o update do worker retira da lista pois já foi atualizado
+            //                await UpdateProduct(product, _context);
+            //                return;
+            //            }
+            //            catch (Exception ex)
+            //            {
+            //                Console.WriteLine(ex.ToString());
+            //            }
+            //        }
+            //    }
+            //}
+            ////---------------------
+            ////agora só tem de fazer o update do product pois apartir daqui o coordinador já existe
+            //var pExistInContext = _context.Products.SingleOrDefault(p => p.Id == product.Id);
+            //if (pExistInContext == null)
+            //{
+            //    //create product
+            //    try
+            //    {
+            //        List<Component> listComponents = new List<Component>();
+            //        if (product.Components.Any())
+            //        {
+            //            foreach (var comp1 in product.Components)
+            //            {
+            //                listComponents.Add(comp1);
+            //            }
+            //            product.Components.Clear();
+
+            //            foreach (var comp2 in listComponents)
+            //            {
+            //                var c = _context.Components.SingleOrDefault(c => c.Id == comp2.Id);
+            //                if (c != null)
+            //                {
+            //                    product.Components.Add(c);
+            //                }
+            //            }
+            //        }
+            //        _context.Add(product);
+            //        await _context.SaveChangesAsync();
+            //        Console.WriteLine("product: " + product.Id.ToString() + " - Adicionado com suceso");
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Console.WriteLine(ex.ToString());
+            //    }
+            //}
+            //else
+            //{
+            //    //fazer update
+            //    try
+            //    {
+
+            //        pExistInContext.Components.Clear();
+            //        foreach (var comp3 in product.Components)
+            //        {
+            //            var co = _context.Components.SingleOrDefault(c => c.Id == comp3.Id);
+            //            if (co != null)
+            //            {
+            //                pExistInContext.Components.Add(co);
+            //            }
+            //        }
+            //        //resto
+            //        pExistInContext.Name = product.Name;
+            //        pExistInContext.LabelReference = product.LabelReference;
+            //        pExistInContext.Cycle = product.Cycle;
+            //        pExistInContext.LastUpdate = product.LastUpdate;
+
+            //        _context.Update(pExistInContext);
+            //        await _context.SaveChangesAsync();
+            //        Console.WriteLine("product: " + pExistInContext.Id.ToString() + " - Atualizado com suceso");
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Console.WriteLine(ex.ToString());
+            //    }
+            //}
+
             var pExistInContext = _context.Products.SingleOrDefault(p => p.Id == product.Id);
             if (pExistInContext == null)
             {
-                //create product
+                //Fazer Create
                 try
                 {
-                    List<Component> listComponents = new List<Component>();
-                    if (product.Components.Any())
-                    {
-                        foreach (var comp1 in product.Components)
-                        {
-                            listComponents.Add(comp1);
-                        }
-                        product.Components.Clear();
-
-                        foreach (var comp2 in listComponents)
-                        {
-                            var c = _context.Components.SingleOrDefault(c => c.Id == comp2.Id);
-                            if (c != null)
-                            {
-                                product.Components.Add(c);
-                            }
-                        }
-                    }
                     _context.Add(product);
                     await _context.SaveChangesAsync();
-                    Console.WriteLine("product: " + product.Id.ToString() + " - Adicionado com suceso");
+                    Console.WriteLine("Product: " + product.Id.ToString() + " - Adicionado com suceso");
                 }
                 catch (Exception ex)
                 {
@@ -1181,17 +1320,6 @@ namespace ContextAcquisition.Services
                 //fazer update
                 try
                 {
-
-                    pExistInContext.Components.Clear();
-                    foreach (var comp3 in product.Components)
-                    {
-                        var co = _context.Components.SingleOrDefault(c => c.Id == comp3.Id);
-                        if (co != null)
-                        {
-                            pExistInContext.Components.Add(co);
-                        }
-                    }
-                    //resto
                     pExistInContext.Name = product.Name;
                     pExistInContext.LabelReference = product.LabelReference;
                     pExistInContext.Cycle = product.Cycle;
@@ -1199,13 +1327,14 @@ namespace ContextAcquisition.Services
 
                     _context.Update(pExistInContext);
                     await _context.SaveChangesAsync();
-                    Console.WriteLine("product: " + pExistInContext.Id.ToString() + " - Atualizado com suceso");
+                    Console.WriteLine("Product: " + pExistInContext.Id.ToString() + " - Atualizado com suceso");
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.ToString());
                 }
             }
+
         }
 
         public static async Task UpdateDevice(Device device, ContextAcquisitonDb _context)
@@ -1741,6 +1870,49 @@ namespace ContextAcquisition.Services
                     Console.WriteLine(ex.ToString());
                 }
             }
+        }
+
+
+        public static async Task UpdateComponentProducts(ComponentProduct compProduct, ContextAcquisitonDb _context)
+        {
+
+            //var cpExistInContext = _context.ComponentProducts.SingleOrDefault(c => c.Id == compProduct.Id);
+            //if (cpExistInContext == null)
+            //{
+            //    try
+            //    {
+            //        compProduct.Product = null;
+            //        compProduct.Component = null;
+            //        _context.Add(compProduct);
+            //        await _context.SaveChangesAsync();
+            //        Console.WriteLine("ComponentProduct: " + compProduct.Id.ToString() + " - Adicionado com suceso");
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Console.WriteLine(ex.ToString());
+            //    }
+            //}
+            //else
+            //{
+            //    //fazer update
+            //    try
+            //    {
+            //        cpExistInContext.ProductId = compProduct.ProductId;
+            //        cpExistInContext.ComponentId = compProduct.ComponentId;
+
+            //        _context.Update(cpExistInContext);
+            //        await _context.SaveChangesAsync();
+            //        Console.WriteLine("ComponentProduct: " + compProduct.Id.ToString() + " - Atualizado com suceso");
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Console.WriteLine(ex.ToString());
+            //    }
+            //}
+
+
+            _context.Add(compProduct);
+            await _context.SaveChangesAsync();
         }
 
         public static async Task CheckIfIsUrgentStop(Stop stop, ContextAcquisitonDb _context)

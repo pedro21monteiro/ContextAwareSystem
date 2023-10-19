@@ -29,12 +29,15 @@ namespace Models.ContextModels
 
         [JsonIgnore]
         [IgnoreDataMember]
+        [NotMapped]
         public virtual ICollection<Coordinator> Coordinators { get; set; }
         [JsonIgnore]
         [IgnoreDataMember]
+        [NotMapped]
         public virtual ICollection<Operator> Operators { get; set; }
         [JsonIgnore]
         [IgnoreDataMember]
+        [NotMapped]
         public virtual ICollection<Supervisor> Supervisors{ get; set; }
     }
 }

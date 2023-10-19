@@ -9,8 +9,9 @@ namespace Models.ContinentalModels
     {
         public Product()
         {
-            this.Components = new HashSet<Component>();
+            //this.Components = new HashSet<Component>();
             this.Production_Plans = new HashSet<Production_Plan>();
+            this.ComponentProducts = new HashSet<ComponentProduct>();
         }
 
         [Key]
@@ -24,7 +25,12 @@ namespace Models.ContinentalModels
 
         public DateTime LastUpdate { get; set; }
 
-        public virtual ICollection<Component> Components { get; set; }
+        //public virtual ICollection<Component> Components { get; set; }
+
+        [JsonIgnore]
+        [IgnoreDataMember]
+        public virtual ICollection<ComponentProduct> ComponentProducts { get; set; }
+
         [JsonIgnore]
         [IgnoreDataMember]
         public virtual ICollection<Production_Plan> Production_Plans { get; set; }

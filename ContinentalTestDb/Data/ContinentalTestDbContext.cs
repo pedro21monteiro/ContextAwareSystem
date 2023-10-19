@@ -34,5 +34,6 @@ namespace ContinentalTestDb.Data
         public DbSet<Supervisor> Supervisors { get; set; }
         public DbSet<Worker> Workers { get; set; }
         public DbSet<Request> Requests { get; set; }
+        public DbSet<ComponentProduct> ComponentProducts { get; set; }
     }
 }

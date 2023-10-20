@@ -73,7 +73,7 @@ namespace ContextBuilder.Controllers
         //---------------Coordinator
         [HttpPost]
         [Route("ChangeCoordinator")]
-        public async Task<ActionResult> ChangeCoordinator([FromBody] JsonCoordinator coordinator, int? operation)
+        public async Task<ActionResult> ChangeCoordinator([FromBody] JsonCoordinator coordinator)
         {
             var cExistInContext = _context.Coordinators.SingleOrDefault(c => c.Id == coordinator.Id);
             if (cExistInContext == null)
@@ -118,7 +118,7 @@ namespace ContextBuilder.Controllers
         //---------------Device
         [HttpPost]
         [Route("ChangeDevice")]
-        public async Task<ActionResult> ChangeDevice([FromBody] JsonDevice device, int? operation)
+        public async Task<ActionResult> ChangeDevice([FromBody] JsonDevice device)
         {
             var dExistInContext = _context.Devices.SingleOrDefault(d => d.Id == device.Id);
             if (dExistInContext == null)
@@ -164,7 +164,7 @@ namespace ContextBuilder.Controllers
         //---------------Line
         [HttpPost]
         [Route("ChangeLine")]
-        public async Task<ActionResult> ChangeLine([FromBody] JsonLine line, int? operation)
+        public async Task<ActionResult> ChangeLine([FromBody] JsonLine line)
         {
 
             var lExistInContext = _context.Lines.SingleOrDefault(l => l.Id == line.Id);
@@ -215,7 +215,7 @@ namespace ContextBuilder.Controllers
         //---------------Operator
         [HttpPost]
         [Route("ChangeOperator")]
-        public async Task<ActionResult> ChangeOperator([FromBody] JsonOperator ope, int? operation)
+        public async Task<ActionResult> ChangeOperator([FromBody] JsonOperator ope)
         {
             var oExistInContext = _context.Operators.SingleOrDefault(o => o.Id == ope.Id);
             if (oExistInContext == null)
@@ -264,7 +264,7 @@ namespace ContextBuilder.Controllers
         //---------------Product
         [HttpPost]
         [Route("ChangeProduct")]
-        public async Task<ActionResult> ChangeProduct([FromBody] JsonProduct product, int? operation)
+        public async Task<ActionResult> ChangeProduct([FromBody] JsonProduct product)
         {
             var pExistInContext = _context.Products.SingleOrDefault(p => p.Id == product.Id);
             if (pExistInContext == null)
@@ -314,7 +314,7 @@ namespace ContextBuilder.Controllers
         //---------------Production
         [HttpPost]
         [Route("ChangeProduction")]
-        public async Task<ActionResult> ChangeProduction([FromBody] JsonProduction production, int? operation)
+        public async Task<ActionResult> ChangeProduction([FromBody] JsonProduction production)
         {
             var pExistInContext = _context.Productions.SingleOrDefault(p => p.Id == production.Id);
             if (pExistInContext == null)
@@ -365,7 +365,7 @@ namespace ContextBuilder.Controllers
         //---------------ProductionPlan
         [HttpPost]
         [Route("ChangeProductionPlan")]
-        public async Task<ActionResult> ChangeProductionPlan([FromBody] JsonProductionPlan production_Plan, int? operation)
+        public async Task<ActionResult> ChangeProductionPlan([FromBody] JsonProductionPlan production_Plan)
         {
             var pExistInContext = _context.Production_Plans.SingleOrDefault(p => p.Id == production_Plan.Id);
             if (pExistInContext == null)
@@ -425,7 +425,7 @@ namespace ContextBuilder.Controllers
         //---------------Reason
         [HttpPost]
         [Route("ChangeReason")]
-        public async Task<ActionResult> ChangeReason([FromBody] JsonReason reason, int? operation)
+        public async Task<ActionResult> ChangeReason([FromBody] JsonReason reason)
         {
 
             var rExistInContext = _context.Reasons.SingleOrDefault(r => r.Id == reason.Id);
@@ -471,7 +471,7 @@ namespace ContextBuilder.Controllers
         //---------------Schedule
         [HttpPost]
         [Route("ChangeSchedule")]
-        public async Task<ActionResult> ChangeSchedule([FromBody] JsonSchedule schedule, int? operation)
+        public async Task<ActionResult> ChangeSchedule([FromBody] JsonSchedule schedule)
         {
             var sExistInContext = _context.Schedule_Worker_Lines.SingleOrDefault(s => s.Id == schedule.Id);
             if (sExistInContext == null)
@@ -541,7 +541,7 @@ namespace ContextBuilder.Controllers
         //---------------Stop
         [HttpPost]
         [Route("ChangeStop")]
-        public async Task<ActionResult> ChangeStop([FromBody] JsonStop stop, int? operation)
+        public async Task<ActionResult> ChangeStop([FromBody] JsonStop stop)
         {
             var sExistInContext = _context.Stops.SingleOrDefault(s => s.Id == stop.Id);
             if (sExistInContext == null)
@@ -602,7 +602,7 @@ namespace ContextBuilder.Controllers
         //---------------Supervisor
         [HttpPost]
         [Route("ChangeSupervisor")]
-        public async Task<ActionResult> ChangeSupervisor([FromBody] JsonSupervisor supervisor, int? operation)
+        public async Task<ActionResult> ChangeSupervisor([FromBody] JsonSupervisor supervisor)
         {
             var sExistInContext = _context.Supervisors.SingleOrDefault(s => s.Id == supervisor.Id);
             if (sExistInContext == null)
@@ -646,7 +646,7 @@ namespace ContextBuilder.Controllers
         //---------------Worker
         [HttpPost]
         [Route("ChangeWorker")]
-        public async Task<ActionResult> ChangeWorker([FromBody] JsonWorker worker, int? operation)
+        public async Task<ActionResult> ChangeWorker([FromBody] JsonWorker worker)
         {
             var wExistInContext = _context.Workers.SingleOrDefault(w => w.Id == worker.Id);
             if (wExistInContext == null)
@@ -699,7 +699,7 @@ namespace ContextBuilder.Controllers
         //---------------ComponentProduct
         [HttpPost]
         [Route("ChangeComponentProduct")]
-        public async Task<ActionResult> ChangeComponentProduct([FromBody] JsonComponentProduct componentProduct, int? operation)
+        public async Task<ActionResult> ChangeComponentProduct([FromBody] JsonComponentProduct componentProduct)
         {
             var cpExistInContext = _context.ComponentProducts.SingleOrDefault(c => c.Id == componentProduct.Id);
             if (cpExistInContext == null)

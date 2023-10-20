@@ -19,8 +19,8 @@ namespace Models.ContextModels
         public DateTime LastUpdate { get; set; }
 
         //---
-        //[JsonIgnore]
-        //[IgnoreDataMember]
+        [JsonIgnore]
+        [IgnoreDataMember]
         [NotMapped]
         public Production_Plan Prod_Plan { get; set; } = new Production_Plan();
         [ForeignKey("Production_PlanId")]

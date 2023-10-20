@@ -15,6 +15,9 @@ namespace Models.ContextModels
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
+
+        [JsonIgnore]
+        [IgnoreDataMember]
         [NotMapped]
         public Worker Worker { get; set; }
         [ForeignKey("WorkerId")]

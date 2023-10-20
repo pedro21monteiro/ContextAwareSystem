@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Context_aware_System.Migrations
 {
     [DbContext(typeof(ContextAwareDb))]
-    [Migration("20231019164728_firstStep")]
+    [Migration("20231019172550_firstStep")]
     partial class firstStep
     {
         /// <inheritdoc />
@@ -68,10 +68,6 @@ namespace Context_aware_System.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ComponentId");
-
-                    b.HasIndex("ProductId");
-
                     b.ToTable("ComponentProducts");
                 });
 
@@ -87,8 +83,6 @@ namespace Context_aware_System.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("WorkerId");
 
                     b.ToTable("Coordinators");
                 });
@@ -108,8 +102,6 @@ namespace Context_aware_System.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("LineId");
 
                     b.ToTable("Devices");
                 });
@@ -189,8 +181,6 @@ namespace Context_aware_System.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CoordinatorId");
-
                     b.ToTable("Lines");
                 });
 
@@ -206,8 +196,6 @@ namespace Context_aware_System.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("WorkerId");
 
                     b.ToTable("Operators");
                 });
@@ -258,8 +246,6 @@ namespace Context_aware_System.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Production_PlanId");
-
                     b.ToTable("Productions");
                 });
 
@@ -294,10 +280,6 @@ namespace Context_aware_System.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("LineId");
-
-                    b.HasIndex("ProductId");
 
                     b.ToTable("Production_Plans");
                 });
@@ -363,12 +345,6 @@ namespace Context_aware_System.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LineId");
-
-                    b.HasIndex("OperatorId");
-
-                    b.HasIndex("SupervisorId");
-
                     b.ToTable("Schedule_Worker_Lines");
                 });
 
@@ -403,10 +379,6 @@ namespace Context_aware_System.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LineId");
-
-                    b.HasIndex("ReasonId");
-
                     b.ToTable("Stops");
                 });
 
@@ -422,8 +394,6 @@ namespace Context_aware_System.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("WorkerId");
 
                     b.ToTable("Supervisors");
                 });
@@ -454,203 +424,6 @@ namespace Context_aware_System.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Workers");
-                });
-
-            modelBuilder.Entity("Models.ContextModels.ComponentProduct", b =>
-                {
-                    b.HasOne("Models.ContextModels.Component", null)
-                        .WithMany("ComponentProducts")
-                        .HasForeignKey("ComponentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Models.ContextModels.Product", null)
-                        .WithMany("ComponentProducts")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Models.ContextModels.Coordinator", b =>
-                {
-                    b.HasOne("Models.ContextModels.Worker", "Worker")
-                        .WithMany("Coordinators")
-                        .HasForeignKey("WorkerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Worker");
-                });
-
-            modelBuilder.Entity("Models.ContextModels.Device", b =>
-                {
-                    b.HasOne("Models.ContextModels.Line", "Line")
-                        .WithMany("Devices")
-                        .HasForeignKey("LineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Line");
-                });
-
-            modelBuilder.Entity("Models.ContextModels.Line", b =>
-                {
-                    b.HasOne("Models.ContextModels.Coordinator", "Coordinator")
-                        .WithMany("Lines")
-                        .HasForeignKey("CoordinatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Coordinator");
-                });
-
-            modelBuilder.Entity("Models.ContextModels.Operator", b =>
-                {
-                    b.HasOne("Models.ContextModels.Worker", "Worker")
-                        .WithMany("Operators")
-                        .HasForeignKey("WorkerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Worker");
-                });
-
-            modelBuilder.Entity("Models.ContextModels.Production", b =>
-                {
-                    b.HasOne("Models.ContextModels.Production_Plan", "Prod_Plan")
-                        .WithMany("Productions")
-                        .HasForeignKey("Production_PlanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Prod_Plan");
-                });
-
-            modelBuilder.Entity("Models.ContextModels.Production_Plan", b =>
-                {
-                    b.HasOne("Models.ContextModels.Line", "Line")
-                        .WithMany("Production_Plans")
-                        .HasForeignKey("LineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Models.ContextModels.Product", "Product")
-                        .WithMany("Production_Plans")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Line");
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Models.ContextModels.Schedule_Worker_Line", b =>
-                {
-                    b.HasOne("Models.ContextModels.Line", "Line")
-                        .WithMany("Schedules")
-                        .HasForeignKey("LineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Models.ContextModels.Operator", "Operator")
-                        .WithMany("Schedules")
-                        .HasForeignKey("OperatorId");
-
-                    b.HasOne("Models.ContextModels.Supervisor", "Supervisor")
-                        .WithMany("Schedules")
-                        .HasForeignKey("SupervisorId");
-
-                    b.Navigation("Line");
-
-                    b.Navigation("Operator");
-
-                    b.Navigation("Supervisor");
-                });
-
-            modelBuilder.Entity("Models.ContextModels.Stop", b =>
-                {
-                    b.HasOne("Models.ContextModels.Line", "Line")
-                        .WithMany("Stops")
-                        .HasForeignKey("LineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Models.ContextModels.Reason", "Reason")
-                        .WithMany("Stops")
-                        .HasForeignKey("ReasonId");
-
-                    b.Navigation("Line");
-
-                    b.Navigation("Reason");
-                });
-
-            modelBuilder.Entity("Models.ContextModels.Supervisor", b =>
-                {
-                    b.HasOne("Models.ContextModels.Worker", "Worker")
-                        .WithMany("Supervisors")
-                        .HasForeignKey("WorkerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Worker");
-                });
-
-            modelBuilder.Entity("Models.ContextModels.Component", b =>
-                {
-                    b.Navigation("ComponentProducts");
-                });
-
-            modelBuilder.Entity("Models.ContextModels.Coordinator", b =>
-                {
-                    b.Navigation("Lines");
-                });
-
-            modelBuilder.Entity("Models.ContextModels.Line", b =>
-                {
-                    b.Navigation("Devices");
-
-                    b.Navigation("Production_Plans");
-
-                    b.Navigation("Schedules");
-
-                    b.Navigation("Stops");
-                });
-
-            modelBuilder.Entity("Models.ContextModels.Operator", b =>
-                {
-                    b.Navigation("Schedules");
-                });
-
-            modelBuilder.Entity("Models.ContextModels.Product", b =>
-                {
-                    b.Navigation("ComponentProducts");
-
-                    b.Navigation("Production_Plans");
-                });
-
-            modelBuilder.Entity("Models.ContextModels.Production_Plan", b =>
-                {
-                    b.Navigation("Productions");
-                });
-
-            modelBuilder.Entity("Models.ContextModels.Reason", b =>
-                {
-                    b.Navigation("Stops");
-                });
-
-            modelBuilder.Entity("Models.ContextModels.Supervisor", b =>
-                {
-                    b.Navigation("Schedules");
-                });
-
-            modelBuilder.Entity("Models.ContextModels.Worker", b =>
-                {
-                    b.Navigation("Coordinators");
-
-                    b.Navigation("Operators");
-
-                    b.Navigation("Supervisors");
                 });
 #pragma warning restore 612, 618
         }

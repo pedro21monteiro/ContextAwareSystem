@@ -27,10 +27,14 @@ namespace Models.ContextModels
         public int Shift { get; set; }
         public DateTime LastUpdate { get; set; }
 
+        [JsonIgnore]
+        [IgnoreDataMember]
         [NotMapped]
         public Product Product { get; set; } = new Product();
         [ForeignKey("ProductId")]
         public int ProductId { get; set; }
+        [JsonIgnore]
+        [IgnoreDataMember]
         [NotMapped]
         public Line Line { get; set; } = new Line();
         [ForeignKey("LineId")]

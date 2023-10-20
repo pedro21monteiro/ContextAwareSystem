@@ -29,6 +29,8 @@ namespace Models.ContextModels
         public Line Line { get; set; } = new Line();
         [ForeignKey("LineId")]
         public int LineId { get; set; }
+        [JsonIgnore]
+        [IgnoreDataMember]
         [NotMapped]
         public Reason? Reason { get; set; }
         public int? ReasonId { get; set; }

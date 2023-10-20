@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Models.ContextModels
 {
@@ -12,6 +14,8 @@ namespace Models.ContextModels
         public int Type { get; set; }
 
         //---
+        [JsonIgnore]
+        [IgnoreDataMember]
         [NotMapped]
         public Line Line { get; set; } = new Line();
         [ForeignKey("LineId")]

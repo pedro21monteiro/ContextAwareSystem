@@ -300,5 +300,25 @@ namespace Testes
 
             Assert.True(teste);
         }
+
+        //ComponentProducts
+        [Fact]
+        public void ComponentProducts()
+        {
+            var ComponentProductsContinental = _contextContinental.ComponentProducts.ToList();
+            var ComponentProductsContext = _context.ComponentProducts.ToList();
+
+            bool teste = true;
+            foreach (var compProduct in ComponentProductsContinental)
+            {
+                //tem de estar na bd do contexto senão retorna erro
+                if (!ComponentProductsContext.Exists(c => c.Id == compProduct.Id && c.ComponentId == compProduct.ComponentId && c.ProductId == compProduct.ProductId))
+                {
+                    teste = false;
+                }
+            }
+
+            Assert.True(teste);
+        }
     }
 }

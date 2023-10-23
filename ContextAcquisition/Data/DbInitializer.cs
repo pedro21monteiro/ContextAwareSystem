@@ -36,7 +36,7 @@ namespace ContextAcquisition.Data
             context.LastVerificationRegists.Add(lvr);
             context.SaveChanges();
 
-            
+
         }
     }
 }

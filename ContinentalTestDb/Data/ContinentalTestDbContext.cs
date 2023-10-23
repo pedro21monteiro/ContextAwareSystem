@@ -1,6 +1,7 @@
 ﻿using Models.ContinentalModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer;
+using Models.cdc_Models;
 
 namespace ContinentalTestDb.Data
 {
@@ -35,5 +36,10 @@ namespace ContinentalTestDb.Data
         public DbSet<Worker> Workers { get; set; }
         public DbSet<Request> Requests { get; set; }
         public DbSet<ComponentProduct> ComponentProducts { get; set; }
+
+        //----------Implementação do cdc
+        public DbSet<cdc_Component> cdc_Components { get; set; }
+
+
     }
 }

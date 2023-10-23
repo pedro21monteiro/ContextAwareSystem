@@ -3,12 +3,30 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ContinentalTestAPI.Migrations
+namespace ContinentalTestDb.Migrations
 {
-    public partial class second : Migration
+    public partial class first : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "cdc_Components",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IdComponent = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Reference = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Category = table.Column<int>(type: "int", nullable: false),
+                    ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Operation = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_cdc_Components", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Components",
                 columns: table => new
@@ -56,6 +74,22 @@ namespace ContinentalTestAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Requests",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    WorkerId = table.Column<int>(type: "int", nullable: false),
+                    LineId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Requests", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Workers",
                 columns: table => new
                 {
@@ -73,24 +107,28 @@ namespace ContinentalTestAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ComponentProduct",
+                name: "ComponentProducts",
                 columns: table => new
                 {
-                    ComponentsId = table.Column<int>(type: "int", nullable: false),
-                    ProductsId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ComponentId = table.Column<int>(type: "int", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    Quantidade = table.Column<int>(type: "int", nullable: false),
+                    LastUpdate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ComponentProduct", x => new { x.ComponentsId, x.ProductsId });
+                    table.PrimaryKey("PK_ComponentProducts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ComponentProduct_Components_ComponentsId",
-                        column: x => x.ComponentsId,
+                        name: "FK_ComponentProducts_Components_ComponentId",
+                        column: x => x.ComponentId,
                         principalTable: "Components",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ComponentProduct_Products_ProductsId",
-                        column: x => x.ProductsId,
+                        name: "FK_ComponentProducts_Products_ProductId",
+                        column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -130,30 +168,6 @@ namespace ContinentalTestAPI.Migrations
                     table.PrimaryKey("PK_Operators", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Operators_Workers_WorkerId",
-                        column: x => x.WorkerId,
-                        principalTable: "Workers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "requests",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    WorkerId = table.Column<int>(type: "int", nullable: false),
-                    LineId = table.Column<int>(type: "int", nullable: false),
-                    Device = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastUpdate = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_requests", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_requests_Workers_WorkerId",
                         column: x => x.WorkerId,
                         principalTable: "Workers",
                         principalColumn: "Id",
@@ -344,9 +358,14 @@ namespace ContinentalTestAPI.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ComponentProduct_ProductsId",
-                table: "ComponentProduct",
-                column: "ProductsId");
+                name: "IX_ComponentProducts_ComponentId",
+                table: "ComponentProducts",
+                column: "ComponentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComponentProducts_ProductId",
+                table: "ComponentProducts",
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Coordinators_WorkerId",
@@ -384,11 +403,6 @@ namespace ContinentalTestAPI.Migrations
                 column: "Production_PlanId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_requests_WorkerId",
-                table: "requests",
-                column: "WorkerId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Schedule_Worker_Lines_LineId",
                 table: "Schedule_Worker_Lines",
                 column: "LineId");
@@ -422,7 +436,10 @@ namespace ContinentalTestAPI.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ComponentProduct");
+                name: "cdc_Components");
+
+            migrationBuilder.DropTable(
+                name: "ComponentProducts");
 
             migrationBuilder.DropTable(
                 name: "Devices");
@@ -431,7 +448,7 @@ namespace ContinentalTestAPI.Migrations
                 name: "Productions");
 
             migrationBuilder.DropTable(
-                name: "requests");
+                name: "Requests");
 
             migrationBuilder.DropTable(
                 name: "Schedule_Worker_Lines");

@@ -31,6 +31,8 @@ builder.Services.AddDbContext<IContextAwareDb, ContextAwareDb>(options =>
 
 //Singleton para a logica do sistema
 builder.Services.AddSingleton<SystemLogic>();
+//Singleton para a logica do sistema
+builder.Services.AddSingleton<DataService>();
 
 
 //----------------

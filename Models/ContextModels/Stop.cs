@@ -7,33 +7,13 @@ namespace Models.ContextModels
 {
     public class Stop
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
-        [Required]
         public bool Planned { get; set; }
-        [Required]
         public DateTime InitialDate { get; set; } = DateTime.Now;
-        [Required]
         public DateTime EndDate { get; set; } = DateTime.Now;
-        [Required]
         public TimeSpan Duration { get; set; }
-        [Required]
         public int Shift { get; set; }
-        public DateTime LastUpdate { get; set; }
-
-        //----
-        [JsonIgnore]
-        [IgnoreDataMember]
-        [NotMapped]
-        public Line Line { get; set; } = new Line();
-        [ForeignKey("LineId")]
-        public int LineId { get; set; }
-        [JsonIgnore]
-        [IgnoreDataMember]
-        [NotMapped]
-        public Reason? Reason { get; set; }
+        public int LineId { get; set; } 
         public int? ReasonId { get; set; }
-
     }
 }

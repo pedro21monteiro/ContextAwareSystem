@@ -250,7 +250,7 @@ namespace Context_aware_System.Controllers
             ResponseOperatorInfo roi = new ResponseOperatorInfo();
             //verificar quem é o worker
 
-            var worker = _DataService.GetWorkersByIdFirebase(OperatorIdFirebase).Result.FirstOrDefault();                
+            var worker = await _DataService.GetWorkerByIdFirebase(OperatorIdFirebase);                
             if (worker == null)
             {
                 roi.Message = "Erro ao identificar o worker!!";
@@ -260,7 +260,7 @@ namespace Context_aware_System.Controllers
             //adicionar o worker ao formato de resposta
             roi.Worker = worker;
             //encontrar o operator
-            var ope = _DataService.GetOperatorsByWorkerId(worker.Id).Result.FirstOrDefault();
+            var ope = await _DataService.GetOperatorByWorkerId(worker.Id);
             if (ope == null)
             {
                 roi.Message = "Erro ao identificar o Operator!!";
@@ -269,7 +269,7 @@ namespace Context_aware_System.Controllers
             }
             roi.Operator = ope;
             //verificar se esse operador esta a trabalhar no dia atual
-            var listSchedules = _DataService.GetSchedulesByOperatorId(ope.Id).Result;
+            var listSchedules = await _DataService.GetSchedulesByOperatorId(ope.Id);
             if(listSchedules != null)
             {
                 foreach (Schedule_Worker_Line swl in listSchedules.ToList())
@@ -292,7 +292,7 @@ namespace Context_aware_System.Controllers
             //Ir à lista de inteiros que contem os ids das linhas que o operador está a trabalhar e adicionar
             foreach (int a in listIntLineIds)
             {
-                var line = _DataService.GetLinesById(a).Result.FirstOrDefault();
+                var line = await _DataService.GetLineById(a);
                 if (line != null)
                 {
                     if (!roi.listLine.Contains(line))

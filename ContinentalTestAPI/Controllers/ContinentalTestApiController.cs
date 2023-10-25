@@ -16,354 +16,28 @@ namespace ContinentalTestAPI.Controllers
             _context = context;
         }
 
-        //[HttpGet]
-        //[Route("GetComponents")]
-        //public async Task<IActionResult> GetComponents(DateTime? InicialDate)
-        //{
-        //    List<Component> components = new List<Component>();
-
-        //    if (InicialDate != null)
-        //    {
-        //        foreach (var c in _context.Components)
-        //        {
-        //            if (c.LastUpdate.CompareTo(InicialDate) > 0)
-        //            {
-        //                components.Add(c);
-        //            }
-        //        }
-        //        return Ok(components);
-        //    }
-        //    else
-        //    {
-        //        return Ok(_context.Components.ToList());
-        //    }
-
-        //}
-
-        //[HttpGet]
-        //[Route("GetCoordinators")]
-        //public async Task<IActionResult> GetCoordinators(DateTime? InicialDate)
-        //{
-        //    List<Coordinator> coordinators = new List<Coordinator>();
-
-        //    if (InicialDate != null)
-        //    {
-        //        foreach (var c in _context.Coordinators.Include(c => c.Worker))
-        //        {
-        //            if (c.LastUpdate.CompareTo(InicialDate) > 0)
-        //            {
-        //                coordinators.Add(c);
-        //            }
-        //        }
-        //        return Ok(coordinators);
-        //    }
-        //    else
-        //    {
-        //        return Ok(_context.Coordinators.ToList());
-        //    }
-        //}
-
-        //[HttpGet]
-        //[Route("GetDevices")]
-        //public async Task<IActionResult> GetDevices(DateTime? InicialDate)
-        //{
-        //    List<Device> devices= new List<Device>();
-
-        //    if (InicialDate != null)
-        //    {
-        //        foreach (var d in _context.Devices.Include(d=>d.Line))
-        //        {
-        //            if (d.LastUpdate.CompareTo(InicialDate) > 0)
-        //            {
-        //                devices.Add(d);
-        //            }
-        //        }
-        //        return Ok(devices);
-        //    }
-        //    else
-        //    {
-        //        return Ok(_context.Devices.ToList());
-        //    }
-        //}
-
-        //[HttpGet]
-        //[Route("GetLines")]
-        //public async Task<IActionResult> GetLines(DateTime? InicialDate)
-        //{
-        //    List<Line> lines = new List<Line>();
-
-        //    if (InicialDate != null)
-        //    {
-        //        foreach (var l in _context.Lines.Include(c=>c.Coordinator))
-        //        {
-        //            if (l.LastUpdate.CompareTo(InicialDate) > 0)
-        //            {
-        //                lines.Add(l);
-        //            }
-        //        }
-        //        return Ok(lines);
-        //    }
-        //    else
-        //    {
-        //        return Ok(_context.Lines.ToList());
-        //    }
-        //}
-
-        //[HttpGet]
-        //[Route("GetOperators")]
-        //public async Task<IActionResult> GetOperators(DateTime? InicialDate)
-        //{
-        //    List<Operator> operators = new List<Operator>();
-
-        //    if (InicialDate != null)
-        //    {
-        //        foreach (var o in _context.Operators.Include(c=>c.Worker))
-        //        {
-        //            if (o.LastUpdate.CompareTo(InicialDate) > 0)
-        //            {
-        //                operators.Add(o);
-        //            }
-        //        }
-        //        return Ok(operators);
-        //    }
-        //    else
-        //    {
-        //        return Ok(_context.Operators.ToList());
-        //    }
-        //}
-
-        //[HttpGet]
-        //[Route("GetProducts")]
-        //public async Task<IActionResult> GetProducts(DateTime? InicialDate)
-        //{
-        //    List<Product> products = new List<Product>();
-
-        //    if (InicialDate != null)
-        //    {
-        //        foreach (var p in _context.Products.ToList())
-        //        {
-        //            if (p.LastUpdate.CompareTo(InicialDate) > 0)
-        //            {
-        //                products.Add(p);
-        //            }
-        //        }
-        //        return Ok(products);
-        //    }
-        //    else
-        //    {
-        //        return Ok(_context.Products.ToList());
-        //    }
-        //}
-
-        //[HttpGet]
-        //[Route("GetProductions")]
-        //public async Task<IActionResult> GetProductions(DateTime? InicialDate)
-        //{
-        //    List<Production> productions = new List<Production>();
-
-        //    if (InicialDate != null)
-        //    {
-        //        foreach (var p in _context.Productions.Include(p=>p.Prod_Plan))
-        //        {
-        //            if (p.LastUpdate.CompareTo(InicialDate) > 0)
-        //            {
-        //                productions.Add(p);
-        //            }
-        //        }
-        //        return Ok(productions);
-        //    }
-        //    else
-        //    {
-        //        return Ok(_context.Productions.ToList());
-        //    }
-        //}
-
-        //[HttpGet]
-        //[Route("GetProductionPlans")]
-        //public async Task<IActionResult> GetProductionsPlans(DateTime? InicialDate)
-        //{
-        //    List<Production_Plan> production_Plans = new List<Production_Plan>();
-
-        //    if (InicialDate != null)
-        //    {
-        //        foreach (var p in _context.Production_Plans.Include(p=>p.Line).Include(p=>p.Product))
-        //        {
-        //            if (p.LastUpdate.CompareTo(InicialDate) > 0)
-        //            {
-        //                production_Plans.Add(p);
-        //            }
-        //        }
-        //        return Ok(production_Plans);
-        //    }
-        //    else
-        //    {
-        //        return Ok(_context.Production_Plans.ToList());
-        //    }
-        //}
-
-        //[HttpGet]
-        //[Route("GetReasons")]
-        //public async Task<IActionResult> GetReasons(DateTime? InicialDate)
-        //{
-        //    List<Reason> reasons = new List<Reason>();
-
-        //    if (InicialDate != null)
-        //    {
-        //        foreach (var r in _context.Reasons)
-        //        {
-        //            if (r.LastUpdate.CompareTo(InicialDate) > 0)
-        //            {
-        //                reasons.Add(r);
-        //            }
-        //        }
-        //        return Ok(reasons);
-        //    }
-        //    else
-        //    {
-        //        return Ok(_context.Reasons.ToList());
-        //    }
-        //}
-
-        //[HttpGet]
-        //[Route("GetSchedule_Worker_Lines")]
-        //public async Task<IActionResult> GetSchedule_Worker_Lines(DateTime? InicialDate)
-        //{
-        //    List<Schedule_Worker_Line> schedule_Worker_Lines = new List<Schedule_Worker_Line>();
-
-        //    if (InicialDate != null)
-        //    {
-        //        foreach (var s in _context.Schedule_Worker_Lines.Include(s=>s.Line).Include(s=>s.Supervisor).Include(s => s.Operator))
-        //        {
-        //            if (s.LastUpdate.CompareTo(InicialDate) > 0)
-        //            {
-        //                schedule_Worker_Lines.Add(s);
-        //            }
-        //        }
-        //        return Ok(schedule_Worker_Lines);
-        //    }
-        //    else
-        //    {
-        //        return Ok(_context.Schedule_Worker_Lines.ToList());
-        //    }
-        //}
-
-        //[HttpGet]
-        //[Route("GetStops")]
-        //public async Task<IActionResult> GetStops(DateTime? InicialDate)
-        //{
-        //    List<Stop> stops = new List<Stop>();
-
-        //    if (InicialDate != null)
-        //    {
-        //        foreach (var s in _context.Stops.Include(s=>s.Reason))
-        //        {
-        //            if (s.LastUpdate.CompareTo(InicialDate) > 0)
-        //            {
-        //                stops.Add(s);
-        //            }
-        //        }
-        //        return Ok(stops);
-        //    }
-        //    else
-        //    {
-        //        return Ok(_context.Stops.ToList());
-        //    }
-        //}
-
-        //[HttpGet]
-        //[Route("GetSupervisors")]
-        //public async Task<IActionResult> GetSupervisors(DateTime? InicialDate)
-        //{
-        //    List<Supervisor> supervisors = new List<Supervisor>();
-
-        //    if (InicialDate != null)
-        //    {
-        //        foreach (var s in _context.Supervisors.Include(s=>s.Worker))
-        //        {
-        //            if (s.LastUpdate.CompareTo(InicialDate) > 0)
-        //            {
-        //                supervisors.Add(s);
-        //            }
-        //        }
-        //        return Ok(supervisors);
-        //    }
-        //    else
-        //    {
-        //        return Ok(_context.Supervisors.ToList());
-        //    }
-        //}
-
-        //[HttpGet]
-        //[Route("GetWorkers")]
-        //public async Task<IActionResult> GetWorkers(DateTime? InicialDate)
-        //{
-        //    List<Worker> workers = new List<Worker>();
-
-        //    if (InicialDate != null)
-        //    {
-        //        foreach (var w in _context.Workers)
-        //        {
-        //            if (w.LastUpdate.CompareTo(InicialDate) > 0)
-        //            {
-        //                workers.Add(w);
-        //            }
-        //        }
-        //        return Ok(workers);
-        //    }
-        //    else
-        //    {
-        //        return Ok(_context.Workers.ToList());
-        //    }
-        //}
-
-
-        //[HttpGet]
-        //[Route("GetComponentProducts")]
-        //public async Task<IActionResult> GetComponentProducts(DateTime? InicialDate)
-        //{
-        //    List<ComponentProduct> componentProducts = new List<ComponentProduct>();
-
-        //    if (InicialDate != null)
-        //    {
-        //        foreach (var p in _context.ComponentProducts.ToList())
-        //        {
-        //            if (p.LastUpdate.CompareTo(InicialDate) > 0)
-        //            {
-        //                componentProducts.Add(p);
-        //            }
-        //        }
-        //        return Ok(componentProducts);
-        //    }
-        //    else
-        //    {
-        //        return Ok(_context.ComponentProducts.ToList());
-        //    }
-        //}
-
-
-        //-----------------Sem terem os Datetimes
         [HttpGet]
         [Route("GetComponents")]
-        public async Task<IActionResult> GetComponents(int? Id, string? name, string ?reference, int? category)
+        public async Task<IActionResult> GetComponents(int? id, string? name, string ?reference, int? category)
         {
             List<Component> listComponents = new List<Component>();
-            listComponents = _context.Components.ToList();
+            listComponents = await _context.Components.ToListAsync();
             //o id só pode existir um
-            if (Id != null)
+            if (id != null)
             {
-                listComponents = listComponents.Where(c => c.Id == Id).ToList();
+                listComponents = listComponents.Where(c => c.Id.Equals(id)).ToList();
             }
             if (name != null)
             {
-                listComponents = listComponents.Where(c => c.Name == name).ToList();
+                listComponents = listComponents.Where(c => c.Name.Equals(name)).ToList();
             }
             if (reference != null)
             {
-                listComponents = listComponents.Where(c => c.Reference == reference).ToList();
+                listComponents = listComponents.Where(c => c.Reference.Equals(reference)).ToList();
             }
             if (category != null)
             {
-                listComponents = listComponents.Where(c => c.Category == category).ToList();
+                listComponents = listComponents.Where(c => c.Category.Equals(category)).ToList();
             }
 
             return Ok(listComponents);
@@ -371,67 +45,67 @@ namespace ContinentalTestAPI.Controllers
 
         [HttpGet]
         [Route("Getcoordinators")]
-        public async Task<IActionResult> GetCoordinators(int? Id, int? workerId)
+        public async Task<IActionResult> GetCoordinators(int? id, int? workerId)
         {
             List<Coordinator> listCoordinator = new List<Coordinator>();
-            listCoordinator = _context.Coordinators.ToList();
+            listCoordinator = await _context.Coordinators.ToListAsync();
             //o id só pode existir um
-            if (Id != null)
+            if (id != null)
             {
-                listCoordinator = listCoordinator.Where(c => c.Id == Id).ToList();
+                listCoordinator = listCoordinator.Where(c => c.Id.Equals(id)).ToList();
             }
             if (workerId != null)
             {
-                listCoordinator = listCoordinator.Where(c => c.WorkerId == workerId).ToList();
+                listCoordinator = listCoordinator.Where(c => c.WorkerId.Equals(workerId)).ToList();
             }
             return Ok(listCoordinator);
         }
 
         [HttpGet]
         [Route("GetDevices")]
-        public async Task<IActionResult> GetDevices(int? Id, int? Type, int? LineId)
+        public async Task<IActionResult> GetDevices(int? id, int? type, int? lineId)
         {
             List<Device> listDevice = new List<Device>();
-            listDevice = _context.Devices.ToList();
+            listDevice = await _context.Devices.ToListAsync();
             //o id só pode existir um
-            if (Id != null)
+            if (id != null)
             {
-                listDevice = listDevice.Where(d => d.Id == Id).ToList();
+                listDevice = listDevice.Where(d => d.Id.Equals(id)).ToList();
             }
-            if (Type != null)
+            if (type != null)
             {
-                listDevice = listDevice.Where(d => d.Type == Type).ToList();
+                listDevice = listDevice.Where(d => d.Type.Equals(type)).ToList();
             }
-            if (LineId != null)
+            if (lineId != null)
             {
-                listDevice = listDevice.Where(d => d.LineId == LineId).ToList();
+                listDevice = listDevice.Where(d => d.LineId.Equals(lineId)).ToList();
             }
             return Ok(listDevice);
         }
 
         [HttpGet]
         [Route("GetLines")]
-        public async Task<IActionResult> GetLines(int? Id, string? name, bool? priority, int? coordinatorId)
+        public async Task<IActionResult> GetLines(int? id, string? name, bool? priority, int? coordinatorId)
         {
             List<Line> listLines = new List<Line>();
-            listLines = _context.Lines.ToList();
+            listLines = await _context.Lines.ToListAsync();
 
             //o id só pode existir um
-            if (Id != null)
+            if (id != null)
             {
-                listLines = listLines.Where(l => l.Id == Id).ToList();
+                listLines = listLines.Where(l => l.Id.Equals(id)).ToList();
             }
             if (name != null)
             {
-                listLines = listLines.Where(l => l.Name == name).ToList();
+                listLines = listLines.Where(l => l.Name.Equals(name)).ToList();
             }
             if (priority != null)
             {
-                listLines = listLines.Where(l => l.Priority == priority).ToList();
+                listLines = listLines.Where(l => l.Priority.Equals(priority)).ToList();
             }
             if (coordinatorId != null)
             {
-                listLines = listLines.Where(l => l.CoordinatorId == coordinatorId).ToList();
+                listLines = listLines.Where(l => l.CoordinatorId.Equals(coordinatorId)).ToList();
             }
 
             return Ok(listLines);
@@ -439,18 +113,18 @@ namespace ContinentalTestAPI.Controllers
 
         [HttpGet]
         [Route("GetOperators")]
-        public async Task<IActionResult> GetOperators(int? Id, int? workerId)
+        public async Task<IActionResult> GetOperators(int? id, int? workerId)
         {
             List<Operator> listOperators = new List<Operator>();
-            listOperators = _context.Operators.ToList();
+            listOperators = await _context.Operators.ToListAsync();
             //o id só pode existir um
-            if (Id != null)
+            if (id != null)
             {
-                listOperators = listOperators.Where(o => o.Id == Id).ToList();
+                listOperators = listOperators.Where(o => o.Id.Equals(id)).ToList();
             }
             if (workerId != null)
             {
-                listOperators = listOperators.Where(o => o.WorkerId == workerId).ToList();
+                listOperators = listOperators.Where(o => o.WorkerId.Equals(workerId)).ToList();
             }
 
             return Ok(listOperators);
@@ -458,78 +132,80 @@ namespace ContinentalTestAPI.Controllers
 
         [HttpGet]
         [Route("GetProducts")]
-        public async Task<IActionResult> GetProducts(int? Id, string? name, string? labelReference, TimeSpan? cycle)
+        public async Task<IActionResult> GetProducts(int? id, string? name, string? labelReference, TimeSpan? cycle)
         {
             List<Product> listProducts = new List<Product>();
-            listProducts = _context.Products.ToList();
-            //o id só pode existir um
-            if (Id != null)
+            listProducts = await _context.Products.ToListAsync();
+
+            if (id != null)
             {
-                listProducts = listProducts.Where(p => p.Id == Id).ToList();
+                listProducts = listProducts.Where(p => p.Id.Equals(id)).ToList();
             }
             if (name != null)
             {
-                listProducts = listProducts.Where(p => p.Name == name).ToList();
+                listProducts = listProducts.Where(p => p.Name.Equals(name)).ToList();
             }
             if (labelReference != null)
             {
-                listProducts = listProducts.Where(p => p.LabelReference == labelReference).ToList();
+                listProducts = listProducts.Where(p => p.LabelReference.Equals(labelReference)).ToList();
             }
             if (cycle != null)
             {
                 listProducts = listProducts.Where(p => p.Cycle.Equals(cycle)).ToList();
             }
+
             return Ok(listProducts);
         }
 
         [HttpGet]
         [Route("GetProductions")]
-        public async Task<IActionResult> GetProductions(int? Id, int? hour, DateTime? day, int? quantity, int? prodPlanId)
+        public async Task<IActionResult> GetProductions(int? id, int? hour, DateTime? day, int? quantity, int? prodPlanId)
         {
             List<Production> listProduction = new List<Production>();
-            listProduction = _context.Productions.ToList();
-            //o id só pode existir um
-            if (Id != null)
+            listProduction = await _context.Productions.ToListAsync();
+
+            if (id != null)
             {
-                listProduction = listProduction.Where(p => p.Id == Id).ToList();
+                listProduction = listProduction.Where(p => p.Id.Equals(id)).ToList();
             }
             if (hour != null)
             {
-                listProduction = listProduction.Where(p => p.Hour == hour).ToList();
+                listProduction = listProduction.Where(p => p.Hour.Equals(hour)).ToList();
             }
-            if (hour != null)
+            if (day != null)
             {
                 listProduction = listProduction.Where(p => p.Day.Equals(day)).ToList();
             }
             if (quantity != null)
             {
-                listProduction = listProduction.Where(p => p.Quantity == quantity).ToList();
+                listProduction = listProduction.Where(p => p.Quantity.Equals(quantity)).ToList();
             }
             if (prodPlanId != null)
             {
-                listProduction = listProduction.Where(p => p.Production_PlanId == prodPlanId).ToList();
+                listProduction = listProduction.Where(p => p.Production_PlanId.Equals(prodPlanId)).ToList();
             }
+
             return Ok(listProduction);
         }
 
         [HttpGet]
         [Route("GetProdPlans")]
-        public async Task<IActionResult> GetProdPlans(int? Id, int? Goal, string? name, DateTime? inicialDate, DateTime? endDate, int? productId, int? lineId)
+        public async Task<IActionResult> GetProdPlans(int? id, int? goal, string? name, DateTime? inicialDate, DateTime? endDate, int? productId, int? lineId)
         {
             List<Production_Plan> listProdPlans = new List<Production_Plan>();
-            listProdPlans = _context.Production_Plans.ToList();
-            //o id só pode existir um
-            if (Id != null)
+            listProdPlans = await _context.Production_Plans.ToListAsync();
+
+            if (id != null)
             {
-                listProdPlans = listProdPlans.Where(p => p.Id == Id).ToList();
+                listProdPlans = listProdPlans.Where(p => p.Id.Equals(id)).ToList();
             }
-            if (Goal != null)
+            if (goal != null)
             {
-                listProdPlans = listProdPlans.Where(p => p.Goal == Goal).ToList();
+                listProdPlans = listProdPlans.Where(p => p.Goal.Equals(goal)).ToList();
             }
             if (name != null)
             {
-                listProdPlans = listProdPlans.Where(p => p.Name == name).ToList();
+                listProdPlans = listProdPlans.Where(p => p.Name.Equals(name)).ToList();
             }
             if (inicialDate != null)
             {
@@ -541,12 +217,13 @@ namespace ContinentalTestAPI.Controllers
             }
             if (productId != null)
             {
-                listProdPlans = listProdPlans.Where(p => p.ProductId == productId).ToList();
+                listProdPlans = listProdPlans.Where(p => p.ProductId.Equals(productId)).ToList();
             }
             if (lineId != null)
             {
-                listProdPlans = listProdPlans.Where(p => p.LineId == lineId).ToList();
+                listProdPlans = listProdPlans.Where(p => p.LineId.Equals(lineId)).ToList();
             }
+
             return Ok(listProdPlans);
         }
 
@@ -554,46 +231,18 @@ namespace ContinentalTestAPI.Controllers
         [Route("GetReasons")]
         public async Task<IActionResult> GetReasons(int? id, string? description)
         {
-            //            public int Id { get; set; }
-            //[Required]
-            //public string Description { get; set; } = string.Empty;
-            List<Reason> listreasons = new List<Reason>();
-            listreasons = _context.Reasons.ToList();
-            //o id só pode existir um
+            List<Reason> listReasons = new List<Reason>();
+            listReasons = await _context.Reasons.ToListAsync();
             if (id != null)
             {
-                listreasons = listreasons.Where(r => r.Id == id).ToList();
+                listReasons = listReasons.Where(r => r.Id.Equals(id)).ToList();
             }
             if (description != null)
             {
-                listreasons = listreasons.Where(r => r.Description == description).ToList();
+                listReasons = listReasons.Where(r => r.Description.Equals(description)).ToList();
             }
-            return Ok(listreasons);
-        }
 
-        [HttpGet]
-        [Route("GetRequests")]
-        public async Task<IActionResult> GetRequests(int? id, int? type, DateTime? date, int? workerId)
-        {
-            List<Request> listRequests = new List<Request>();
-            listRequests = _context.requests.ToList();
-            if (id != null)
-            {
-                listRequests = listRequests.Where(r => r.Id == id).ToList();
-            }
-            if (type != null)
-            {
-                listRequests = listRequests.Where(r => r.Type == type).ToList();
-            }
-            if (date != null)
-            {
-                listRequests = listRequests.Where(r => r.Date == date).ToList();
-            }
-            if (workerId != null)
-            {
-                listRequests = listRequests.Where(r => r.WorkerId == workerId).ToList();
-            }
-            return Ok(listRequests);
+            return Ok(listReasons);
         }
 
         [HttpGet]
@@ -601,12 +250,13 @@ namespace ContinentalTestAPI.Controllers
         public async Task<IActionResult> GetSchedules(int? id, DateTime? day, int? shift, int? lineId, int? operatorId, int? supervisorId)
         {
             List<Schedule_Worker_Line> listSchedules = new List<Schedule_Worker_Line>();
-            listSchedules = _context.Schedule_Worker_Lines.ToList();
+            listSchedules = await _context.Schedule_Worker_Lines.ToListAsync();
+
             if (id != null)
             {
-                listSchedules = listSchedules.Where(s => s.Id == id).ToList();
+                listSchedules = listSchedules.Where(s => s.Id.Equals(id)).ToList();
             }
-            if (!day.Equals(null))
+            if (day != null)
             {
                 listSchedules = listSchedules.Where(s => s.Day.Equals(day)).ToList();
             }
@@ -626,6 +276,7 @@ namespace ContinentalTestAPI.Controllers
             {
                 listSchedules = listSchedules.Where(s => s.SupervisorId == supervisorId).ToList();
             }
+
             return Ok(listSchedules);
         }
 
@@ -635,24 +286,25 @@ namespace ContinentalTestAPI.Controllers
         {
 
             List<Stop> listStops = new List<Stop>();
-            listStops = _context.Stops.ToList();
+            listStops = await _context.Stops.ToListAsync();
+
             if (id != null)
             {
-                listStops = listStops.Where(s => s.Id == id).ToList();
+                listStops = listStops.Where(s => s.Id.Equals(id)).ToList();
             }
             if (planned != null)
             {
                 listStops = listStops.Where(s => s.Planned == planned).ToList();
             }
-            if (!initialDate.Equals(null))
+            if (initialDate != null)
             {
                 listStops = listStops.Where(s => s.InitialDate.Equals(initialDate)).ToList();
             }
-            if (!endDate.Equals(null))
+            if (endDate != null)
             {
                 listStops = listStops.Where(s => s.EndDate.Equals(endDate)).ToList();
             }
-            if (!duration.Equals(null))
+            if (duration != null)
             {
                 listStops = listStops.Where(s => s.Duration.Equals(duration)).ToList();
             }
@@ -662,12 +314,13 @@ namespace ContinentalTestAPI.Controllers
             }
             if (reasonId != null)
             {
-                listStops = listStops.Where(s => s.ReasonId == reasonId).ToList();
+                listStops = listStops.Where(s => s.ReasonId.Equals(reasonId)).ToList();
             }
             if (lineId != null)
             {
-                listStops = listStops.Where(s => s.LineId == ~lineId).ToList();
+                listStops = listStops.Where(s => s.LineId.Equals(lineId)).ToList();
             }
+
             return Ok(listStops);
         }
 
@@ -676,16 +329,17 @@ namespace ContinentalTestAPI.Controllers
         public async Task<IActionResult> GetSupervisors(int? Id, int? workerId)
         {
             List<Supervisor> listSupervisor = new List<Supervisor>();
-            listSupervisor = _context.Supervisors.ToList();
-            //o id só pode existir um
+            listSupervisor = await _context.Supervisors.ToListAsync();
+
             if (Id != null)
             {
-                listSupervisor = listSupervisor.Where(c => c.Id == Id).ToList();
+                listSupervisor = listSupervisor.Where(s => s.Id.Equals(Id)).ToList();
             }
             if (workerId != null)
             {
-                listSupervisor = listSupervisor.Where(c => c.WorkerId == workerId).ToList();
+                listSupervisor = listSupervisor.Where(s => s.WorkerId.Equals(workerId)).ToList();
             }
+
             return Ok(listSupervisor);
 
         }
@@ -695,15 +349,15 @@ namespace ContinentalTestAPI.Controllers
         public async Task<IActionResult> GetWorkers(int? id, string? idFirebase, string? username, string? email, int? role)
         {
             List<Worker> listWorkers = new List<Worker>();
-            listWorkers = _context.Workers.ToList();
-            //o id só pode existir um
+            listWorkers = await _context.Workers.ToListAsync();
+
             if (id != null)
             {
-                listWorkers = listWorkers.Where(w => w.Id == id).ToList();
+                listWorkers = listWorkers.Where(w => w.Id.Equals(id)).ToList();
             }
             if (idFirebase != null)
             {
-                listWorkers = listWorkers.Where(w => w.IdFirebase == idFirebase).ToList();
+                listWorkers = listWorkers.Where(w => w.IdFirebase.Equals(idFirebase)).ToList();
             }
             if (username != null)
             {
@@ -715,9 +369,37 @@ namespace ContinentalTestAPI.Controllers
             }
             if (role != null)
             {
-                listWorkers = listWorkers.Where(w => w.Role == role).ToList();
+                listWorkers = listWorkers.Where(w => w.Role.Equals(role)).ToList();
             }
+
             return Ok(listWorkers);
+        }
+
+        [HttpGet]
+        [Route("GetComponentProducts")]
+        public async Task<IActionResult> GetComponentProducts(int? id, int? componentId, int? productId, int? quantidade)
+        {
+            List<ComponentProduct> listComponentProducts = new List<ComponentProduct>();
+            listComponentProducts = await _context.ComponentProducts.ToListAsync();
+
+            if (id != null)
+            {
+                listComponentProducts = listComponentProducts.Where(c => c.Id.Equals(id)).ToList();
+            }
+            if (componentId != null)
+            {
+                listComponentProducts = listComponentProducts.Where(c => c.ComponentId.Equals(componentId)).ToList();
+            }
+            if (productId != null)
+            {
+                listComponentProducts = listComponentProducts.Where(c => c.ProductId.Equals(productId)).ToList();
+            }
+            if (quantidade != null)
+            {
+                listComponentProducts = listComponentProducts.Where(c => c.Quantidade.Equals(quantidade)).ToList();
+            }
+
+            return Ok(listComponentProducts);
         }
     }
 }

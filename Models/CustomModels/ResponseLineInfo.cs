@@ -17,13 +17,6 @@ namespace Models.CustomModels
         public Worker Worker { get; set; } = new Worker();
         public List<Stop> listStops{ get; set; } = new List<Stop>();
         public List<ResponseProductionPlan> listProductionsByProductionPlan { get; set; } = new List<ResponseProductionPlan>();
-        
-        [JsonIgnore]
-        [IgnoreDataMember]
-        public List<Production> listProductions { get; set; } = new List<Production>();
-        [JsonIgnore]
-        [IgnoreDataMember]
-        public List<Product> listProduct { get; set; } = new List<Product>();
 
     }
 }

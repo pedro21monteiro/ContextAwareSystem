@@ -351,14 +351,13 @@ namespace Context_aware_System.Controllers
 
         //}
 
-        //Se ambos não tiverem valor vai ser visto para o dia atual
         [HttpGet]
         [Route("LineInfo")]
         public async Task<IActionResult> LineInfo(int LineId, DateTime? dtInitial, DateTime? dtFinal)
         {
-            //Formato da resposta
+            // Formato da resposta
             ResponseLineInfo rli = new ResponseLineInfo();
-            //ver a linha
+            // Verifica a linha
             var line = await _DataService.GetLineById(LineId);
             if (line == null)
             {
@@ -366,15 +365,15 @@ namespace Context_aware_System.Controllers
                 return NotFound(rli);
             }
             rli.Line = line;
-            //ver o coordenador
+            // Verifica o coordenador
             var coord = await _DataService.GetCoordinatorById(line.CoordinatorId);
-            if(coord == null)
+            if (coord == null)
             {
                 rli.Message = "Erro ao identificar o coordinator!!";
                 return NotFound(rli);
             }
             rli.Coordinator = coord;
-            //buscar o worker para dar a informação sobre ele
+            // verifica o worker para dar informações sobre ele
             var worker = await _DataService.GetWorkerById(coord.WorkerId);
             if (worker == null)
             {
@@ -382,17 +381,18 @@ namespace Context_aware_System.Controllers
                 return NotFound(rli);
             }
             rli.Worker = worker;
-            //ver as paragens que ocorreram naquela linha naquelas datas
+            // Verifica as paragens que ocorreram naquela linha naquelas datas
             var stops = await _DataService.GetStopsByLineId(line.Id);
             if (stops != null)
             {
                 rli.listStops.AddRange(stops.Where(stop => _systemLogic.IsAtributeInDatetime(dtInitial, dtFinal, stop.InitialDate, stop.EndDate)));
                 stops.Clear();
             }
-            //primeiro vai procurar pelos planos de produção que houveram nessas datas nessa linha
+
+            // Primeiro procura pelos planos de produção que houveram nessas datas nessa linha
             var productionPlans = await _DataService.GetProdPlansByLineId(line.Id);
-            //vai ver os que estão entre aquelas datas
-            if(productionPlans != null)
+            // Verifica os que estão entre aquelas datas
+            if (productionPlans != null)
             {
                 var filteredProductionPlans = productionPlans.Where(p => _systemLogic.IsAtributeInDatetime(dtInitial, dtFinal, p.InitialDate, p.EndDate)).ToList();
                 productionPlans = filteredProductionPlans;
@@ -402,75 +402,27 @@ namespace Context_aware_System.Controllers
                 rli.Message = "Não existem Planos de produções nessas datas";
                 return Ok(rli);
             }
-            //vai buscar as produções daqueles planos de produção
-            foreach(var pp in productionPlans)
-            {
+
+            // Vai buscar as produções daqueles planos de produção e adiciona diretamente ao rli.listProductionsByProductionPlan
+            foreach (var pp in productionPlans)
+            {               
+                ResponseProductionPlan RPP = new ResponseProductionPlan();
+                RPP.Production_plan = pp;
                 var productions = await _DataService.GetProductionsByProdPlanId(pp.Id);
-                //só pode guardar na lista os que as datas pertecem às datas de pesquisa
-                if(productions != null)
+                if (productions != null)
                 {
-                    rli.listProductions.AddRange(productions.Where(prod => _systemLogic.IsAtributeInDatetime(dtInitial, dtFinal, prod.Day)));
-                }
-            }
-            List<int> ProdPlanIds = new List<int>();
-            foreach(Production p in rli.listProductions)
-            {
-                if (!ProdPlanIds.Contains(p.Production_PlanId))
-                {
-                    ProdPlanIds.Add(p.Production_PlanId);
-                }
-            }
-            //vai pelos ids de planos de produção e vai buscar os ids dos produtos
-            List<int> ProductsIds = new List<int>();
-            foreach (int a in ProdPlanIds)
-            {
-                var pp = productionPlans.Where(p => p.Id == a).FirstOrDefault();
-                if (pp != null)
-                {
-                    if (!ProductsIds.Contains(pp.ProductId))
+                    var filteredProductions = productions.Where(prod => _systemLogic.IsAtributeInDatetime(dtInitial, dtFinal, prod.Day));
+                    if (filteredProductions != null)
                     {
-                        ProductsIds.Add(pp.ProductId);
+                        RPP.listProductions = filteredProductions.ToList();
                     }
                 }
-            }
-            //Agora vamos à lista dos produtos e vamos adicionalos
-            foreach(int a in ProductsIds)
-            {
-                var product = await _DataService.GetProductById(a);
+                var product = await _DataService.GetProductById(pp.ProductId);
                 if(product != null)
                 {
-                    rli.listProduct.Add(product);
+                    RPP.Product = product;
                 }
-            }
-            //Agora aqui no final vai ser preenchido o formato de dados que quero
-            foreach(var a in ProdPlanIds)
-            {
-                ResponseProductionPlan RPP = new ResponseProductionPlan();
-                var pp = productionPlans.Where(p => p.Id == a).FirstOrDefault();
-                //adicionar plano de produção
-                if(pp != null)
-                {
-                    //adicionar plano produção
-                    RPP.Production_plan = pp;
-                    //adicionar produto
-                    var product = rli.listProduct.Where(p => p.Id == pp.ProductId).FirstOrDefault();
-                    if (product != null)
-                    {
-                        RPP.Product = product;
-                    }
-                }
-                //adicionar productions
-                var productions = rli.listProductions.Where(p => p.Production_PlanId == a).ToList();
-                if(productions.Count > 0)
-                {
-                    RPP.listProductions = productions;
-                }
-                //no final só adiciona se estiver preenchido
-                if(RPP.Production_plan != null)
-                {
-                    rli.listProductionsByProductionPlan.Add(RPP);
-                }
-
+                rli.listProductionsByProductionPlan.Add(RPP);
             }
 
             rli.Message = "Info obtida com sucesso";

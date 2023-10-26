@@ -16,6 +16,5 @@ namespace Models.ContextModels
         public int ProductId { get; set; }
         public int LineId { get; set; }
 
-
     }
 }

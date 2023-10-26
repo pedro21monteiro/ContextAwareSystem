@@ -295,17 +295,12 @@ namespace Context_aware_System.Controllers
                 var line = await _DataService.GetLineById(a);
                 if (line != null)
                 {
-                    if (!roi.listLine.Contains(line))
-                    {
-                        //adicionar so uma vez caso ele tenha mais uma linha
-                        roi.listLine.Add(line);
-                    }
+                    roi.listLine.Add(line);
                 }
             }
             //--
             int nLinhas = roi.listLine.Count;
             roi.Message = "O operador " + worker.UserName + " está a trabalhar em " + nLinhas.ToString() + " linha hoje";
-
             return Ok(roi);
         }
 
@@ -356,136 +351,186 @@ namespace Context_aware_System.Controllers
 
         //}
 
-        //[HttpGet]
-        //[Route("LineInfo")]
-        //public async Task<IActionResult> LineInfo(int LineId, DateTime? dtInitial, DateTime? dtFinal)
-        //{
-        //    //Formato da resposta
-        //    ResponseLineInfo rli = new ResponseLineInfo();
+        //Se ambos não tiverem valor vai ser visto para o dia atual
+        [HttpGet]
+        [Route("LineInfo")]
+        public async Task<IActionResult> LineInfo(int LineId, DateTime? dtInitial, DateTime? dtFinal)
+        {
+            //Formato da resposta
+            ResponseLineInfo rli = new ResponseLineInfo();
+            //ver a linha
+            var line = await _DataService.GetLineById(LineId);
+            if (line == null)
+            {
+                rli.Message = "Erro ao identificar a Line!!";
+                return NotFound(rli);
+            }
+            rli.Line = line;
+            //ver o coordenador
+            var coord = await _DataService.GetCoordinatorById(line.CoordinatorId);
+            if(coord == null)
+            {
+                rli.Message = "Erro ao identificar o coordinator!!";
+                return NotFound(rli);
+            }
+            rli.Coordinator = coord;
+            //buscar o worker para dar a informação sobre ele
+            var worker = await _DataService.GetWorkerById(coord.WorkerId);
+            if (worker == null)
+            {
+                rli.Message = "Erro ao identificar o worker!!";
+                return NotFound(rli);
+            }
+            rli.Worker = worker;
+            //ver as paragens que ocorreram naquela linha naquelas datas
+            var stops = await _DataService.GetStopsByLineId(line.Id);
+            if (stops != null)
+            {
+                rli.listStops.AddRange(stops.Where(stop => _systemLogic.IsAtributeInDatetime(dtInitial, dtFinal, stop.InitialDate, stop.EndDate)));
+                stops.Clear();
+            }
+            //primeiro vai procurar pelos planos de produção que houveram nessas datas nessa linha
+            var productionPlans = await _DataService.GetProdPlansByLineId(line.Id);
+            //vai ver os que estão entre aquelas datas
+            if(productionPlans != null)
+            {
+                var filteredProductionPlans = productionPlans.Where(p => _systemLogic.IsAtributeInDatetime(dtInitial, dtFinal, p.InitialDate, p.EndDate)).ToList();
+                productionPlans = filteredProductionPlans;
+            }
+            if (productionPlans == null)
+            {
+                rli.Message = "Não existem Planos de produções nessas datas";
+                return Ok(rli);
+            }
+            //vai buscar as produções daqueles planos de produção
+            foreach(var pp in productionPlans)
+            {
+                var productions = await _DataService.GetProductionsByProdPlanId(pp.Id);
+                //só pode guardar na lista os que as datas pertecem às datas de pesquisa
+                if(productions != null)
+                {
+                    rli.listProductions.AddRange(productions.Where(prod => _systemLogic.IsAtributeInDatetime(dtInitial, dtFinal, prod.Day)));
+                }
+            }
+            List<int> ProdPlanIds = new List<int>();
+            foreach(Production p in rli.listProductions)
+            {
+                if (!ProdPlanIds.Contains(p.Production_PlanId))
+                {
+                    ProdPlanIds.Add(p.Production_PlanId);
+                }
+            }
+            //vai pelos ids de planos de produção e vai buscar os ids dos produtos
+            List<int> ProductsIds = new List<int>();
+            foreach (int a in ProdPlanIds)
+            {
+                var pp = productionPlans.Where(p => p.Id == a).FirstOrDefault();
+                if (pp != null)
+                {
+                    if (!ProductsIds.Contains(pp.ProductId))
+                    {
+                        ProductsIds.Add(pp.ProductId);
+                    }
+                }
+            }
+            //Agora vamos à lista dos produtos e vamos adicionalos
+            foreach(int a in ProductsIds)
+            {
+                var product = await _DataService.GetProductById(a);
+                if(product != null)
+                {
+                    rli.listProduct.Add(product);
+                }
+            }
+            //Agora aqui no final vai ser preenchido o formato de dados que quero
+            foreach(var a in ProdPlanIds)
+            {
+                ResponseProductionPlan RPP = new ResponseProductionPlan();
+                var pp = productionPlans.Where(p => p.Id == a).FirstOrDefault();
+                //adicionar plano de produção
+                if(pp != null)
+                {
+                    //adicionar plano produção
+                    RPP.Production_plan = pp;
+                    //adicionar produto
+                    var product = rli.listProduct.Where(p => p.Id == pp.ProductId).FirstOrDefault();
+                    if (product != null)
+                    {
+                        RPP.Product = product;
+                    }
+                }
+                //adicionar productions
+                var productions = rli.listProductions.Where(p => p.Production_PlanId == a).ToList();
+                if(productions.Count > 0)
+                {
+                    RPP.listProductions = productions;
+                }
+                //no final só adiciona se estiver preenchido
+                if(RPP.Production_plan != null)
+                {
+                    rli.listProductionsByProductionPlan.Add(RPP);
+                }
 
-        //    var line = _context.Lines.Where(l => l.Id == LineId)
-        //        .Include(l => l.Stops)
-        //        .Include(l => l.Coordinator)
-        //        .FirstOrDefault();
-        //    //ver se no coordinator da a informação do worker
-        //    if (line == null)
-        //    {
-        //        rli.Message = "Erro ao identificar a Line!!";
+            }
 
-        //        return NotFound(rli);
-        //    }
-        //    rli.Coordinator = line.Coordinator;
-        //    rli.Line = line;
-        //    //Lista de stops
-        //    var stops = _context.Stops.Where(s => s.LineId == line.Id).ToList();
-        //    if (stops.Any())
-        //    {
-        //        rli.listStops = stops;
-        //    }
+            rli.Message = "Info obtida com sucesso";
+            return Ok(rli);
+        }
 
-        //    var _productions = _context.Production_Plans.Where(p => p.LineId == line.Id).ToList();
-
-        //    var production_plan = _productions.Where(p => _systemLogic.IsAtributeInDatetime(p.InitialDate, p.EndDate, DateTime.Now) == true).FirstOrDefault();
-
-        //    if (production_plan == null)
-        //    {
-        //        rli.Message = "Não existe planos de produção na linha no momento!!";
-        //        return NotFound(rli);
-        //    }
-        //    //Encontrar as produções
-        //    var productions = _context.Productions.Where(p => p.Production_PlanId == production_plan.Id).ToList();
-        //    if (!productions.Any())
-        //    {
-        //        rli.Message = "Não existe produções nessa data!!";
-        //    }
-        //    //encontrar o product pois é lá que tem a a product reference
-        //    var product = _context.Products.Where(p => p.Id == production_plan.ProductId).FirstOrDefault();
-
-        //    if (product == null)
-        //    {
-        //        rli.Message = "Erro ao identificar a product!!";
-        //        return NotFound(rli);
-        //    }
-
-        //    rli.listProductions = productions;
-        //    rli.Product = product;
-        //    rli.Message = "Info obtida com sucesso";
-        //    return Ok(rli);
-        //}
-
-        //[HttpGet]
-        //[Route("SupervisorInfo")]
-        //public async Task<IActionResult> SupervisorInfo(string SupervisorIdFirebase, DateTime? Day)
-        //{
-        //    //Formato da resposta
-        //    ResponseSupervisorInfo rsi = new ResponseSupervisorInfo();
-        //    var worker = _context.Workers.Where(w => w.IdFirebase == SupervisorIdFirebase).FirstOrDefault();
-
-        //    if (worker == null)
-        //    {
-        //        rsi.Message = "Erro ao identificar o worker!!";
-
-        //        return NotFound(rsi);
-        //    }
-        //    //encontrar o operator
-        //    var sup = _context.Supervisors.Where(s => s.WorkerId == worker.Id)
-        //        .Include(s => s.Worker)
-        //        .FirstOrDefault();
-        //    if (sup == null)
-        //    {
-        //        rsi.Message = "Erro ao identificar o Supervisor!!";
-
-        //        return NotFound(rsi);
-        //    }
-        //    rsi.Supervisor = sup;
-        //    //verificar se esse operador esta a trabalhar no dia atual
-        //    DateTime DataPesquisa = new DateTime();
-        //    if (Day.HasValue)
-        //    {
-        //        DataPesquisa = (DateTime)Day;
-        //    }
-        //    else
-        //    {
-        //        DataPesquisa = DateTime.Now;
-        //    }
-        //    foreach (Schedule_Worker_Line swl in _context.Schedule_Worker_Lines)
-        //    {
-        //        if (swl.Supervisor != null)
-        //        {
-        //            if (swl.SupervisorId == sup.Id && swl.Day.Date == DataPesquisa.Date)
-        //            {
-        //                rsi.listSWL.Add(swl);
-        //            }
-        //        }
-        //    }
-
-        //    //ver em quantas linhas esta a trabalhar
-        //    foreach (Schedule_Worker_Line swl2 in rsi.listSWL)
-        //    {
-        //        foreach (Line l in _context.Lines)
-        //        {
-        //            if (l.Id == swl2.LineId)
-        //            {
-        //                if (!rsi.listLine.Contains(l))
-        //                {
-        //                    //adicionar so uma vez caso ele tenha mais que um horario numa linha
-        //                    rsi.listLine.Add(l);
-        //                }
-        //            }
-        //        }
-
-        //    }
-        //    int nLinhas = rsi.listLine.Count;
-        //    if (nLinhas == 0)
-        //    {
-        //        rsi.Message = "O Supervisor " + worker.UserName + " não está a supervisionar nenhuma linha - Dia: " + DataPesquisa.Date.ToString();
-        //    }
-        //    else
-        //    {
-        //        rsi.Message = "O operador " + worker.UserName + " está a supervisionar " + nLinhas.ToString() + " linha(s) - Dia: " + DataPesquisa.Date.ToString();
-        //    }
-        //    return Ok(rsi);            
-        //}
+        [HttpGet]
+        [Route("SupervisorInfo")]
+        public async Task<IActionResult> SupervisorInfo(string SupervisorIdFirebase, DateTime? Day)
+        {
+            //Formato da resposta
+            ResponseSupervisorInfo rsi = new ResponseSupervisorInfo();
+            var worker = await _DataService.GetWorkerByIdFirebase(SupervisorIdFirebase);
+            if (worker == null)
+            {
+                rsi.Message = "Erro ao identificar o worker!!";
+                return NotFound(rsi);
+            }
+            rsi.Worker = worker;
+            //encontrar o supervisor
+            var sup = await _DataService.GetSupervisorByWorkerId(worker.Id);
+            if (sup == null)
+            {
+                rsi.Message = "Erro ao identificar o Supervisor!!";
+                return NotFound(rsi);
+            }
+            rsi.Supervisor = sup;
+            //verificar se esse operador esta a trabalhar no dia atual
+            //Se a DataPesquisa estiver preenchida fica igual a day, senão fica igual a datetime
+            DateTime DataPesquisa = Day ?? DateTime.Now;
+            //vai buscar os horarios do supervisor
+            var schedules = await _DataService.GetSchedulesBySupervisorId(sup.Id);
+            //vai aos schedules e guarda no formato de resposta os horarios do superviso do dia atual
+            if(schedules != null)
+            {
+                rsi.listSWL = schedules.Where(s => s.Day.Date.Equals(DataPesquisa.Date)).ToList();
+            }
+            //ver em quantas linhas esta a trabalhar e guardar numa lista de inteiros para poupar pedidos efetuados à camada de integração
+            List<int> listIntLineIds = new List<int>();
+            foreach (Schedule_Worker_Line swl in rsi.listSWL)
+            {
+                if (!listIntLineIds.Contains(swl.LineId))
+                {
+                    listIntLineIds.Add(swl.LineId);
+                }
+            }
+            //Ir à lista de inteiros que contem os ids das linhas que o supervisor está a trabalhar e adicionar
+            foreach (int a in listIntLineIds)
+            {
+                var line = await _DataService.GetLineById(a);
+                if (line != null)
+                {
+                    rsi.listLine.Add(line);
+                }
+            }
+            //--
+            int nLinhas = rsi.listLine.Count;
+            rsi.Message = "O supervisor " + worker.UserName + " supervisionou " + nLinhas.ToString() + " linhas no dia: " + DataPesquisa.Date.ToString("yyyy-MM-dd");
+            return Ok(rsi);
+        }
 
 
         //////método que retorna a lista de produção da linha x no turno atual
@@ -609,37 +654,37 @@ namespace Context_aware_System.Controllers
         //    return Ok(rpi);
         //}
 
-        //[HttpGet]
-        //[Route("CoordinatorInfo")]
-        //public async Task<IActionResult> CoordinatorInfo(string WorkerIdFirebase)
-        //{
-        //    //Formato da resposta
-        //    ResponseCoordinatorInfo rci = new ResponseCoordinatorInfo();
-        //    var worker = _context.Workers.Where(w => w.IdFirebase == WorkerIdFirebase).FirstOrDefault();
+        [HttpGet]
+        [Route("CoordinatorInfo")]
+        public async Task<IActionResult> CoordinatorInfo(string WorkerIdFirebase)
+        {
+            //Formato da resposta
+            ResponseCoordinatorInfo rci = new ResponseCoordinatorInfo();
+            var worker = await _DataService.GetWorkerByIdFirebase(WorkerIdFirebase);              
+            if (worker == null)
+            {
+                rci.Message = "Erro ao identificar o worker!!";
+                return NotFound(rci);
+            }
+            rci.Worker = worker;
+            //encontrar o coordinador
+            var coord = await _DataService.GetCoordinatorByWorkerId(worker.Id);
+            if (coord == null)
+            {
+                rci.Message = "Erro ao identificar o Coordinator!!";
+                return NotFound(rci);
+            }
+            rci.Coordinator = coord;
+            //encontrar as lines que ele é responsável
+            var lines = await _DataService.GetLinesByCoordinatorId(coord.Id);
+            if(lines != null)
+            {
+                rci.listLine = lines;
+            }
+            rci.Message = "Info obtida com sucesso!!";
 
-        //    if (worker == null)
-        //    {
-        //        rci.Message = "Erro ao identificar o worker!!";
-
-        //        return NotFound(rci);
-        //    }
-        //    //encontrar o operator
-        //    var coord = _context.Coordinators.Where(c => c.WorkerId == worker.Id)
-        //        .Include(c => c.Worker)
-        //        .Include(c => c.Lines)
-        //        .FirstOrDefault();
-        //    if (coord == null)
-        //    {
-        //        rci.Message = "Erro ao identificar o Coordinator!!";
-
-        //        return NotFound(rci);
-        //    }
-        //    rci.Message = "Info obtida com sucesso!!";
-        //    rci.Coordinator = coord;
-        //    rci.listLine = coord.Lines.ToList();
-
-        //    return Ok(rci);
-        //}
+            return Ok(rci);
+        }
 
         //[HttpGet]
         //[Route("NotificationRecommendation")]
@@ -804,18 +849,6 @@ namespace Context_aware_System.Controllers
         //    rnr.nextDate = anterior;
         //    return Ok(rnr);
         //}
-
-
-
-        //-----------depois apagar é só para testar------------------------------------
-        [HttpGet]
-        [Route("GetDeviceById")]
-        public async Task<IActionResult> GetDeviceById(int id)
-        {
-            var device = await _DataService.GetDeviceById(id);
-            return Ok(device);
-        }
-
 
     }
 }

@@ -2,19 +2,28 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Models.CustomModels
 {
     public class ResponseLineInfo
     {
-        public string Message { get; set; } = String.Empty;//Mensagem de erro 
+        public string Message { get; set; } = String.Empty;
         public Line Line { get; set; } = new Line();
-        public List<Stop> listStops{ get; set; } = new List<Stop>();
         public Coordinator Coordinator { get; set; } = new Coordinator();
-        public Product Product { get; set; } = new Product();
+        public Worker Worker { get; set; } = new Worker();
+        public List<Stop> listStops{ get; set; } = new List<Stop>();
+        public List<ResponseProductionPlan> listProductionsByProductionPlan { get; set; } = new List<ResponseProductionPlan>();
+        
+        [JsonIgnore]
+        [IgnoreDataMember]
         public List<Production> listProductions { get; set; } = new List<Production>();
+        [JsonIgnore]
+        [IgnoreDataMember]
+        public List<Product> listProduct { get; set; } = new List<Product>();
 
     }
 }

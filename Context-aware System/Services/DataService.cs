@@ -13,7 +13,7 @@ namespace ContextServer.Services
         //Lista de serviços que podem ser pedidos à camada de integração com as bases de dados
 
         //--------------------------Serviços relacionados com Components-------------------------------------
-        public async Task<List<Component>> GetComponents(int? id, string? name, string? reference, int? category)
+        public async Task<List<Component>?> GetComponents(int? id, string? name, string? reference, int? category)
         {
             string searchLink = string.Empty;
             if (id != null)
@@ -59,18 +59,17 @@ namespace ContextServer.Services
 
             try
             {
-                List<Component> listComponents = new List<Component>();
-                listComponents = await httpClient.GetFromJsonAsync<List<Component>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetComponents/" + searchLink);
-                return listComponents;
+                return await httpClient.GetFromJsonAsync<List<Component>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetComponents/" + searchLink);
             }
             catch (Exception e)
             {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
                 return null;
             }
         }
 
         //--------------------------Serviços relacionados com Coordinators-------------------------------------
-        public async Task<List<Coordinator>> GetCoordinators(int? id, int? workerId)
+        public async Task<List<Coordinator>?> GetCoordinators(int? id, int? workerId)
         {
             string searchLink = string.Empty;
             if (id != null)
@@ -92,18 +91,43 @@ namespace ContextServer.Services
 
             try
             {
-                List<Coordinator> listCoordinators = new List<Coordinator>();
-                listCoordinators = await httpClient.GetFromJsonAsync<List<Coordinator>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetCoordinators/" + searchLink);
-                return listCoordinators;
+                return await httpClient.GetFromJsonAsync<List<Coordinator>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetCoordinators/" + searchLink);
             }
             catch (Exception e)
             {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
+                return null;
+            }
+        }
+        public async Task<Coordinator?> GetCoordinatorByWorkerId(int workerId)
+        {
+            try
+            {
+                var listCoordinators = await GetCoordinators(null, workerId);
+                return listCoordinators?.FirstOrDefault();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
+                return null;
+            }
+        }
+        public async Task<Coordinator?> GetCoordinatorById(int id)
+        {
+            try
+            {
+                var listCoordinators = await GetCoordinators(id, null);
+                return listCoordinators?.FirstOrDefault();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
                 return null;
             }
         }
 
         //--------------------------Serviços relacionados com Devices-------------------------------------
-        public async Task<List<Device>> GetDevices(int? id, int? type, int? lineId)
+        public async Task<List<Device>?> GetDevices(int? id, int? type, int? lineId)
         {
             string searchLink = string.Empty;
             if (id != null)
@@ -137,39 +161,30 @@ namespace ContextServer.Services
 
             try
             {
-                List<Device> listDevices = new List<Device>();
-                listDevices = await httpClient.GetFromJsonAsync<List<Device>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetDevices/" + searchLink);
-                return listDevices;
+                return await httpClient.GetFromJsonAsync<List<Device>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetDevices/" + searchLink);
             }
             catch (Exception e)
             {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
                 return null;
             }
         }
-        public async Task<Device> GetDeviceById(int id)
+        public async Task<Device?> GetDeviceById(int id)
         {
             try
             {
-                var listDevices = await GetDevices(id,null,null);
-                if (listDevices != null)
-                {
-                    var device = listDevices.FirstOrDefault();
-                    if (device != null)
-                    {
-                        return device;
-                    }
-                    else return null;
-                }
-                else return null;
+                var listDevices = await GetDevices(id, null, null);
+                return listDevices?.FirstOrDefault();
             }
             catch (Exception e)
             {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
                 return null;
             }
         }
 
         //--------------------------Serviços relacionados com Lines-------------------------------------
-        public async Task<List<Line>> GetLines(int? id, string? name, bool? priority, int? coordinatorId)
+        public async Task<List<Line>?> GetLines(int? id, string? name, bool? priority, int? coordinatorId)
         {
             string searchLink = string.Empty;
             if (id != null)
@@ -215,39 +230,42 @@ namespace ContextServer.Services
 
             try
             {
-                List<Line> listLines = new List<Line>();
-                listLines = await httpClient.GetFromJsonAsync<List<Line>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetLines/" + searchLink);
-                return listLines;
+                return await httpClient.GetFromJsonAsync<List<Line>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetLines/" + searchLink);
             }
             catch (Exception e)
             {
-                return null; // Lide adequadamente com exceções aqui
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
+                return null;
             }
         }
-        public async Task<Line> GetLineById(int id)
+        public async Task<Line?> GetLineById(int id)
         {
             try
             {
-                var listLines = await GetLines(id,null,null,null);
-                if (listLines != null)
-                {
-                    var line = listLines.FirstOrDefault();
-                    if (line != null)
-                    {
-                        return line;
-                    }
-                    else return null;
-                }
-                else return null;
+                var listLines = await GetLines(id, null, null, null);
+                return listLines?.FirstOrDefault();
             }
             catch (Exception e)
             {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
+                return null;
+            }
+        }
+        public async Task<List<Line>?> GetLinesByCoordinatorId(int coordinatorId)
+        {
+            try
+            {
+                return await GetLines(null, null, null, coordinatorId);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
                 return null;
             }
         }
 
         //--------------------------Serviços relacionados com Operators-------------------------------------
-        public async Task<List<Operator>> GetOperators(int? id, int? workerId)
+        public async Task<List<Operator>?> GetOperators(int? id, int? workerId)
         {
             string searchLink = string.Empty;
             if (id != null)
@@ -269,45 +287,30 @@ namespace ContextServer.Services
 
             try
             {
-                List<Operator> listOperators = new List<Operator>();
-                listOperators = await httpClient.GetFromJsonAsync<List<Operator>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetOperators/" + searchLink);
-                return listOperators;
+                return await httpClient.GetFromJsonAsync<List<Operator>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetOperators/" + searchLink);
             }
             catch (Exception e)
             {
-                return null; // Lide adequadamente com exceções aqui
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
+                return null;
             }
         }
-        public async Task<Operator> GetOperatorByWorkerId(int workerId)
+        public async Task<Operator?> GetOperatorByWorkerId(int workerId)
         {
             try
             {
                 var listOperators = await GetOperators(null, workerId);
-                if(listOperators != null)
-                {
-                    var ope = listOperators.FirstOrDefault();
-                    if (ope != null)
-                    {
-                        return ope;
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }
-                else
-                {
-                    return null;
-                }
+                return listOperators?.FirstOrDefault();
             }
             catch (Exception e)
             {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
                 return null;
             }
         }
 
         //--------------------------Serviços relacionados com Products-------------------------------------
-        public async Task<List<Product>> GetProducts(int? id, string? name, string? labelReference, TimeSpan? cycle)
+        public async Task<List<Product>?> GetProducts(int? id, string? name, string? labelReference, TimeSpan? cycle)
         {
             string searchLink = string.Empty;
             if (id != null)
@@ -352,18 +355,31 @@ namespace ContextServer.Services
             }
             try
             {
-                List<Product> listProducts = new List<Product>();
-                listProducts = await httpClient.GetFromJsonAsync<List<Product>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetProducts/" + searchLink);
-                return listProducts;
+                return await httpClient.GetFromJsonAsync<List<Product>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetProducts/" + searchLink);
             }
             catch (Exception e)
             {
-                return null; 
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
+                return null;
+            }
+        }
+
+        public async Task<Product?> GetProductById(int id)
+        {
+            try
+            {
+                var listProducts = await GetProducts(id, null, null, null);
+                return listProducts?.FirstOrDefault();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
+                return null;
             }
         }
 
         //--------------------------Serviços relacionados com Productions-------------------------------------
-        public async Task<List<Production>> GetProductions(int? id, int? hour, DateTime? day, int? quantity, int? prodPlanId)
+        public async Task<List<Production>?> GetProductions(int? id, int? hour, DateTime? day, int? quantity, int? prodPlanId)
         {
             string searchLink = string.Empty;
             if (id != null)
@@ -421,18 +437,30 @@ namespace ContextServer.Services
 
             try
             {
-                List<Production> listProductions = new List<Production>();
-                listProductions = await httpClient.GetFromJsonAsync<List<Production>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetProductions/" + searchLink);
-                return listProductions;
+                return await httpClient.GetFromJsonAsync<List<Production>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetProductions/" + searchLink);
             }
             catch (Exception e)
             {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
+                return null;
+            }
+        }
+
+        public async Task<List<Production>?> GetProductionsByProdPlanId(int prodPlanid)
+        {
+            try
+            {
+                return await GetProductions(null, null, null, null, prodPlanid);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
                 return null;
             }
         }
 
         //--------------------------Serviços relacionados com productionPlans-------------------------------------
-        public async Task<List<Production_Plan>> GetProdPlans(int? id, int? goal, string? name, DateTime? inicialDate, DateTime? endDate, int? productId, int? lineId)
+        public async Task<List<Production_Plan>?> GetProdPlans(int? id, int? goal, string? name, DateTime? inicialDate, DateTime? endDate, int? productId, int? lineId)
         {
             string searchLink = string.Empty;
             if (id != null)
@@ -513,18 +541,43 @@ namespace ContextServer.Services
             }
             try
             {
-                List<Production_Plan> listProdPlans = new List<Production_Plan>();
-                listProdPlans = await httpClient.GetFromJsonAsync<List<Production_Plan>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetProdPlans/" + searchLink);
-                return listProdPlans;
+                return await httpClient.GetFromJsonAsync<List<Production_Plan>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetProdPlans/" + searchLink); ;
             }
             catch (Exception e)
             {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
                 return null;
             }
         }
 
+        public async Task<List<Production_Plan>?> GetProdPlansByLineId(int lineId)
+        {
+            try
+            {
+                return await GetProdPlans(null, null, null, null, null, null,lineId);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
+                return null;
+            }
+        }
+
+        public async Task<Production_Plan?> GetProdPlanById(int id)
+        {
+            try
+            {
+                var listProductionPlans = await GetProdPlans(id, null, null, null, null, null, null);
+                return listProductionPlans?.FirstOrDefault();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
+                return null;
+            }
+        }
         //--------------------------Serviços relacionados com Reasons-------------------------------------
-        public async Task<List<Reason>> GetReasons(int? id, string? description)
+        public async Task<List<Reason>?> GetReasons(int? id, string? description)
         {
             string searchLink = string.Empty;
             if (id != null)
@@ -543,21 +596,19 @@ namespace ContextServer.Services
                 }
                 searchLink += "description=" + description;
             }
-
             try
             {
-                List<Reason> listReasons = new List<Reason>();
-                listReasons = await httpClient.GetFromJsonAsync<List<Reason>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetReasons/" + searchLink);
-                return listReasons;
+                return await httpClient.GetFromJsonAsync<List<Reason>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetReasons/" + searchLink);
             }
             catch (Exception e)
             {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
                 return null;
             }
         }
 
         //--------------------------Serviços relacionados com Schedules-------------------------------------
-        public async Task<List<Schedule_Worker_Line>> GetSchedules(int? id, DateTime? day, int? shift, int? lineId, int? operatorId, int? supervisorId)
+        public async Task<List<Schedule_Worker_Line>?> GetSchedules(int? id, DateTime? day, int? shift, int? lineId, int? operatorId, int? supervisorId)
         {
             string searchLink = string.Empty;
             if (id != null)
@@ -624,35 +675,43 @@ namespace ContextServer.Services
                 }
                 searchLink += "supervisorId=" + supervisorId.ToString();
             }
-
             try
             {
-                List<Schedule_Worker_Line> listSchedules = new List<Schedule_Worker_Line>();
-                listSchedules = await httpClient.GetFromJsonAsync<List<Schedule_Worker_Line>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetSchedules/" + searchLink);
-                return listSchedules;
+                return await httpClient.GetFromJsonAsync<List<Schedule_Worker_Line>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetSchedules/" + searchLink);
             }
             catch (Exception e)
             {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
                 return null;
             }
         }
-        public async Task<List<Schedule_Worker_Line>> GetSchedulesByOperatorId(int operatorId)
+        public async Task<List<Schedule_Worker_Line>?> GetSchedulesByOperatorId(int operatorId)
         {
             try
             {
-                List<Schedule_Worker_Line> listSchedules = new List<Schedule_Worker_Line>();
-                listSchedules = await GetSchedules(null, null, null, null, operatorId, null);
-                return listSchedules;
-
+                return await GetSchedules(null, null, null, null, operatorId, null);
             }
             catch (Exception e)
             {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
+                return null;
+            }
+        }
+        public async Task<List<Schedule_Worker_Line>?> GetSchedulesBySupervisorId(int SupervisorId)
+        {
+            try
+            {
+                return await GetSchedules(null, null, null, null, null, SupervisorId);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
                 return null;
             }
         }
 
         //--------------------------Serviços relacionados com Stops-------------------------------------
-        public async Task<List<Stop>> GetStops(int? id, bool? planned, DateTime? initialDate, DateTime? endDate, TimeSpan? duration, int? shift, int? lineId, int? reasonId)
+        public async Task<List<Stop>?> GetStops(int? id, bool? planned, DateTime? initialDate, DateTime? endDate, TimeSpan? duration, int? shift, int? lineId, int? reasonId)
         {
             string searchLink = string.Empty;
             if (id != null)
@@ -746,18 +805,28 @@ namespace ContextServer.Services
 
             try
             {
-                List<Stop> listStops = new List<Stop>();
-                listStops = await httpClient.GetFromJsonAsync<List<Stop>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetStops/" + searchLink);
-                return listStops;
+                return await httpClient.GetFromJsonAsync<List<Stop>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetStops/" + searchLink);
             }
             catch (Exception e)
             {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
                 return null;
             }
         }
-
+        public async Task<List<Stop>?> GetStopsByLineId(int lineId)
+        {
+            try
+            {
+                return await GetStops(null, null, null, null, null, null, lineId, null);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
+                return null;
+            }
+        }
         //--------------------------Serviços relacionados com Supervisors-------------------------------------
-        public async Task<List<Supervisor>> GetSupervisors(int? id, int? workerId)
+        public async Task<List<Supervisor>?> GetSupervisors(int? id, int? workerId)
         {
             string searchLink = string.Empty;
             if (id != null)
@@ -779,18 +848,30 @@ namespace ContextServer.Services
 
             try
             {
-                List<Supervisor> listSupervisors = new List<Supervisor>();
-                listSupervisors = await httpClient.GetFromJsonAsync<List<Supervisor>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetSupervisors/" + searchLink);
-                return listSupervisors;
+                return await httpClient.GetFromJsonAsync<List<Supervisor>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetSupervisors/" + searchLink);
             }
             catch (Exception e)
             {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
+                return null;
+            }
+        }
+        public async Task<Supervisor?> GetSupervisorByWorkerId(int workerId)
+        {
+            try
+            {
+                var listSupervisotrs = await GetSupervisors(null, workerId);
+                return listSupervisotrs?.FirstOrDefault();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
                 return null;
             }
         }
 
         //--------------------------Serviços relacionados com Workers-------------------------------------
-        public async Task<List<Worker>> GetWorkers(int? id, string? idFirebase, string? username, string? email, int? role)
+        public async Task<List<Worker>?> GetWorkers(int? id, string? idFirebase, string? username, string? email, int? role)
         {
             string searchLink = string.Empty;
             if (id != null)
@@ -845,48 +926,45 @@ namespace ContextServer.Services
                 }
                 searchLink += "role=" + role.ToString();
             }
-
             try
             {
-                List<Worker> listWorkers = new List<Worker>();
-                listWorkers = await httpClient.GetFromJsonAsync<List<Worker>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetWorkers/" + searchLink);
-                return listWorkers;
+                return await httpClient.GetFromJsonAsync<List<Worker>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetWorkers/" + searchLink);
             }
             catch (Exception e)
             {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
                 return null;
             }
         }
-        public async Task<Worker> GetWorkerByIdFirebase(string idFirebase)
+        public async Task<Worker?> GetWorkerByIdFirebase(string idFirebase)
         {
             try
             {              
                 var listWorkers = await GetWorkers(null, idFirebase, null, null, null);
-                if (listWorkers != null)
-                {
-                    var worker = listWorkers.FirstOrDefault();
-                    if(worker != null)
-                    {
-                        return worker;
-                    }
-                    else
-                    {
-                        return null;
-                    };
-                }
-                else
-                {
-                    return null;
-                }
+                return listWorkers?.FirstOrDefault();
             }
             catch (Exception e)
             {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
+                return null;
+            }
+        }
+        public async Task<Worker?> GetWorkerById(int id)
+        {
+            try
+            {
+                var listWorkers = await GetWorkers(id, null, null, null, null);
+                return listWorkers?.FirstOrDefault();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
                 return null;
             }
         }
 
         //--------------------------Serviços relacionados com ComponentProducts-------------------------------------
-        public async Task<List<ComponentProduct>> GetComponentProducts(int? id, int? componentId, int? productId, int? quantidade)
+        public async Task<List<ComponentProduct>?> GetComponentProducts(int? id, int? componentId, int? productId, int? quantidade)
         {
             string searchLink = string.Empty;
             if (id != null)
@@ -932,13 +1010,12 @@ namespace ContextServer.Services
 
             try
             {
-                List<ComponentProduct> listComponentProducts = new List<ComponentProduct>();
-                listComponentProducts = await httpClient.GetFromJsonAsync<List<ComponentProduct>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetComponentProducts/" + searchLink);
-                return listComponentProducts;
+                return await httpClient.GetFromJsonAsync<List<ComponentProduct>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetComponentProducts/" + searchLink); ;
             }
             catch (Exception e)
             {
-                return null; 
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
+                return null;
             }
         }
 

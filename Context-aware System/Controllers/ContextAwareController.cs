@@ -27,221 +27,96 @@ namespace Context_aware_System.Controllers
             _DataService = dataService;
         }
 
-        //-----------------------------------Device Info Antigo e corrigido---------------------------
+        /// <summary>
+        /// Fornecerá informações relativas ao dispositivo, incluindo o seu tipo (wearable, tablet, etc). 
+        /// Se o dispositivo estiver associado a um operador, serão fornecidas informações sobre a linha de produção à 
+        /// qual o dispositivo está associado, o produto atualmente em produção, a sua etiqueta, a lista de componentes 
+        /// em falta na linha que precisam de reposição e o turno de trabalho. Se o dispositivo estiver associado a um 
+        /// coordenador, serão fornecidas informações sobre o coordenador e as linhas de produção pelas quais é responsável.
+        /// </summary>
+        [HttpGet]
+        [Route("DeviceInfo")]
+        public async Task<IActionResult> DeviceInfo(int deviceId)
+        {
+            ResponseDeviceInfo rdi = new ResponseDeviceInfo();
+            //Encontrar o device
+            var device = await _DataService.GetDeviceById(deviceId);
+            if (device == null)
+            {
+                rdi.Message = "Erro ao identificar o Device";
+                return NotFound(rdi);
+            }
+            //encontrar a linha
+            var line = await _DataService.GetLineById(device.LineId);
+            if (line == null)
+            {
+                rdi.Message = "Erro ao identificar a line";
+                return NotFound(rdi);
+            }
+            rdi.Line = line;
+            // ver qual o tipo do device se é 1-weareble(utilizado por operadores, os outros vao utilizados por coordenadores, exe: 2 - tablet
+            //se for wearable
+            if (device.Type == 1)
+            {
+                rdi.Type = "Weareble-Operator";
+                //chegar ao produto
+                // Procura o plano de produção que a linha tem no momento (só pode estar um ativo)
+                var productionPlans = await _DataService.GetProdPlansByLineId(line.Id);
+                var filteredProductionPlan = productionPlans?.FirstOrDefault(p => _systemLogic.IsAtributeInDatetime(p.InitialDate, p.EndDate, DateTime.Now));
+                if (filteredProductionPlan == null)
+                {
+                    rdi.Message = "A linha não tem nenhum plano de produção ativo no momento";
+                    return Ok(rdi);
+                }
+                //chegar ao produto
+                var product = await _DataService.GetProductById(filteredProductionPlan.ProductId);
+                if(product == null)
+                {
+                    rdi.Message = "Erro ao identificar o Produto";
+                    return Ok(rdi);
+                }
+                rdi.ProductName = product.Name;
+                rdi.TagReference = product.LabelReference;
+                //dizer o turno do momento
+                rdi.WorkShift = _systemLogic.GetAtualWorkShift(DateTime.Now).Shift;
+                //--------------------------------------------------------------Falta implementar a função dos missing Components
+                rdi.Message = "Info obtida com sucesso!!";
+            }
+            //se não for wearable vai ser um coordenador
+            else
+            {
+                rdi.Type = "Tablet/Outro-Coordenator";
+                //encontrar o worker
+                var coordinator = await _DataService.GetCoordinatorById(line.CoordinatorId);
+                if (coordinator == null)
+                {
+                    rdi.Message = "Erro ao identificar o coordinador";
+                    return NotFound(rdi);
+                }
+                var worker = await _DataService.GetWorkerById(coordinator.WorkerId);
+                if (worker == null)
+                {
+                    rdi.Message = "Erro ao identificar o worker!!";
+                    return NotFound(rdi);
+                }
+                rdi.Worker = worker;
+                //encontrar as lines que ele é responsável
+                var lines = await _DataService.GetLinesByCoordinatorId(coordinator.Id);
+                if (lines == null)
+                {
+                    rdi.Message = "O coordenador não é responsavel por nenhuma linha de produção";
+                    return Ok(rdi);
+                }
+                rdi.Message = "Info obtida com sucesso!!";
+                rdi.listResponsavelLines = lines;
+            }
+            return Ok(rdi);
+        }
 
-        //[HttpGet]
-        //[Route("DeviceInfo")]
-        //public async Task<IActionResult> DeviceInfo(int deviceId)
-        //{
-        //    //Formato da resposta
-        //    ResponseDeviceInfo rdi = new ResponseDeviceInfo();
-
-        //    //encontrar o device
-        //    var device = _context.Devices.Where(d => d.Id == deviceId).FirstOrDefault();
-        //    if (device == null)
-        //    {
-        //        rdi.Message = "Erro ao identificar o Device!!";
-        //        return NotFound(rdi);
-        //    }
-        //    //O line id já esta no device
-
-        //    //ver qual o tipo do device se é 1- weareble dos operadors, os outros para já vao ser dos coordenadores, exe: 2-tablet
-        //    //se for wearable
-        //    //adicionar as listas necessárias para esta função
-
-        //    //encontrar a linha
-        //    var _line = _context.Lines.Where(l => l.Id == device.LineId)
-        //        .Include(l => l.Coordinator)
-        //        .FirstOrDefault();
-        //    if (_line == null)
-        //    {
-        //        rdi.Message = "Erro ao identificar a linha de produção!!";
-        //        return NotFound(rdi);
-        //    }
-        //    rdi.line = _line;
-
-        //    if (device.Type == 1)
-        //    {
-
-        //        rdi.Type = "Weareble-Operator";
-        //        //ver o workshift do operador
-        //        WorkShift ws = _systemLogic.GetAtualWorkShift(DateTime.Now);
-        //        rdi.WorkShift = ws.Shift;
-        //        rdi.WorkShiftString = ws.ShiftString;
-
-        //        //encontrar o product reference
-        //        Production_Plan production_Plan = new Production_Plan();
-        //        var _production_plan = _context.Production_Plans.Where(p => p.LineId == _line.Id).ToList();
-        //        if (_production_plan.Any())
-        //        {
-        //            foreach (var productionPlan in _production_plan)
-        //            {
-        //                if (_systemLogic.dateTimeIsActiveNow(productionPlan.InitialDate, productionPlan.EndDate))
-        //                {
-        //                    production_Plan = productionPlan;
-        //                }
-        //            }
-        //        }
-
-        //        if (production_Plan.Name == "")
-        //        {
-        //            rdi.Message = "Erro ao identificar o plano de produção!!";
-        //            return NotFound(rdi);
-        //        }
-
-        //        //encontrar o product pois é lá que tem a a product reference
-        //        var product = _context.Products.Where(p => p.Id == production_Plan.ProductId)
-        //            .Include(p => p.ComponentProducts)
-        //            .FirstOrDefault();
-        //        if (product == null)
-        //        {
-        //            rdi.Message = "Erro ao identificar o product!!";
-        //            return NotFound(rdi);
-        //        }
-        //        //aqui já temos a referencia do produto
-        //        rdi.ProductName = product.Name;
-
-        //        //Agora aqui vou ter de encher a lista de missing componentes que para já vou meter todos e encontrar a tag
-        //        //para já vai ser os componentes do produto
-
-
-        //        foreach (var cp in product.ComponentProducts)
-        //        {
-        //            var component = _context.Components.FirstOrDefault(c => c.Id == cp.ComponentId);
-        //            if(component != null)
-        //            {
-        //                rdi.listMissingComponentes.Add(component);
-        //            }
-        //        }
-        //    }
-        //    else
-        //    {
-        //        //se não for wearable vai ser operado por um coordenador
-        //        rdi.Type = "Tablet/Outro-Coordenator";
-
-        //        //encontrar o worker
-        //        var coordinator = _context.Coordinators.Where(c => c.Id == _line.CoordinatorId)
-        //            .Include(c => c.Worker)
-        //            .Include(c => c.Lines)
-        //            .FirstOrDefault();
-        //        if (coordinator == null)
-        //        {
-        //            rdi.Message = "Erro ao identificar o worker!!";
-        //            return NotFound(rdi);
-        //        }
-        //        rdi.Coordinator = coordinator;
-
-        //    }
-        //    rdi.Message = "Info obtida com sucesso!!";
-        //    return Ok(rdi);
-        //}
-        //[HttpGet]
-        //[Route("DeviceInfo")]
-        //public async Task<IActionResult> DeviceInfo(int deviceId)
-        //{
-        //    //Formato da resposta
-        //    ResponseDeviceInfo rdi = new ResponseDeviceInfo();
-        //    //encontrar o device
-        //    var device = _context.Devices.Where(d => d.Id == deviceId).FirstOrDefault();
-        //    if (device == null)
-        //    {
-        //        rdi.Message = "Erro ao identificar o Device!!";
-        //        return NotFound(rdi);
-        //    }
-        //    //O line id já esta no device
-
-        //    //ver qual o tipo do device se é 1- weareble dos operadors, os outros para já vao ser dos coordenadores, exe: 2-tablet
-        //    //se for wearable
-        //    //adicionar as listas necessárias para esta função
-
-        //    //encontrar a linha
-        //    var _line = _context.Lines.Where(l => l.Id == device.LineId)
-        //        .Include(l => l.Coordinator)
-        //        .FirstOrDefault();
-        //    if (_line == null)
-        //    {
-        //        rdi.Message = "Erro ao identificar a linha de produção!!";
-        //        return NotFound(rdi);
-        //    }
-        //    rdi.line = _line;
-
-        //    if (device.Type == 1)
-        //    {
-
-        //        rdi.Type = "Weareble-Operator";
-        //        //ver o workshift do operador
-        //        WorkShift ws = _systemLogic.GetAtualWorkShift(DateTime.Now);
-        //        rdi.WorkShift = ws.Shift;
-        //        rdi.WorkShiftString = ws.ShiftString;
-
-        //        //encontrar o product reference
-        //        Production_Plan production_Plan = new Production_Plan();
-        //        var _production_plan = _context.Production_Plans.Where(p => p.LineId == _line.Id).ToList();
-        //        if (_production_plan.Any())
-        //        {
-        //            foreach (var productionPlan in _production_plan)
-        //            {
-        //                if (_systemLogic.dateTimeIsActiveNow(productionPlan.InitialDate, productionPlan.EndDate))
-        //                {
-        //                    production_Plan = productionPlan;
-        //                }
-        //            }
-        //        }
-
-        //        if (production_Plan.Name == "")
-        //        {
-        //            rdi.Message = "Erro ao identificar o plano de produção!!";
-        //            return NotFound(rdi);
-        //        }
-
-        //        //encontrar o product pois é lá que tem a a product reference
-        //        var product = _context.Products.Where(p => p.Id == production_Plan.ProductId)
-        //            .Include(p => p.ComponentProducts)
-        //            .FirstOrDefault();
-        //        if (product == null)
-        //        {
-        //            rdi.Message = "Erro ao identificar o product!!";
-        //            return NotFound(rdi);
-        //        }
-        //        //aqui já temos a referencia do produto
-        //        rdi.ProductName = product.Name;
-
-        //        //Agora aqui vou ter de encher a lista de missing componentes que para já vou meter todos e encontrar a tag
-        //        //para já vai ser os componentes do produto
-
-
-        //        foreach (var cp in product.ComponentProducts)
-        //        {
-        //            var component = _context.Components.FirstOrDefault(c => c.Id == cp.ComponentId);
-        //            if (component != null)
-        //            {
-        //                rdi.listMissingComponentes.Add(component);
-        //            }
-        //        }
-        //    }
-        //    else
-        //    {
-        //        //se não for wearable vai ser operado por um coordenador
-        //        rdi.Type = "Tablet/Outro-Coordenator";
-
-        //        //encontrar o worker
-        //        var coordinator = _context.Coordinators.Where(c => c.Id == _line.CoordinatorId)
-        //            .Include(c => c.Worker)
-        //            .Include(c => c.Lines)
-        //            .FirstOrDefault();
-        //        if (coordinator == null)
-        //        {
-        //            rdi.Message = "Erro ao identificar o worker!!";
-        //            return NotFound(rdi);
-        //        }
-        //        rdi.Coordinator = coordinator;
-
-        //    }
-        //    rdi.Message = "Info obtida com sucesso!!";
-        //    return Ok(rdi);
-        //}
-        ////---------------
-
+        /// <summary>
+        /// Fornecerá informações relativas ao operador e às linhas de produção nas quais ele está a 
+        /// trabalhar no dia atual, juntamente com os respetivos horários de trabalho.
+        /// </summary>
         [HttpGet]
         [Route("OperatorInfo")]
         public async Task<IActionResult> OperatorInfo(string OperatorIdFirebase)
@@ -304,53 +179,49 @@ namespace Context_aware_System.Controllers
             return Ok(roi);
         }
 
-        //[HttpGet]
-        //[Route("NewStopsInfo")]
-        //public async Task<IActionResult> NewStopsInfo(DateTime? dtInitial, DateTime? dtFinal, bool? planned)
-        //{
-        //    ResponseNewStopsInfo rnsi = new ResponseNewStopsInfo();
+        /// <summary>
+        /// Fornece informações sobre as paragens que ocorreram de acordo com as datas inseridas, dependendo de se as paragens foram planeadas ou não.
+        /// </summary>
+        [HttpGet]
+        [Route("NewStopsInfo")]
+        public async Task<IActionResult> StopsInfo(DateTime? dtInitial, DateTime? dtFinal, bool? planned)
+        {
+            ResponseStopsInfo rnsi = new ResponseStopsInfo();
+            var stops = await _DataService.GetStops(null, planned, null, null, null, null, null, null);
+            //ver sops que ocorreram entre aquelas datas
+            if(dtInitial.HasValue || dtFinal.HasValue)
+            {
+                var stopsFiltered = stops?.Where(s => _systemLogic.IsAtributeInDatetime(dtInitial, dtFinal, s.InitialDate, s.EndDate));
+                stops = stopsFiltered?.ToList();
+            }
+            if (stops == null || !stops.Any())
+            {
+                rnsi.Message = "Não existem paragens nessas datas";
+                return Ok(rnsi);
+            }
+            foreach (var stop in stops)
+            {
+                StopResponse stopResponse = new StopResponse();
+                stopResponse.Stop = stop;
+                if (stop.ReasonId != null)
+                {
+                    var reason = await _DataService.GetReasonById(stop.ReasonId.Value);
+                    if (reason != null)
+                    {
+                        stopResponse.Description = reason.Description;
+                    }
+                }
+                rnsi.listNewStops.Add(stopResponse);
+            }
+            rnsi.Message = "Info obtida com sucesso";
+            return Ok(rnsi);
+        }
 
-        //    //ver as novas paragens
-        //    rnsi.listNewStops = new List<Stop>();
-        //    List<Stop> stops = new List<Stop>();
-        //    if(planned == null)
-        //    {
-        //        stops = _context.Stops
-        //        .Include(s => s.Reason)
-        //        .ToList();
-        //    }
-        //    else
-        //    {
-        //        stops = _context.Stops.Where(s => s.Planned == planned)
-        //        .Include(s => s.Reason)
-        //        .ToList();
-        //    }
-
-        //    if (!stops.Any())
-        //    {
-        //        rnsi.Message = "Não existe paragens nessas datas!!";
-        //        return NotFound(rnsi);
-        //    }
-        //    foreach (var stop in stops)
-        //    {
-        //        if(_systemLogic.IsAtributeInDatetime(dtInitial, dtFinal, stop.InitialDate, stop.EndDate) == true)
-        //        {
-        //            rnsi.listNewStops.Add(stop);
-        //        }
-        //    }
-        //    if(rnsi.listNewStops.Any())
-        //    {
-        //        rnsi.Message = "Info obtida com sucesso!!";
-        //        return Ok(rnsi);
-        //    }
-        //    else
-        //    {
-        //        rnsi.Message = "Não existe paragens nessas datas!!";
-        //        return NotFound(rnsi);
-        //    }
-
-        //}
-
+        /// <summary>
+        /// Fornecerá informações relativas à linha de produção, disponibilizará dados sobre as paragens e as 
+        /// produções de produtos que ocorreram na mesma, de acordo com as datas inseridas. Além disso, fornecerá
+        /// informações sobre o coordenador responsável pela linha e os produtos que estão ou estiveram a ser produzidos durante essas datas.
+        /// </summary>
         [HttpGet]
         [Route("LineInfo")]
         public async Task<IActionResult> LineInfo(int LineId, DateTime? dtInitial, DateTime? dtFinal)
@@ -388,7 +259,6 @@ namespace Context_aware_System.Controllers
                 rli.listStops.AddRange(stops.Where(stop => _systemLogic.IsAtributeInDatetime(dtInitial, dtFinal, stop.InitialDate, stop.EndDate)));
                 stops.Clear();
             }
-
             // Primeiro procura pelos planos de produção que houveram nessas datas nessa linha
             var productionPlans = await _DataService.GetProdPlansByLineId(line.Id);
             // Verifica os que estão entre aquelas datas
@@ -402,33 +272,36 @@ namespace Context_aware_System.Controllers
                 rli.Message = "Não existem Planos de produções nessas datas";
                 return Ok(rli);
             }
-
             // Vai buscar as produções daqueles planos de produção e adiciona diretamente ao rli.listProductionsByProductionPlan
             foreach (var pp in productionPlans)
-            {               
-                ResponseProductionPlan RPP = new ResponseProductionPlan();
-                RPP.Production_plan = pp;
+            {
+                ProductionPlanResponse PPR = new ProductionPlanResponse();
+                PPR.Production_plan = pp;
                 var productions = await _DataService.GetProductionsByProdPlanId(pp.Id);
                 if (productions != null)
                 {
                     var filteredProductions = productions.Where(prod => _systemLogic.IsAtributeInDatetime(dtInitial, dtFinal, prod.Day));
                     if (filteredProductions != null)
                     {
-                        RPP.listProductions = filteredProductions.ToList();
+                        PPR.listProductions = filteredProductions.ToList();
                     }
                 }
                 var product = await _DataService.GetProductById(pp.ProductId);
                 if(product != null)
                 {
-                    RPP.Product = product;
+                    PPR.Product = product;
                 }
-                rli.listProductionsByProductionPlan.Add(RPP);
+                rli.listProductionsByProductionPlan.Add(PPR);
             }
 
             rli.Message = "Info obtida com sucesso";
             return Ok(rli);
         }
 
+        /// <summary>
+        /// Disponibiliza informações relativas ao supervisor e às linhas de produção que ele está a 
+        /// supervisionar no dia atual, juntamente com os respetivos horários de trabalho, de acordo com o pedido.
+        /// </summary>
         [HttpGet]
         [Route("SupervisorInfo")]
         public async Task<IActionResult> SupervisorInfo(string SupervisorIdFirebase, DateTime? Day)
@@ -485,127 +358,162 @@ namespace Context_aware_System.Controllers
         }
 
 
-        //////método que retorna a lista de produção da linha x no turno atual
-        //[HttpGet]
-        //[Route("GetProductionsInfo")]
-        //public async Task<IActionResult> GetProductionsInfo(int LineId, DateTime? dtInitial, DateTime? dtFinal)
-        //{
-        //    ResponseGetProductionsInfo rgpi = new ResponseGetProductionsInfo();
+        /// <summary>
+        /// Fornece a lista de produções de produtos ocorridas de acordo com as datas inseridas.
+        /// </summary>
+        [HttpGet]
+        [Route("GetProductionsInfo")]
+        public async Task<IActionResult> GetProductionsInfo(int LineId, DateTime? dtInitial, DateTime? dtFinal)
+        {
+            ResponseGetProductionsInfo rgpi = new ResponseGetProductionsInfo();
+            var line = await _DataService.GetLineById(LineId);
+            if (line == null)
+            {
+                rgpi.Message = "Erro ao identificar a Line!!";
+                return NotFound(rgpi);
+            }
+            // Primeiro procura pelos planos de produção que houveram nessas datas nessa linha
+            var productionPlans = await _DataService.GetProdPlansByLineId(line.Id);
+            // Verifica os que estão entre aquelas datas
+            if (productionPlans != null)
+            {
+                var filteredProductionPlans = productionPlans.Where(p => _systemLogic.IsAtributeInDatetime(dtInitial, dtFinal, p.InitialDate, p.EndDate)).ToList();
+                productionPlans = filteredProductionPlans;
+            }
+            if (productionPlans == null)
+            {
+                rgpi.Message = "Não existem Planos de produções nessas datas";
+                return Ok(rgpi);
+            }
+            foreach (var pp in productionPlans)
+            {
+                var productions = await _DataService.GetProductionsByProdPlanId(pp.Id);
+                if (productions != null)
+                {
+                    var filteredProductions = productions.Where(prod => _systemLogic.IsAtributeInDatetime(dtInitial, dtFinal, prod.Day));
+                    if (filteredProductions != null)
+                    {
+                        rgpi.listProductions.AddRange(filteredProductions.ToList());
+                    }
+                }
+            }
+            if(rgpi.listProductions == null || !rgpi.listProductions.Any())
+            {
+                rgpi.Message = "Não foram encontradas produções nessa linha";
+                return Ok(rgpi);
+            }
+            rgpi.Message = "Info obtida com sucesso!!";
+            return Ok(rgpi);
+        }
 
-        //    var listpordPlans = _context.Production_Plans.Where(p => p.LineId == LineId).ToList();
-        //    if (listpordPlans.Any())
-        //    {
-        //        //se encontrar produções nessa linha vamos ver as produções da mesma
-        //        //var listproductions = _context.Productions.Where(p=>p.Production_PlanId)
-        //        foreach (var pp in listpordPlans)
-        //        {
-        //            foreach(var production in _context.Productions.Include(p=>p.Prod_Plan).ThenInclude(x=>x.Product))
-        //            {
-        //                if(production.Production_PlanId == pp.Id && _systemLogic.IsAtributeInDatetime(dtInitial,dtFinal,production.Day) == true)
-        //                {
-        //                    rgpi.listProductions.Add(production);
-        //                }
-        //            }
-        //        }
-        //        rgpi.Message = "Info obtida com sucesso!!";
-        //        return Ok(rgpi);
-        //    }
-        //    else
-        //    {
-        //        rgpi.Message = "Não encontrou produções nessa linha!!";
-        //        return Ok(rgpi);
-        //    }
 
-        //}
+        /// <summary>
+        /// Disponibiliza a lista de componentes que estão a ser utilizados na linha de produção à qual o dispositivo está associado.
+        /// </summary>
+        [HttpGet]
+        [Route("GetComponentsDeviceInfo")]
+        public async Task<IActionResult> GetComponentsDeviceInfo(int deviceId)
+        {
+            ResponseGetComponentsDeviceInfo rgcdi = new ResponseGetComponentsDeviceInfo();
+            //encontrar o device
+            var device = await _DataService.GetDeviceById(deviceId);
+            if (device == null)
+            {
+                rgcdi.Message = "Erro ao identificar o Device!!";
+                return NotFound(rgcdi);
+            }
+            var line = await _DataService.GetLineById(device.LineId);
+            if (line == null)
+            {
+                rgcdi.Message = "Erro ao identificar a linha de produção!!";
+                return NotFound(rgcdi);
+            }
+            //encontrar o plano de produção na linha no momento
+            var productionPlans = await _DataService.GetProdPlansByLineId(line.Id);
+            if (productionPlans == null || !productionPlans.Any())
+            {
+                rgcdi.Message = "Não existe nenhum plano de produção na linha no momento!!";
+                return NotFound(rgcdi);
+            }
+            //Verifica os que estão entre aquelas datas
+            var filteredProductionPlans = productionPlans.Where(p => _systemLogic.IsAtributeInDatetime(p.InitialDate, p.EndDate, DateTime.Now)).ToList();
+            var productionPlan = filteredProductionPlans?.FirstOrDefault();
+            if (productionPlan == null)
+            {
+                rgcdi.Message = "Não existe nenhum plano de produção na linha no momento!!";
+                return NotFound(rgcdi);
+            }
+            //encontrar o produto
+            var product = await _DataService.GetProductById(productionPlan.ProductId);
+            if (product == null)
+            {
+                rgcdi.Message = "Erro ao identificar a product!!";
+                return NotFound(rgcdi);
+            }
+            //Ir buscar os components daquele produto
+            var listComponentProducts = await _DataService.GetComponentProductsByProductId(product.Id);
+            if(listComponentProducts == null || !listComponentProducts.Any())
+            {
+                rgcdi.Message = "O produto " + product.Name + " ainda não tem os componentes definidos";
+                return Ok(rgcdi);
+            }
+            foreach(var cp in listComponentProducts)
+            {
+                var component = await _DataService.GetComponentById(cp.ComponentId);
+                if(component != null)
+                {
+                    rgcdi.listComponents.Add(component);
+                }
+            }
+            rgcdi.Message = "Info obtida com sucesso!!";
+            return Ok(rgcdi);
+        }
 
+        /// <summary>
+        /// Fornecerá informações relativas ao produto que está a ser produzido na linha de produção no momento em que o pedido foi efetuado.
+        /// </summary>
+        [HttpGet]
+        [Route("ProductInfo")]
+        public async Task<IActionResult> ProductInfo(int LineId)
+        {
+            //Formato da resposta
+            ResponseProductInfo rpi = new ResponseProductInfo();
+            var line = await _DataService.GetLineById(LineId);
+            if (line == null)
+            {
+                rpi.Message = "Erro ao identificar a Line!!";
+                return NotFound(rpi);
+            }
+            //Ver se naquela linha tem algum plano de produção ativo no momento
+            var productionPlans = await _DataService.GetProdPlansByLineId(line.Id);
+            if (productionPlans == null || !productionPlans.Any())
+            {
+                rpi.Message = "Não existe nenhum plano de produção na linha no momento!!";
+                return NotFound(rpi);
+            }
+            // Verifica os que estão entre aquelas datas
+            var filteredProductionPlans = productionPlans.Where(p => _systemLogic.IsAtributeInDatetime(p.InitialDate, p.EndDate, DateTime.Now)).ToList();
+            var productionPlan = filteredProductionPlans?.FirstOrDefault();
+            if (productionPlan == null)
+            {
+                rpi.Message = "Não existe nenhum plano de produção na linha no momento!!";
+                return NotFound(rpi);
+            }
+            //vai procurar o produto
+            var product = await _DataService.GetProductById(productionPlan.ProductId);
+            if (product == null)
+            {
+                rpi.Message = "Erro ao identificar a product!!";
+                return NotFound(rpi);
+            }
+            rpi.Product = product;
+            rpi.Message = "Info obtida com sucesso";
+            return Ok(rpi);
+        }
 
-        //////método que retorna a lista de components a partir do id do device
-        //[HttpGet]
-        //[Route("GetComponentsDeviceInfo")]
-        //public async Task<IActionResult> GetComponentsDeviceInfo(int deviceId)
-        //{
-        //    ResponseGetComponentsDeviceInfo rgcdi = new ResponseGetComponentsDeviceInfo();
-        //    //encontrar o device
-        //    var device = _context.Devices.Where(d => d.Id == deviceId).FirstOrDefault();
-        //    if (device == null)
-        //    {
-        //        rgcdi.Message = "Erro ao identificar o Device!!";
-        //        return NotFound(rgcdi);
-        //    }
-        //    var _line = _context.Lines.Where(l => l.Id == device.LineId).FirstOrDefault();
-        //    if (_line == null)
-        //    {
-        //        rgcdi.Message = "Erro ao identificar a linha de produção!!";
-        //        return NotFound(rgcdi);
-        //    }
-        //    var _productions = _context.Production_Plans.Where(p => p.LineId == _line.Id)
-        //        .Include(p => p.Product)
-        //        .ToList();
-
-        //    var production = _productions.Where(p => _systemLogic.IsAtributeInDatetime(p.InitialDate, p.EndDate, DateTime.Now) == true).FirstOrDefault();
-
-        //    if (production == null)
-        //    {
-        //        rgcdi.Message = "O device não se encontra em nenhuma linha no momento!!";
-        //        return NotFound(rgcdi);
-        //    }
-        //    //encontrar o product pois é lá que tem a a product reference
-        //    var product = _context.Products.Where(p => p.Id == production.ProductId)
-        //        .Include(p => p.ComponentProducts)
-        //        .FirstOrDefault();
-        //    if (product == null)
-        //    {
-        //        rgcdi.Message = "Erro ao identificar a product!!";
-        //        return NotFound(rgcdi);
-        //    }
-        //    foreach (var cp in product.ComponentProducts)
-        //    {
-        //        var component = _context.Components.FirstOrDefault(c => c.Id == cp.ComponentId);
-        //        if (component != null)
-        //        {
-        //            rgcdi.listComponents.Add(component);
-        //        }
-        //    }
-        //    rgcdi.Message = "Info obtida com sucesso!!";
-        //    return Ok(rgcdi);
-        //}
-
-        //[HttpGet]
-        //[Route("ProductInfo")]
-        //public async Task<IActionResult> ProductInfo(int LineId)
-        //{
-        //    //Formato da resposta
-        //    ResponseProductInfo rpi = new ResponseProductInfo();
-
-        //    var line = _context.Lines.Where(l => l.Id == LineId).FirstOrDefault();
-        //    //ver se no coordinator da a informação do worker
-        //    if (line == null)
-        //    {
-        //        rpi.Message = "Erro ao identificar a Line!!";
-
-        //        return NotFound(rpi);
-        //    }
-
-        //    var _productions = _context.Production_Plans.Where(p => p.LineId == line.Id).ToList();
-        //    var production_plan = _productions.Where(p => _systemLogic.IsAtributeInDatetime(p.InitialDate, p.EndDate, DateTime.Now) == true).FirstOrDefault();
-
-        //    if (production_plan == null)
-        //    {
-        //        rpi.Message = "Não existe planos de produção na linha no momento!!";
-        //        return NotFound(rpi);
-        //    }
-        //    //Encontrar as produções
-        //    var product = _context.Products.Where(p => p.Id == production_plan.ProductId).FirstOrDefault();
-        //    if (product == null)
-        //    {
-        //        rpi.Message = "Erro ao identificar a product!!";
-        //        return NotFound(rpi);
-        //    }
-        //    rpi.Product = product;
-        //    rpi.Message = "Info obtida com sucesso";
-        //    return Ok(rpi);
-        //}
-
+        /// <summary>
+        /// Fornecerá informações relativas ao coordenador e às linhas de produção das quais ele é responsável, de acordo com o pedido.
+        /// </summary>
         [HttpGet]
         [Route("CoordinatorInfo")]
         public async Task<IActionResult> CoordinatorInfo(string WorkerIdFirebase)
@@ -638,6 +546,10 @@ namespace Context_aware_System.Controllers
             return Ok(rci);
         }
 
+        /// <summary>
+        /// Esta função realiza uma operação específica.
+        /// </summary>
+        /// 
         //[HttpGet]
         //[Route("NotificationRecommendation")]
         //public async Task<IActionResult> NotificationRecommendation(int type, int workerId)

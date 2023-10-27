@@ -133,7 +133,7 @@ namespace Testes
             //test1
             var response = await controller.NewStopsInfo(new DateTime(2030, 6, 29, 0, 0, 0), null, null);
             // Assert
-            var rdi = (response as NotFoundObjectResult).Value as ResponseNewStopsInfo;
+            var rdi = (response as NotFoundObjectResult).Value as ResponseStopsInfo;
 
             Assert.Equal("Não existe paragens nessas datas!!", rdi.Message);
         }
@@ -145,7 +145,7 @@ namespace Testes
             //test1
             var response = await controller.NewStopsInfo(null, new DateTime(2030, 6, 29, 0, 0, 0), null);
             // Assert
-            var rdi = (response as OkObjectResult).Value as ResponseNewStopsInfo;
+            var rdi = (response as OkObjectResult).Value as ResponseStopsInfo;
 
             Assert.Equal("Info obtida com sucesso!!", rdi.Message);
         }

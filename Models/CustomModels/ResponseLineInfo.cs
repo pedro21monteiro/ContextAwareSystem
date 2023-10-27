@@ -16,7 +16,7 @@ namespace Models.CustomModels
         public Coordinator Coordinator { get; set; } = new Coordinator();
         public Worker Worker { get; set; } = new Worker();
         public List<Stop> listStops{ get; set; } = new List<Stop>();
-        public List<ResponseProductionPlan> listProductionsByProductionPlan { get; set; } = new List<ResponseProductionPlan>();
+        public List<ProductionPlanResponse> listProductionsByProductionPlan { get; set; } = new List<ProductionPlanResponse>();
 
     }
 }

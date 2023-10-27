@@ -7,9 +7,9 @@ using Models.ContextModels;
 
 namespace Models.CustomModels
 {
-    public class ResponseNewStopsInfo
+    public class ResponseStopsInfo
     {
         public string Message { get; set; } = String.Empty;//Mensagem de erro
-        public List<Stop> listNewStops { get; set; }
+        public List<StopResponse> listNewStops { get; set; } = new List<StopResponse>();
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Models.CustomModels
 {
-    public class ResponseProductionPlan
+    public class ProductionPlanResponse
     {
         public Production_Plan Production_plan { get; set; } = new Production_Plan();
         public Product Product { get; set; } = new Product();

@@ -258,7 +258,7 @@ namespace ContinentalTestAPI.Controllers
             }
             if (day != null)
             {
-                listSchedules = listSchedules.Where(s => s.Day.Equals(day)).ToList();
+                listSchedules = listSchedules.Where(s => s.Day.Date.Equals(day.Value.Date)).ToList();
             }
             if (shift != null)
             {

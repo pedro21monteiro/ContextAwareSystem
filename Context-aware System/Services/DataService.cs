@@ -67,6 +67,19 @@ namespace ContextServer.Services
                 return null;
             }
         }
+        public async Task<Component?> GetComponentById(int id)
+        {
+            try
+            {
+                var listComponents = await GetComponents(id, null, null, null);
+                return listComponents?.FirstOrDefault();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
+                return null;
+            }
+        }
 
         //--------------------------Serviços relacionados com Coordinators-------------------------------------
         public async Task<List<Coordinator>?> GetCoordinators(int? id, int? workerId)
@@ -606,6 +619,19 @@ namespace ContextServer.Services
                 return null;
             }
         }
+        public async Task<Reason?> GetReasonById(int id)
+        {
+            try
+            {
+                var listReasons = await GetReasons(id, null);
+                return listReasons?.FirstOrDefault();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
+                return null;
+            }
+        }
 
         //--------------------------Serviços relacionados com Schedules-------------------------------------
         public async Task<List<Schedule_Worker_Line>?> GetSchedules(int? id, DateTime? day, int? shift, int? lineId, int? operatorId, int? supervisorId)
@@ -1018,6 +1044,17 @@ namespace ContextServer.Services
                 return null;
             }
         }
-
+        public async Task<List<ComponentProduct>?> GetComponentProductsByProductId(int productId)
+        {
+            try
+            {
+                return await GetComponentProducts(null, null, productId, null);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
+                return null;
+            }
+        }
     }
 }

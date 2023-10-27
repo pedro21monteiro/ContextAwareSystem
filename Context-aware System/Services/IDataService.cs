@@ -9,6 +9,7 @@ namespace ContextServer.Services
     {
         //-------------------------Components
         Task<List<Component>?> GetComponents(int? id, string? name, string? reference, int? category);
+        Task<Component?> GetComponentById(int id);
 
         //-------------------------Coordinators
         Task<List<Coordinator>?> GetCoordinators(int? id, int? workerId);
@@ -42,6 +43,7 @@ namespace ContextServer.Services
 
         //-------------------------Reasons
         Task<List<Reason>?> GetReasons(int? id, string? description);
+        Task<Reason?> GetReasonById(int id);
 
         //-------------------------Schedules
         Task<List<Schedule_Worker_Line>?> GetSchedules(int? id, DateTime? day, int? shift, int? lineId, int? operatorId, int? supervisorId);
@@ -63,6 +65,6 @@ namespace ContextServer.Services
 
         //-------------------------ComponentProducts
         Task<List<ComponentProduct>?> GetComponentProducts(int? id, int? componentId, int? productId, int? quantidade);
-
+        Task<List<ComponentProduct>?> GetComponentProductsByProductId(int productId);
     }
 }

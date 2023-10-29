@@ -7,6 +7,8 @@ namespace Models.ContextModels
 {
     public class Stop
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
         public bool Planned { get; set; }
         public DateTime InitialDate { get; set; } = DateTime.Now;

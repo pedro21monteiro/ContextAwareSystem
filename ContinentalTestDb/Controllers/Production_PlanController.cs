@@ -72,7 +72,6 @@ namespace ContinentalTestDb.Controllers
                 production_Plan.Line = l;
                 production_Plan.Product = p;
 
-                production_Plan.LastUpdate = DateTime.Now;
                 _context.Add(production_Plan);
                 await _context.SaveChangesAsync();
                 //await _rabbit.PublishMessage(JsonConvert.SerializeObject(production_Plan), "create.production_plan");
@@ -123,7 +122,6 @@ namespace ContinentalTestDb.Controllers
                 {
                     production_Plan.Line = l;
                     production_Plan.Product = p;
-                    production_Plan.LastUpdate = DateTime.Now;
                     _context.Update(production_Plan);
                     //await _rabbit.PublishMessage(JsonConvert.SerializeObject(production_Plan), "update.production_plan");
                     await _context.SaveChangesAsync();

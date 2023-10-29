@@ -62,7 +62,6 @@ namespace ContinentalTestDb.Controllers
         {
             if (ModelState.IsValid)
             {
-                worker.LastUpdate = DateTime.Now;
                 _context.Add(worker);
                 //criar coordenador ou supervisor relativamente ao role Role (1-coordenador , 2-Operador , 3-Supervisor)
                 if(worker.Role == 1)
@@ -70,7 +69,6 @@ namespace ContinentalTestDb.Controllers
                     Coordinator coordinator = new Coordinator();
                     coordinator.Worker = worker;
                     coordinator.WorkerId = worker.Id;
-                    coordinator.LastUpdate = DateTime.Now;
                     _context.Add(coordinator);
                 }
                 if (worker.Role == 2)
@@ -79,7 +77,6 @@ namespace ContinentalTestDb.Controllers
                     @operator.Worker = worker;
                     @operator.WorkerId = worker.Id;
                     _context.Add(@operator);
-                    @operator.LastUpdate = DateTime.Now;
                 }
                 if (worker.Role == 3)
                 {
@@ -87,7 +84,6 @@ namespace ContinentalTestDb.Controllers
                     supervisor.Worker = worker;
                     supervisor.WorkerId = worker.Id;
                     _context.Add(supervisor);
-                    supervisor.LastUpdate = DateTime.Now;
                 }
                 await _context.SaveChangesAsync();
                 //await _rabbit.PublishMessage(JsonConvert.SerializeObject(worker), "create.worker");
@@ -128,7 +124,6 @@ namespace ContinentalTestDb.Controllers
             {
                 try
                 {
-                    worker.LastUpdate = DateTime.Now;
                     _context.Update(worker);
 
                     //criar coordenador ou supervisor relativamente ao role Role (1-coordenador , 2-Operador , 3-Supervisor)
@@ -138,7 +133,6 @@ namespace ContinentalTestDb.Controllers
                         coordinator.Worker = worker;
                         coordinator.WorkerId = worker.Id;
                         _context.Add(coordinator);
-                        coordinator.LastUpdate = DateTime.Now;
                         //remover sup e ope
                         await RemoveSupervisor(worker.Id);
                         await RemoveOperator(worker.Id);
@@ -148,7 +142,6 @@ namespace ContinentalTestDb.Controllers
                         Operator @operator = new Operator();
                         @operator.Worker = worker;
                         @operator.WorkerId = worker.Id;
-                        @operator.LastUpdate = DateTime.Now;
                         _context.Add(@operator);
                         //remover sup e coord
                         await RemoveSupervisor(worker.Id);
@@ -159,7 +152,6 @@ namespace ContinentalTestDb.Controllers
                         Supervisor supervisor = new Supervisor();
                         supervisor.Worker = worker;
                         supervisor.WorkerId = worker.Id;
-                        supervisor.LastUpdate = DateTime.Now;
                         _context.Add(supervisor);
                         //remover ope e coord
                         await RemoveOperator(worker.Id);

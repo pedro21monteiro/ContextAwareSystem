@@ -22,10 +22,6 @@ namespace Models.ContinentalModels
         [IgnoreDataMember]
         public Product Product { get; set; } = new Product();
         public int ProductId { get; set; }
-
-        //quantidade 
         public int Quantidade { get;set; }
-
-        public DateTime LastUpdate { get; set; }
     }
 }

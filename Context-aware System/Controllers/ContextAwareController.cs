@@ -6,6 +6,7 @@ using Models.FunctionModels;
 using Microsoft.EntityFrameworkCore;
 using Models.ContextModels;
 using Context_aware_System.Data;
+using Services.DataServices;
 
 namespace Context_aware_System.Controllers
 
@@ -17,10 +18,10 @@ namespace Context_aware_System.Controllers
     {
         private readonly IContextAwareDb _context;
         private readonly SystemLogic _systemLogic;
-        private readonly DataService _DataService;
+        private readonly IDataService _DataService;
         //para experimentar os datetimes 2023-11-20T11:11:11Z
 
-        public ContextAwareController(IContextAwareDb context, SystemLogic systemLogic, DataService dataService)
+        public ContextAwareController(IContextAwareDb context, SystemLogic systemLogic, IDataService dataService)
         {
             _context = context;
             _systemLogic = systemLogic;

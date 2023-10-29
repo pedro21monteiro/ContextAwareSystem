@@ -1,9 +1,11 @@
-﻿
+﻿using Models.ContextModels;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-using Models.ContextModels;
-
-namespace ContextServer.Services
-
+namespace Services.DataServices
 {
     public interface IDataService
     {

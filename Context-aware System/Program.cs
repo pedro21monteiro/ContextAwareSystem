@@ -3,6 +3,7 @@ using Context_aware_System.Data;
 using ContextServer.Data;
 using ContextServer.Services;
 using Microsoft.EntityFrameworkCore;
+using Services.DataServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,7 +33,7 @@ builder.Services.AddDbContext<IContextAwareDb, ContextAwareDb>(options =>
 //Singleton para a logica do sistema
 builder.Services.AddSingleton<SystemLogic>();
 //Singleton para a logica do sistema
-builder.Services.AddSingleton<DataService>();
+builder.Services.AddSingleton<IDataService ,DataService>();
 
 
 //----------------

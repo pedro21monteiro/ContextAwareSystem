@@ -66,7 +66,6 @@ namespace ContinentalTestDb.Controllers
             var c = _context.Coordinators.SingleOrDefault(c => c.Id == line.CoordinatorId);
             if (c != null)
             {
-                line.LastUpdate = DateTime.Now;
                 _context.Add(line);
                 await _context.SaveChangesAsync();
                 //await _rabbit.PublishMessage(JsonConvert.SerializeObject(line), "create.line");
@@ -110,10 +109,8 @@ namespace ContinentalTestDb.Controllers
             {
                 try
                 {   
-                    line.LastUpdate = DateTime.Now;
                     _context.Update(line);
                     await _context.SaveChangesAsync();
-                    //await _rabbit.PublishMessage(JsonConvert.SerializeObject(line), "update.line");
                 }
                 catch (DbUpdateConcurrencyException)
                 {

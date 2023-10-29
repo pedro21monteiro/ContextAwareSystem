@@ -62,7 +62,6 @@ namespace ContinentalTestDb.Controllers
         {
             if (ModelState.IsValid)
             {
-                component.LastUpdate = DateTime.Now;
                 _context.Add(component);
                 await _context.SaveChangesAsync();
 
@@ -105,7 +104,6 @@ namespace ContinentalTestDb.Controllers
             {
                 try
                 {
-                    component.LastUpdate = DateTime.Now;
                     _context.Update(component);
                     await _context.SaveChangesAsync();
                     //await _rabbit.PublishMessage(JsonConvert.SerializeObject(component), "update.component");
@@ -226,7 +224,6 @@ namespace ContinentalTestDb.Controllers
                 cp.ProductId = product.Id;
                 cp.ComponentId = component.Id;
                 cp.Quantidade = 1;
-                cp.LastUpdate = DateTime.Now;
 
                 _context.Add(cp);
                 await _context.SaveChangesAsync();

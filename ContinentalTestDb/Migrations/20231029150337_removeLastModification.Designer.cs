@@ -4,6 +4,7 @@ using ContinentalTestDb.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ContinentalTestDb.Migrations
 {
     [DbContext(typeof(ContinentalTestDbContext))]
-    partial class ContinentalTestDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231029150337_removeLastModification")]
+    partial class removeLastModification
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

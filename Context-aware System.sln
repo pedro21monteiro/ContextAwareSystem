@@ -22,6 +22,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens
 		cdc_query.sql = cdc_query.sql
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "Services\Services.csproj", "{08192990-DD0B-4212-9DE6-1BEC990A5BFE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +58,10 @@ Global
 		{510E245E-FD4A-4EA5-9169-C27ECFD8132D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{510E245E-FD4A-4EA5-9169-C27ECFD8132D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{510E245E-FD4A-4EA5-9169-C27ECFD8132D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08192990-DD0B-4212-9DE6-1BEC990A5BFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08192990-DD0B-4212-9DE6-1BEC990A5BFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08192990-DD0B-4212-9DE6-1BEC990A5BFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08192990-DD0B-4212-9DE6-1BEC990A5BFE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

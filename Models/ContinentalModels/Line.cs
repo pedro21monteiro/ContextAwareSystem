@@ -21,11 +21,8 @@ namespace Models.ContinentalModels
         public string Name { get; set; } = string.Empty;
         [Required]
         public bool Priority { get; set; }
-
         public Coordinator Coordinator { get; set; } 
         public int CoordinatorId { get; set; }
-
-        public DateTime LastUpdate { get; set; }
 
         [JsonIgnore]
         [IgnoreDataMember]

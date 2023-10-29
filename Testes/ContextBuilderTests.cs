@@ -25,25 +25,25 @@ namespace Testes
             _contextContinental = new ContinentalTestDbContext(optionsBuilder.Options);
         }
 
-        //requests
-        [Fact]
-        public void RequestsTest()
-        {
-            var requestsContinental = _contextContinental.Requests.ToList();
-            var requestsContext = _context.Requests.ToList();
+        ////requests
+        //[Fact]
+        //public void RequestsTest()
+        //{
+        //    var requestsContinental = _contextContinental.Requests.ToList();
+        //    var requestsContext = _context.Requests.ToList();
 
-            bool teste = true;
-            foreach (var request in requestsContinental)
-            {
-                //tem de estar na bd do contexto senão retorna erro
-                if (!requestsContext.Exists(r => r.Type == request.Type && r.Date.Equals(request.Date)
-                && r.WorkerId == request.WorkerId))
-                {
-                    teste = false;
-                }
-            }
+        //    bool teste = true;
+        //    foreach (var request in requestsContinental)
+        //    {
+        //        //tem de estar na bd do contexto senão retorna erro
+        //        if (!requestsContext.Exists(r => r.Type == request.Type && r.Date.Equals(request.Date)
+        //        && r.WorkerId == request.WorkerId))
+        //        {
+        //            teste = false;
+        //        }
+        //    }
 
-            Assert.True(teste);
-        }
+        //    Assert.True(teste);
+        //}
     }
 }

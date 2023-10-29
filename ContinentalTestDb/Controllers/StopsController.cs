@@ -15,12 +15,10 @@ namespace ContinentalTestDb.Controllers
     public class StopsController : Controller
     {
         private readonly ContinentalTestDbContext _context;
-        private readonly RabbitMqService _rabbit;
 
-        public StopsController(ContinentalTestDbContext context, RabbitMqService rabbit)
+        public StopsController(ContinentalTestDbContext context)
         {
             _context = context;
-            _rabbit = rabbit;
         }
 
         // GET: Stops
@@ -75,7 +73,6 @@ namespace ContinentalTestDb.Controllers
                 {
                     stop.Reason = r;
                 }
-                stop.LastUpdate = DateTime.Now;
                 _context.Add(stop);
                 await _context.SaveChangesAsync();
                 //await _rabbit.PublishMessage(JsonConvert.SerializeObject(stop), "create.stop");
@@ -127,10 +124,8 @@ namespace ContinentalTestDb.Controllers
                     {
                         stop.Reason = r;
                     }
-                    stop.LastUpdate = DateTime.Now;
                     _context.Update(stop);
                     await _context.SaveChangesAsync();
-                    //await _rabbit.PublishMessage(JsonConvert.SerializeObject(stop), "update.stop");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -183,7 +178,6 @@ namespace ContinentalTestDb.Controllers
             if (stop != null)
             {
                 _context.Stops.Remove(stop);
-                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(stop), "delete.stop");
             }
             
             await _context.SaveChangesAsync();

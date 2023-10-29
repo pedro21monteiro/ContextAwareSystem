@@ -12,6 +12,5 @@ namespace Models.ContinentalModels
         //---
         public Line Line { get; set; } = new Line();
         public int LineId { get; set; }
-        public DateTime LastUpdate { get; set; }
     }
 }

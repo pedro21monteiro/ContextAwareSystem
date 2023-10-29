@@ -1,9 +1,12 @@
-﻿
+﻿using Models.ContextModels;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http.Json;
+using System.Text;
+using System.Threading.Tasks;
 
-using Models.ContextModels;
-
-namespace ContextServer.Services
-
+namespace Services.DataServices
 {
     public class DataService : IDataService
     {
@@ -567,7 +570,7 @@ namespace ContextServer.Services
         {
             try
             {
-                return await GetProdPlans(null, null, null, null, null, null,lineId);
+                return await GetProdPlans(null, null, null, null, null, null, lineId);
             }
             catch (Exception e)
             {
@@ -965,7 +968,7 @@ namespace ContextServer.Services
         public async Task<Worker?> GetWorkerByIdFirebase(string idFirebase)
         {
             try
-            {              
+            {
                 var listWorkers = await GetWorkers(null, idFirebase, null, null, null);
                 return listWorkers?.FirstOrDefault();
             }

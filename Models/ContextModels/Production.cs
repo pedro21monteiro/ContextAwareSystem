@@ -7,6 +7,8 @@ namespace Models.ContextModels
 {
     public class Production
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
         public int Hour { get; set; }
         public DateTime Day { get; set; }

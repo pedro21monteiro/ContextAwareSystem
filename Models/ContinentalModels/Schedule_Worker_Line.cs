@@ -10,17 +10,11 @@ namespace Models.ContinentalModels
         public DateTime Day { get; set; }
         [Required]
         public int Shift { get; set; }
-
-        //---
         public Line Line { get; set; } = new Line();
         public int LineId { get; set; }
-
         public Operator? Operator { get; set; }
         public int? OperatorId { get; set; }
         public Supervisor? Supervisor { get; set; }
         public int? SupervisorId { get; set; }
-
-        public DateTime LastUpdate { get; set; }
-
     }
 }

@@ -13,10 +13,8 @@ namespace Models.ContinentalModels
 
         [Key]
         public int Id { get; set; }
-
         public Worker Worker { get; set; }
         public int WorkerId { get; set; }
-        public DateTime LastUpdate { get; set; }
         [JsonIgnore]
         [IgnoreDataMember]
         public virtual ICollection<Schedule_Worker_Line> Schedules { get; set; }

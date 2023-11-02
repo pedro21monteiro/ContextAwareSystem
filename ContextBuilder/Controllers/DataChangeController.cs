@@ -1,7 +1,6 @@
 ﻿using ContextBuilder.Data;
 using Microsoft.AspNetCore.Mvc;
 using Models.ContextModels;
-using Models.JsonModels;
 
 namespace ContextBuilder.Controllers
 {
@@ -112,5 +111,6 @@ namespace ContextBuilder.Controllers
                 }
             }
         }
+
     }
 }

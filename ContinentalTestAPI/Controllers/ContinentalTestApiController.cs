@@ -1,6 +1,7 @@
 ﻿using ContinentalTestAPI.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Models.cdc_Models;
 using Models.ContinentalModels;
 
 namespace ContinentalTestAPI.Controllers
@@ -400,6 +401,44 @@ namespace ContinentalTestAPI.Controllers
             }
 
             return Ok(listComponentProducts);
+        }
+
+
+        //Implementar os cds, serão pedidos os dados de cdc depois de certo datetime
+        [HttpGet]
+        [Route("GetCdcStops")]
+        public async Task<IActionResult> GetCdcStops(DateTime? InicialDate)
+        {
+            if (InicialDate != null)
+            {
+                var cdcStops = await _context.cdc_Stops
+                    .Where(s => s.ModificationDate > InicialDate)
+                    .ToListAsync();
+                return Ok(cdcStops);
+            }
+            else
+            {
+                var allCdcStops = await _context.cdc_Stops.ToListAsync();
+                return Ok(allCdcStops);
+            }
+        }
+
+        [HttpGet]
+        [Route("GetCdcProductions")]
+        public async Task<IActionResult> GetCdcProductions(DateTime? InicialDate)
+        {
+            if (InicialDate != null)
+            {
+                var cdcProductions = await _context.cdc_Productions
+                    .Where(s => s.ModificationDate > InicialDate)
+                    .ToListAsync();
+                return Ok(cdcProductions);
+            }
+            else
+            {
+                var allCdcProductions = await _context.cdc_Productions.ToListAsync();
+                return Ok(allCdcProductions);
+            }
         }
     }
 }

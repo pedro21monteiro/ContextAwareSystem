@@ -38,8 +38,7 @@ namespace ContinentalTestDb.Data
         public DbSet<ComponentProduct> ComponentProducts { get; set; }
 
         //----------Implementação do cdc
-        public DbSet<cdc_Component> cdc_Components { get; set; }
-
-
+        public DbSet<CDC_Stop> cdc_Stops { get; set; }
+        public DbSet<CDC_Production> cdc_Productions { get; set; }
     }
 }

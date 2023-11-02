@@ -1,4 +1,5 @@
-﻿using Models.ContextModels;
+﻿using Models.cdc_Models;
+using Models.ContextModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -1052,6 +1053,44 @@ namespace Services.DataServices
             try
             {
                 return await GetComponentProducts(null, null, productId, null);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
+                return null;
+            }
+        }
+
+        //--------------------------Serviços relacionados com cdc_Stops-------------------------------------
+        public async Task<List<CDC_Stop>?> GetCDC_Stops(DateTime? LastVerification)
+        {
+            string searchLink = string.Empty;
+            if (LastVerification != null)
+            {
+                searchLink = "?InicialDate=" + ((DateTime)LastVerification).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
+            }
+            try
+            {
+                return await httpClient.GetFromJsonAsync<List<CDC_Stop>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetCdcStops/" + searchLink); ;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Ocorreu uma exceção: {e.Message}");
+                return null;
+            }
+        }
+
+        //--------------------------Serviços relacionados com cdc_Productions-------------------------------------
+        public async Task<List<CDC_Production>?> GetCDC_Productions(DateTime? LastVerification)
+        {
+            string searchLink = string.Empty;
+            if (LastVerification != null)
+            {
+                searchLink = "?InicialDate=" + ((DateTime)LastVerification).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
+            }
+            try
+            {
+                return await httpClient.GetFromJsonAsync<List<CDC_Production>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetCdcProductions/" + searchLink); ;
             }
             catch (Exception e)
             {

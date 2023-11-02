@@ -10,6 +10,7 @@ namespace ContextAcquisition.Services
 {
     public interface ILogic
     {
-        Task UpdateItens(ItensToUpdate ITU, DateTime? lastVerification);
+        Task UpdateItensDMUD(ItensToUpdate ITU);
+        Task UpdateItensCDC(ItensToUpdate ITU, DateTime lastVerification);
     }
 }

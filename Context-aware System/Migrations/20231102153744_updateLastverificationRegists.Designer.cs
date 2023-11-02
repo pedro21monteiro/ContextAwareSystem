@@ -4,6 +4,7 @@ using ContextServer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Context_aware_System.Migrations
 {
     [DbContext(typeof(ContextAwareDb))]
-    partial class ContextAwareDbModelSnapshot : ModelSnapshot
+    [Migration("20231102153744_updateLastverificationRegists")]
+    partial class updateLastverificationRegists
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,7 +29,10 @@ namespace Context_aware_System.Migrations
                     b.Property<int>("Id")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("LastVerification")
+                    b.Property<DateTime>("ProductionsVerification")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("StopsVerification")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");

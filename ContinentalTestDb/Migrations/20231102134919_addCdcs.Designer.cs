@@ -4,6 +4,7 @@ using ContinentalTestDb.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ContinentalTestDb.Migrations
 {
     [DbContext(typeof(ContinentalTestDbContext))]
-    partial class ContinentalTestDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231102134919_addCdcs")]
+    partial class addCdcs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,9 +36,6 @@ namespace ContinentalTestDb.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Hour")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IdProduction")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ModificationDate")
@@ -69,9 +68,6 @@ namespace ContinentalTestDb.Migrations
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("IdStop")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("InitialDate")
                         .HasColumnType("datetime2");

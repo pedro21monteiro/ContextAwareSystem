@@ -1,6 +1,5 @@
 ﻿using ContextAcquisition.Data;
 using Models.ContextModels;
-using Models.JsonModels;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -21,7 +20,7 @@ namespace ContextAcquisition.Services
         private static readonly ContextAcquisitonDb _context = new ContextAcquisitonDb();
 
         //Update dos itens todos
-        public async Task UpdateItens(ItensToUpdate ITU, DateTime? lastVerification)
+        public async Task UpdateItensDMUD(ItensToUpdate ITU)
         {
             DateTime inicio = DateTime.Now;
             //-----------escrever no ecra o nº de itens para atualizar--------
@@ -53,7 +52,6 @@ namespace ContextAcquisition.Services
             //stops
             if (ITU.stops != null)
             {
-                //enviar para o messagem broker
                 foreach (var s in ITU.stops)
                 {
                     await UpdateStop(s);
@@ -62,19 +60,10 @@ namespace ContextAcquisition.Services
             //production
             if (ITU.productions != null)
             {
-                //enviar para o messagem broker
                 foreach (var p in ITU.productions)
                 {
                     await UpdateProduction(p);
                 }
-            }
-            if(lastVerification.HasValue)
-            {
-                var lvr = _context.LastVerificationRegists.First();
-                lvr.ProductionsVerification = (DateTime)lastVerification;
-                lvr.StopsVerification = (DateTime)lastVerification;
-                _context.LastVerificationRegists.Update(lvr);
-                await _context.SaveChangesAsync();
             }
             Console.WriteLine();
             TimeSpan tempoDeExecucao = DateTime.Now.Subtract(inicio);
@@ -131,7 +120,64 @@ namespace ContextAcquisition.Services
                 Console.WriteLine(ex.ToString());
             }
         }
-        
+
+        //Implementação a usar o CDC
+        public async Task UpdateItensCDC(ItensToUpdate ITU, DateTime lastVerification)
+        {
+            DateTime inicio = DateTime.Now;
+            //-----------escrever no ecra o nº de itens para atualizar--------
+            Console.WriteLine("-----------------  " + inicio.ToString() + "  ----------------");
+
+            //productions
+            if (ITU.productions != null)
+            {
+                Console.WriteLine(ITU.Cdc_Productions.Count.ToString() + " productions novos/atualizados detetados");
+            }
+            else
+            {
+                Console.WriteLine("0 productions novos/atualizados detetados");
+            }
+
+            //stops
+            if (ITU.stops != null)
+            {
+                Console.WriteLine(ITU.Cdc_Stops.Count.ToString() + " stops novos/atualizados detetados");
+            }
+            else
+            {
+                Console.WriteLine("0 stops novos/atualizados detetados");
+            }
+            //Escrever no fim
+            Console.WriteLine("---------------Atualizacao dos itens---------------------------");
+
+            //------------------Depois iserir ou atualizar os dados----------------------
+            //stops
+            if (ITU.Cdc_Stops != null)
+            {
+                foreach (var cdc_stop in ITU.Cdc_Stops)
+                {
+                    Console.WriteLine("Aviso de novo Stop: " + cdc_stop.IdStop + " Modificação: " + cdc_stop.Operation);
+                }
+            }
+            if (ITU.Cdc_Productions != null)
+            {
+                foreach (var cdc_production in ITU.Cdc_Productions)
+                {
+                    Console.WriteLine("Aviso de novo Stop: " + cdc_production.IdProduction + " Modificação: " + cdc_production.Operation);
+                }
+            }
+
+            //atualizar a data de ultima verificação
+            var lvr = _context.LastVerificationRegists.First();
+            lvr.LastVerification = lastVerification;
+            _context.LastVerificationRegists.Update(lvr);
+            await _context.SaveChangesAsync();
+            //
+            Console.WriteLine();
+            TimeSpan tempoDeExecucao = DateTime.Now.Subtract(inicio);
+            Console.WriteLine("Código executado em: " + tempoDeExecucao.ToString());
+
+        }
 
         ////Funções de ver se existem situações cíticas
         //public static async Task CheckIfIsUrgentStop(Stop stop, ContextAcquisitonDb _context)
@@ -181,7 +227,5 @@ namespace ContextAcquisition.Services
         //        Console.WriteLine("Alerta da paragem - " + stop.Id.ToString() + " Erro ao enviar Alerta");
         //    }
         //}
-
-
     }
 }

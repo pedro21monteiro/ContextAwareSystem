@@ -1,4 +1,5 @@
-﻿using Models.ContextModels;
+﻿using Models.cdc_Models;
+using Models.ContextModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,5 +69,11 @@ namespace Services.DataServices
         //-------------------------ComponentProducts
         Task<List<ComponentProduct>?> GetComponentProducts(int? id, int? componentId, int? productId, int? quantidade);
         Task<List<ComponentProduct>?> GetComponentProductsByProductId(int productId);
+
+
+        //-----------------------CdcStops
+        Task<List<CDC_Stop>?> GetCDC_Stops(DateTime? LastVerification);
+        //-----------------------CdcProductions
+        Task<List<CDC_Production>?> GetCDC_Productions(DateTime? LastVerification);
     }
 }

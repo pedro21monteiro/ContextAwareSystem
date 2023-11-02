@@ -1,6 +1,7 @@
 ﻿using ContextAcquisition.Data;
 using Models.ContextModels;
 using Newtonsoft.Json;
+using Services.DataServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace ContextAcquisition.Services
         private static string AlertAppConnectionString = "https://192.168.28.86:8091/api/Alert/SendNotification/";
         private static string builderHost = System.Environment.GetEnvironmentVariable("BUILDER") ?? "https://localhost:7284";
         private static readonly ContextAcquisitonDb _context = new ContextAcquisitonDb();
+        private static readonly IDataService _dataService = new DataService();
 
         //Update dos itens todos
         public async Task UpdateItensDMUD(ItensToUpdate ITU)
@@ -55,6 +57,7 @@ namespace ContextAcquisition.Services
                 foreach (var s in ITU.stops)
                 {
                     await UpdateStop(s);
+                    await CheckIfIsUrgentStop(s);
                 }
             }       
             //production
@@ -63,6 +66,7 @@ namespace ContextAcquisition.Services
                 foreach (var p in ITU.productions)
                 {
                     await UpdateProduction(p);
+                    await CheckIfItIsNewProduction(p);
                 }
             }
             Console.WriteLine();
@@ -156,14 +160,22 @@ namespace ContextAcquisition.Services
             {
                 foreach (var cdc_stop in ITU.Cdc_Stops)
                 {
-                    Console.WriteLine("Aviso de novo Stop: " + cdc_stop.IdStop + " Modificação: " + cdc_stop.Operation);
+                    //só vai fazer a verificação nos updates e insertes
+                    if(cdc_stop.Operation == 2 || cdc_stop.Operation == 3)
+                    {
+                        await CheckIfIsUrgentStop(cdc_stop.toStop());
+                    }
                 }
             }
             if (ITU.Cdc_Productions != null)
             {
                 foreach (var cdc_production in ITU.Cdc_Productions)
                 {
-                    Console.WriteLine("Aviso de novo Stop: " + cdc_production.IdProduction + " Modificação: " + cdc_production.Operation);
+                    //só vai fazer a verificação nos updates e insertes
+                    if (cdc_production.Operation == 2 || cdc_production.Operation == 3)
+                    {
+                        await CheckIfItIsNewProduction(cdc_production.ToProduction());
+                    }
                 }
             }
 
@@ -179,53 +191,95 @@ namespace ContextAcquisition.Services
 
         }
 
-        ////Funções de ver se existem situações cíticas
-        //public static async Task CheckIfIsUrgentStop(Stop stop, ContextAcquisitonDb _context)
-        //{
-        //    try
-        //    {
-        //        TimeSpan ts = stop.EndDate.Subtract(stop.InitialDate);
-        //        if (ts.TotalMinutes >= UrgentStopTime)
-        //        {
-        //            //soar o aviso
-        //            AlertRequest ar = new AlertRequest();
-        //            ar.type = 0;//alerta de paragens
-        //            ar.line = stop.LineId;
-        //            ar.shift = stop.Shift;
-        //            ar.dateStart = stop.InitialDate;
-        //            ar.dateEnd = stop.EndDate;
-        //            if (stop.ReasonId != null)
-        //            {
-        //                var reason = _context.Reasons.First(r => r.Id == stop.ReasonId);
-        //                if (reason != null)
-        //                {
-        //                    ar.message = reason.Description;
-        //                }
-        //            }
+        //Funções para ver se é para adicionar avisos
+        public static async Task CheckIfIsUrgentStop(Stop stop)
+        {
+            try
+            {
+                TimeSpan ts = stop.EndDate.Subtract(stop.InitialDate);
+                //ver se a paragem durou mais de 15 min, se não é planeada e se foi no dia de hoje
+                if (ts.TotalMinutes >= UrgentStopTime && stop.Planned == false && stop.InitialDate.Date.Equals(DateTime.Now.Date))
+                {
+                    //Soar o aviso
+                    var asr = new AlertStopRequest
+                    {
+                        lineId = stop.LineId,
+                        shift = stop.Shift,
+                        dateStart = stop.InitialDate,
+                        dateEnd = stop.EndDate
+                    };
 
-        //            HttpClient client = new HttpClient();
-        //            HttpResponseMessage response = await client.PostAsJsonAsync(AlertAppConnectionString, ar);
-        //            response.EnsureSuccessStatusCode();
+                    if (stop.ReasonId != null)
+                    {
+                        var reason = await _dataService.GetReasonById((int)stop.ReasonId);
+                        if (reason != null)
+                        {
+                            asr.message = reason.Description;
+                        }
+                    }
+                    using (var client = new HttpClient())
+                    {
+                        var response = await client.PostAsJsonAsync(AlertAppConnectionString, asr);
+                        response.EnsureSuccessStatusCode();
 
-        //            if (response.IsSuccessStatusCode)
-        //            {
-        //                Console.WriteLine("Alerta da paragem - " + stop.Id.ToString() + " Enviado com sucesso");
-        //            }
-        //            else
-        //            {
-        //                Console.WriteLine("Alerta da paragem - " + stop.Id.ToString() + " Erro ao enviar Alerta");
-        //            }
-        //        }
-        //        else
-        //        {
-        //            return;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex.ToString());
-        //        Console.WriteLine("Alerta da paragem - " + stop.Id.ToString() + " Erro ao enviar Alerta");
-        //    }
-        //}
+                        if (response.IsSuccessStatusCode)
+                        {
+                            Console.WriteLine("Alerta da paragem - " + stop.Id.ToString() + " Enviado com sucesso");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Alerta da paragem - " + stop.Id.ToString() + " Erro ao enviar Alerta");
+                        }
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Paragem - " + stop.Id.ToString() + " não é urgente");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Alerta da paragem - " + stop.Id.ToString() + " Erro ao enviar Alerta");
+                Console.WriteLine(ex.ToString());
+            }           
+        }
+
+        //vai verificar se a produção aconteceu nas ultimas 24 horas
+        public static async Task CheckIfItIsNewProduction(Production production)
+        {
+            DateTime ProductionDateTime = new DateTime();
+            ProductionDateTime = production.Day.Date;
+            ProductionDateTime.AddHours(production.Hour);
+            try
+            {
+                TimeSpan ts = DateTime.Now.Subtract(ProductionDateTime);
+                if (ts.TotalHours < 24)
+                {
+                    using (var client = new HttpClient())
+                    {
+                        var response = await client.PostAsJsonAsync(AlertAppConnectionString, production);
+                        response.EnsureSuccessStatusCode();
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            Console.WriteLine("Alerta de nova production - " + production.Id.ToString() + " Enviado com sucesso");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Alerta de nova production - " + production.Id.ToString() + " Erro ao enviar Alerta");
+                        }
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Production - " + production.Id.ToString() + " não é das ultimas 24 horas");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Alerta de nova production - " + production.Id.ToString() + " Erro ao enviar Alerta");
+                Console.WriteLine(ex.ToString());
+            }
+        }
     }
 }

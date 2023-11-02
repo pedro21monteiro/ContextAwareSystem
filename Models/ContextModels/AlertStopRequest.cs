@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace Models.ContextModels
 {
-    public class AlertRequest
+    public class AlertStopRequest
     {
-        public int type { get; set; }
-        public int line { get; set; }
+        public int lineId { get; set; }
         public int shift { get; set; }
         public DateTime dateStart { get; set; }
         public DateTime dateEnd { get; set; }

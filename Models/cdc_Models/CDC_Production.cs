@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Models.ContextModels;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -18,5 +19,17 @@ namespace Models.cdc_Models
         public int Production_PlanId { get; set; }
         public DateTime ModificationDate { get; set; }
         public int Operation { get; set; }//1-delete, 2-insert, 3-update
+
+        public Production ToProduction()
+        {
+            Production production = new Production();
+            production.Id = this.IdProduction;
+            production.Hour = this.Hour;
+            production.Day = this.Day; 
+            production.Quantity = this.Quantity;
+            production.Production_PlanId = this.Production_PlanId;
+
+            return production;
+        }
     }
 }

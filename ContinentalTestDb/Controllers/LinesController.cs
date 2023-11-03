@@ -15,50 +15,24 @@ namespace ContinentalTestDb.Controllers
     public class LinesController : Controller
     {
         private readonly ContinentalTestDbContext _context;
-        private readonly RabbitMqService _rabbit;
 
-        public LinesController(ContinentalTestDbContext context, RabbitMqService rabbit)
+        public LinesController(ContinentalTestDbContext context)
         {
             _context = context;
-            _rabbit = rabbit;
         }
 
-        // GET: Lines
         public async Task<IActionResult> Index()
         {
             var continentalTestDbContext = _context.Lines.Include(l => l.Coordinator);
             return View(await continentalTestDbContext.ToListAsync());
         }
 
-        // GET: Lines/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.Lines == null)
-            {
-                return NotFound();
-            }
-
-            var line = await _context.Lines
-                .Include(l => l.Coordinator)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (line == null)
-            {
-                return NotFound();
-            }
-
-            return View(line);
-        }
-
-        // GET: Lines/Create
         public IActionResult Create()
         {
             ViewData["CoordinatorId"] = new SelectList(_context.Coordinators, "Id", "Id");
             return View();
         }
 
-        // POST: Lines/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Priority,CoordinatorId")] Line line)
@@ -68,14 +42,12 @@ namespace ContinentalTestDb.Controllers
             {
                 _context.Add(line);
                 await _context.SaveChangesAsync();
-                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(line), "create.line");
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CoordinatorId"] = new SelectList(_context.Coordinators, "Id", "Id", line.CoordinatorId);
             return View(line);
         }
 
-        // GET: Lines/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Lines == null)
@@ -92,9 +64,6 @@ namespace ContinentalTestDb.Controllers
             return View(line);
         }
 
-        // POST: Lines/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Priority,CoordinatorId")] Line line)
@@ -103,7 +72,6 @@ namespace ContinentalTestDb.Controllers
             {
                 return NotFound();
             }
-
             var c = _context.Coordinators.SingleOrDefault(c => c.Id == line.CoordinatorId);
             if (c != null)
             {
@@ -128,8 +96,6 @@ namespace ContinentalTestDb.Controllers
             ViewData["CoordinatorId"] = new SelectList(_context.Coordinators, "Id", "Id", line.CoordinatorId);
             return View(line);
         }
-
-        // GET: Lines/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Lines == null)
@@ -148,7 +114,6 @@ namespace ContinentalTestDb.Controllers
             return View(line);
         }
 
-        // POST: Lines/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -161,7 +126,6 @@ namespace ContinentalTestDb.Controllers
             if (line != null)
             {
                 _context.Lines.Remove(line);
-                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(line), "delete.line");
             }
             
             await _context.SaveChangesAsync();

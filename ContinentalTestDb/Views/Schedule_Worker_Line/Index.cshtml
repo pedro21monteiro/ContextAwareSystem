@@ -12,6 +12,9 @@
 <table class="table">
     <thead>
         <tr>
+             <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.Day)
             </th>
@@ -34,6 +37,9 @@
 @foreach (var item in Model) {
         <tr>
             <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.Day)
             </td>
             <td>
@@ -43,10 +49,16 @@
                 @Html.DisplayFor(modelItem => item.Line.Id)
             </td>
             <td>
+            @if (item.Operator != null)
+            {
                 @Html.DisplayFor(modelItem => item.Operator.Id)
+            }
             </td>
             <td>
+            @if (item.Supervisor != null)
+            {
                 @Html.DisplayFor(modelItem => item.Supervisor.Id)
+            }
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

@@ -15,43 +15,18 @@ namespace ContinentalTestDb.Controllers
     public class Schedule_Worker_LineController : Controller
     {
         private readonly ContinentalTestDbContext _context;
-        private readonly RabbitMqService _rabbit;
 
-        public Schedule_Worker_LineController(ContinentalTestDbContext context, RabbitMqService rabbit)
+        public Schedule_Worker_LineController(ContinentalTestDbContext context)
         {
             _context = context;
-            _rabbit = rabbit;
         }
 
-        // GET: Schedule_Worker_Line
         public async Task<IActionResult> Index()
         {
             var continentalTestDbContext = _context.Schedule_Worker_Lines.Include(s => s.Line).Include(s => s.Operator).Include(s => s.Supervisor);
             return View(await continentalTestDbContext.ToListAsync());
         }
 
-        // GET: Schedule_Worker_Line/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.Schedule_Worker_Lines == null)
-            {
-                return NotFound();
-            }
-
-            var schedule_Worker_Line = await _context.Schedule_Worker_Lines
-                .Include(s => s.Line)
-                .Include(s => s.Operator)
-                .Include(s => s.Supervisor)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (schedule_Worker_Line == null)
-            {
-                return NotFound();
-            }
-
-            return View(schedule_Worker_Line);
-        }
-
-        // GET: Schedule_Worker_Line/Create
         public IActionResult Create()
         {
             ViewData["LineId"] = new SelectList(_context.Lines, "Id", "Name");
@@ -61,9 +36,6 @@ namespace ContinentalTestDb.Controllers
             return View();
         }
 
-        // POST: Schedule_Worker_Line/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Day,Shift,LineId,OperatorId,SupervisorId")] Schedule_Worker_Line schedule_Worker_Line)
@@ -84,7 +56,6 @@ namespace ContinentalTestDb.Controllers
                 }
                 _context.Add(schedule_Worker_Line);
                 await _context.SaveChangesAsync();
-                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(schedule_Worker_Line), "create.swl");
                 return RedirectToAction(nameof(Index));
             }
             ViewData["LineId"] = new SelectList(_context.Lines, "Id", "Name", schedule_Worker_Line.LineId);
@@ -93,7 +64,6 @@ namespace ContinentalTestDb.Controllers
             return View(schedule_Worker_Line);
         }
 
-        // GET: Schedule_Worker_Line/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Schedule_Worker_Lines == null)
@@ -112,9 +82,6 @@ namespace ContinentalTestDb.Controllers
             return View(schedule_Worker_Line);
         }
 
-        // POST: Schedule_Worker_Line/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Day,Shift,LineId,OperatorId,SupervisorId")] Schedule_Worker_Line schedule_Worker_Line)
@@ -141,7 +108,6 @@ namespace ContinentalTestDb.Controllers
                         schedule_Worker_Line.Supervisor = s;
                     }
                     _context.Update(schedule_Worker_Line);
-                    //await _rabbit.PublishMessage(JsonConvert.SerializeObject(schedule_Worker_Line), "update.swl");
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -163,7 +129,6 @@ namespace ContinentalTestDb.Controllers
             return View(schedule_Worker_Line);
         }
 
-        // GET: Schedule_Worker_Line/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Schedule_Worker_Lines == null)
@@ -184,7 +149,6 @@ namespace ContinentalTestDb.Controllers
             return View(schedule_Worker_Line);
         }
 
-        // POST: Schedule_Worker_Line/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -197,8 +161,6 @@ namespace ContinentalTestDb.Controllers
             if (schedule_Worker_Line != null)
             {
                 _context.Schedule_Worker_Lines.Remove(schedule_Worker_Line);
-                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(schedule_Worker_Line), "delete.swl");
-
             }
             
             await _context.SaveChangesAsync();

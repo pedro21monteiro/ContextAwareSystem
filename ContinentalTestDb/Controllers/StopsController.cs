@@ -21,34 +21,12 @@ namespace ContinentalTestDb.Controllers
             _context = context;
         }
 
-        // GET: Stops
         public async Task<IActionResult> Index()
         {
             var continentalTestDbContext = _context.Stops.Include(s => s.Line).Include(s => s.Reason);
             return View(await continentalTestDbContext.ToListAsync());
         }
 
-        // GET: Stops/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.Stops == null)
-            {
-                return NotFound();
-            }
-
-            var stop = await _context.Stops
-                .Include(s => s.Line)
-                .Include(s => s.Reason)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (stop == null)
-            {
-                return NotFound();
-            }
-
-            return View(stop);
-        }
-
-        // GET: Stops/Create
         public IActionResult Create()
         {
             ViewData["LineId"] = new SelectList(_context.Lines, "Id", "Name");
@@ -56,9 +34,6 @@ namespace ContinentalTestDb.Controllers
             return View();
         }
 
-        // POST: Stops/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Planned,InitialDate,EndDate,Duration,Shift,LineId,ReasonId")] Stop stop)
@@ -75,7 +50,6 @@ namespace ContinentalTestDb.Controllers
                 }
                 _context.Add(stop);
                 await _context.SaveChangesAsync();
-                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(stop), "create.stop");
                 return RedirectToAction(nameof(Index));
             }
             ViewData["LineId"] = new SelectList(_context.Lines, "Id", "Name", stop.LineId);
@@ -83,7 +57,6 @@ namespace ContinentalTestDb.Controllers
             return View(stop);
         }
 
-        // GET: Stops/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Stops == null)
@@ -101,9 +74,6 @@ namespace ContinentalTestDb.Controllers
             return View(stop);
         }
 
-        // POST: Stops/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Planned,InitialDate,EndDate,Duration,Shift,LineId,ReasonId")] Stop stop)
@@ -145,7 +115,6 @@ namespace ContinentalTestDb.Controllers
             return View(stop);
         }
 
-        // GET: Stops/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Stops == null)
@@ -165,7 +134,6 @@ namespace ContinentalTestDb.Controllers
             return View(stop);
         }
 
-        // POST: Stops/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

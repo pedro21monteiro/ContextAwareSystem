@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Text;
-using Models.ContinentalModels;
+using Models.FunctionModels;
 
 namespace ContinentalTestDb.Controllers
 {

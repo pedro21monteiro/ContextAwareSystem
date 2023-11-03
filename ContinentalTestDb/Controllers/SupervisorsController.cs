@@ -15,50 +15,24 @@ namespace ContinentalTestDb.Controllers
     public class SupervisorsController : Controller
     {
         private readonly ContinentalTestDbContext _context;
-        private readonly RabbitMqService _rabbit;
 
-        public SupervisorsController(ContinentalTestDbContext context, RabbitMqService rabbit)
+        public SupervisorsController(ContinentalTestDbContext context)
         {
             _context = context;
-            _rabbit = rabbit;
         }
 
-        // GET: Supervisors
         public async Task<IActionResult> Index()
         {
             var continentalTestDbContext = _context.Supervisors.Include(s => s.Worker);
             return View(await continentalTestDbContext.ToListAsync());
         }
 
-        // GET: Supervisors/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.Supervisors == null)
-            {
-                return NotFound();
-            }
-
-            var supervisor = await _context.Supervisors
-                .Include(s => s.Worker)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (supervisor == null)
-            {
-                return NotFound();
-            }
-
-            return View(supervisor);
-        }
-
-        // GET: Supervisors/Create
         public IActionResult Create()
         {
             ViewData["WorkerId"] = new SelectList(_context.Workers, "Id", "UserName");
             return View();
         }
 
-        // POST: Supervisors/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,WorkerId")] Supervisor supervisor)
@@ -68,14 +42,12 @@ namespace ContinentalTestDb.Controllers
             {
                 _context.Add(supervisor);
                 await _context.SaveChangesAsync();
-                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(supervisor), "create.supervisor");
                 return RedirectToAction(nameof(Index));
             }
             ViewData["WorkerId"] = new SelectList(_context.Workers, "Id", "UserName", supervisor.WorkerId);
             return View(supervisor);
         }
 
-        // GET: Supervisors/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Supervisors == null)
@@ -92,9 +64,6 @@ namespace ContinentalTestDb.Controllers
             return View(supervisor);
         }
 
-        // POST: Supervisors/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,WorkerId")] Supervisor supervisor)
@@ -110,7 +79,6 @@ namespace ContinentalTestDb.Controllers
                 {
                     _context.Update(supervisor);
                     await _context.SaveChangesAsync();
-                    //await _rabbit.PublishMessage(JsonConvert.SerializeObject(supervisor), "update.supervisor");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -129,7 +97,6 @@ namespace ContinentalTestDb.Controllers
             return View(supervisor);
         }
 
-        // GET: Supervisors/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Supervisors == null)
@@ -148,7 +115,6 @@ namespace ContinentalTestDb.Controllers
             return View(supervisor);
         }
 
-        // POST: Supervisors/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -161,7 +127,6 @@ namespace ContinentalTestDb.Controllers
             if (supervisor != null)
             {
                 _context.Supervisors.Remove(supervisor);
-                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(supervisor), "delete.supervisor");
             }
             
             await _context.SaveChangesAsync();

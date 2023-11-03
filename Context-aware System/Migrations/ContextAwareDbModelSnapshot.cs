@@ -44,25 +44,6 @@ namespace Context_aware_System.Migrations
                     b.ToTable("Productions");
                 });
 
-            modelBuilder.Entity("Models.ContextModels.Request", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WorkerId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("requests");
-                });
-
             modelBuilder.Entity("Models.ContextModels.Stop", b =>
                 {
                     b.Property<int>("Id")
@@ -127,6 +108,31 @@ namespace Context_aware_System.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("missingComponents");
+                });
+
+            modelBuilder.Entity("Models.FunctionModels.Request", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("LineId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WorkerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("requests");
                 });
 #pragma warning restore 612, 618
         }

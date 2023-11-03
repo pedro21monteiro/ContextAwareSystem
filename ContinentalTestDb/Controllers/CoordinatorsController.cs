@@ -15,50 +15,24 @@ namespace ContinentalTestDb.Controllers
     public class CoordinatorsController : Controller
     {
         private readonly ContinentalTestDbContext _context;
-        private readonly RabbitMqService _rabbit;
 
-        public CoordinatorsController(ContinentalTestDbContext context, RabbitMqService rabbit)
+        public CoordinatorsController(ContinentalTestDbContext context)
         {
             _context = context;
-            _rabbit = rabbit;
         }
 
-        // GET: Coordinators
         public async Task<IActionResult> Index()
         {
             var continentalTestDbContext = _context.Coordinators.Include(c => c.Worker);
             return View(await continentalTestDbContext.ToListAsync());
         }
 
-        // GET: Coordinators/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.Coordinators == null)
-            {
-                return NotFound();
-            }
-
-            var coordinator = await _context.Coordinators
-                .Include(c => c.Worker)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (coordinator == null)
-            {
-                return NotFound();
-            }
-
-            return View(coordinator);
-        }
-
-        // GET: Coordinators/Create
         public IActionResult Create()
         {
             ViewData["WorkerId"] = new SelectList(_context.Workers, "Id", "UserName");
             return View();
         }
 
-        // POST: Coordinators/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,WorkerId")] Coordinator coordinator)
@@ -68,14 +42,12 @@ namespace ContinentalTestDb.Controllers
             {
                 _context.Add(coordinator);
                 await _context.SaveChangesAsync();
-                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(coordinator), "create.coordinator");
                 return RedirectToAction(nameof(Index));
             }
             ViewData["WorkerId"] = new SelectList(_context.Workers, "Id", "UserName", coordinator.WorkerId);
             return View(coordinator);
         }
 
-        // GET: Coordinators/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Coordinators == null)
@@ -92,9 +64,6 @@ namespace ContinentalTestDb.Controllers
             return View(coordinator);
         }
 
-        // POST: Coordinators/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,WorkerId")] Coordinator coordinator)
@@ -111,7 +80,6 @@ namespace ContinentalTestDb.Controllers
                 {   
                     _context.Update(coordinator);
                     await _context.SaveChangesAsync();
-                    //await _rabbit.PublishMessage(JsonConvert.SerializeObject(coordinator), "update.coordinator");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -130,7 +98,6 @@ namespace ContinentalTestDb.Controllers
             return View(coordinator);
         }
 
-        // GET: Coordinators/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Coordinators == null)
@@ -149,7 +116,6 @@ namespace ContinentalTestDb.Controllers
             return View(coordinator);
         }
 
-        // POST: Coordinators/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -162,9 +128,7 @@ namespace ContinentalTestDb.Controllers
             if (coordinator != null)
             {
                 _context.Coordinators.Remove(coordinator);
-                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(coordinator), "delete.coordinator");
-            }
-            
+            }        
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

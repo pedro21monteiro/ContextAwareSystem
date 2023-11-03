@@ -1,4 +1,4 @@
-﻿@using Models.ContinentalModels
+﻿@using Models.FunctionModels
 @model IEnumerable<Request>
 
 @{
@@ -10,6 +10,9 @@
 <table class="table">
     <thead>
         <tr>
+             <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.Type)
             </th>
@@ -28,6 +31,9 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Type)
             </td>

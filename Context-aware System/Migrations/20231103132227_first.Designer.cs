@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Context_aware_System.Migrations
 {
     [DbContext(typeof(ContextAwareDb))]
-    [Migration("20231103005754_addMissingComponents")]
-    partial class addMissingComponents
+    [Migration("20231103132227_first")]
+    partial class first
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -44,25 +44,6 @@ namespace Context_aware_System.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Productions");
-                });
-
-            modelBuilder.Entity("Models.ContextModels.Request", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WorkerId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("requests");
                 });
 
             modelBuilder.Entity("Models.ContextModels.Stop", b =>
@@ -129,6 +110,31 @@ namespace Context_aware_System.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("missingComponents");
+                });
+
+            modelBuilder.Entity("Models.FunctionModels.Request", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("LineId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WorkerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("requests");
                 });
 #pragma warning restore 612, 618
         }

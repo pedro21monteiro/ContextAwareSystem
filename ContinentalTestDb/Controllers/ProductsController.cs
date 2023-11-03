@@ -15,48 +15,23 @@ namespace ContinentalTestDb.Controllers
     public class ProductsController : Controller
     {
         private readonly ContinentalTestDbContext _context;
-        private readonly RabbitMqService _rabbit;
 
-        public ProductsController(ContinentalTestDbContext context, RabbitMqService rabbit)
+        public ProductsController(ContinentalTestDbContext context)
         {
             _context = context;
-            _rabbit = rabbit;
         }
 
-        // GET: Products
         public async Task<IActionResult> Index()
         {
               return View(await _context.Products.ToListAsync());
         }
 
-        // GET: Products/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.Products == null)
-            {
-                return NotFound();
-            }
-
-            var product = await _context.Products
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            return View(product);
-        }
-
-        // GET: Products/Create
         public IActionResult Create()
         {
             ViewData["ComponentsId"] = new SelectList(_context.Components, "Id", "Name");
             return View();
         }
 
-        // POST: Products/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,LabelReference,Cycle")] Product product)
@@ -66,7 +41,6 @@ namespace ContinentalTestDb.Controllers
             {
                 _context.Add(product);
                 await _context.SaveChangesAsync();
-                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(product), "create.product");
 
                 return RedirectToAction("EditComponentProducts", "Components", new { id = product.Id });
             }
@@ -74,7 +48,6 @@ namespace ContinentalTestDb.Controllers
             return View(product);
         }
 
-        // GET: Products/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Products == null)
@@ -90,9 +63,6 @@ namespace ContinentalTestDb.Controllers
             return View(product);
         }
 
-        // POST: Products/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,LabelReference,Cycle")] Product product)
@@ -108,7 +78,6 @@ namespace ContinentalTestDb.Controllers
                 {
                     _context.Update(product);
                     await _context.SaveChangesAsync();
-                    //await _rabbit.PublishMessage(JsonConvert.SerializeObject(product), "update.product");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -126,7 +95,6 @@ namespace ContinentalTestDb.Controllers
             return View(product);
         }
 
-        // GET: Products/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Products == null)
@@ -144,7 +112,6 @@ namespace ContinentalTestDb.Controllers
             return View(product);
         }
 
-        // POST: Products/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -157,7 +124,6 @@ namespace ContinentalTestDb.Controllers
             if (product != null)
             {
                 _context.Products.Remove(product);
-                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(product), "delete.product");
             }
             
             await _context.SaveChangesAsync();

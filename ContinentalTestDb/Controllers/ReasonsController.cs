@@ -15,47 +15,22 @@ namespace ContinentalTestDb.Controllers
     public class ReasonsController : Controller
     {
         private readonly ContinentalTestDbContext _context;
-        private readonly RabbitMqService _rabbit;
 
-        public ReasonsController(ContinentalTestDbContext context, RabbitMqService rabbit = null)
+        public ReasonsController(ContinentalTestDbContext context)
         {
             _context = context;
-            _rabbit = rabbit;
         }
 
-        // GET: Reasons
         public async Task<IActionResult> Index()
         {
               return View(await _context.Reasons.ToListAsync());
         }
 
-        // GET: Reasons/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.Reasons == null)
-            {
-                return NotFound();
-            }
-
-            var reason = await _context.Reasons
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (reason == null)
-            {
-                return NotFound();
-            }
-
-            return View(reason);
-        }
-
-        // GET: Reasons/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Reasons/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Description")] Reason reason)
@@ -64,14 +39,12 @@ namespace ContinentalTestDb.Controllers
             {
                 _context.Add(reason);
                 await _context.SaveChangesAsync();
-                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(reason), "create.reason");
 
                 return RedirectToAction(nameof(Index));
             }
             return View(reason);
         }
 
-        // GET: Reasons/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Reasons == null)
@@ -87,9 +60,6 @@ namespace ContinentalTestDb.Controllers
             return View(reason);
         }
 
-        // POST: Reasons/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Description")] Reason reason)
@@ -105,7 +75,6 @@ namespace ContinentalTestDb.Controllers
                 {
                     _context.Update(reason);
                     await _context.SaveChangesAsync();
-                    //await _rabbit.PublishMessage(JsonConvert.SerializeObject(reason), "update.reason");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -123,7 +92,6 @@ namespace ContinentalTestDb.Controllers
             return View(reason);
         }
 
-        // GET: Reasons/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Reasons == null)
@@ -141,7 +109,6 @@ namespace ContinentalTestDb.Controllers
             return View(reason);
         }
 
-        // POST: Reasons/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -154,7 +121,6 @@ namespace ContinentalTestDb.Controllers
             if (reason != null)
             {
                 _context.Reasons.Remove(reason);
-                //await _rabbit.PublishMessage(JsonConvert.SerializeObject(reason), "delete.reason");
             }
             
             await _context.SaveChangesAsync();

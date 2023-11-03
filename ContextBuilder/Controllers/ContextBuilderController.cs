@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models.ContextModels;
+using Models.FunctionModels;
 
 namespace ContextBuilder.Controllers
 {
@@ -17,6 +18,7 @@ namespace ContextBuilder.Controllers
             _context = context;
         }
 
+        //receber os requests de outras aplicações
         [HttpPost]
         [Route("CreateResquest")]
         public async Task<ActionResult> CreateResquest([FromBody] Request request)
@@ -28,15 +30,61 @@ namespace ContextBuilder.Controllers
                 Console.WriteLine("Request: " + request.Id.ToString() + " - Adicionado com Sucesso");
                 return Ok();
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
                 Console.WriteLine("Request: " + request.Id.ToString() + " - Erro ao adicionar");
-                Console.WriteLine(ex.ToString());
+                Console.WriteLine(e.Message);
                 return BadRequest();
             }
         }
 
-        //vou ter de criar uma função que elimina os requests que com mais de 1 ano e 8 meses
-      
+        //Receber os missingCompoentes
+        [HttpPost]
+        [Route("AddMissingComponent")]
+        public async Task<ActionResult> AddMissingComponent([FromBody] MissingComponent missingComponente)
+        {
+            try
+            {
+                var mc = await _context.missingComponents.FirstOrDefaultAsync(m => m.LineId.Equals(missingComponente.LineId) && m.ComponentId.Equals(missingComponente.ComponentId));
+                if(mc != null) 
+                {
+                    return BadRequest();
+                }
+                _context.Add(missingComponente);
+                await _context.SaveChangesAsync();
+                Console.WriteLine("MissingCoponente: LineId-" + missingComponente.LineId.ToString() + " , ComponenteId-" + missingComponente.ComponentId.ToString() + " - Adicionado com Sucesso");
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Erro ao adicionar missingComponente");
+                Console.WriteLine(e.Message);
+                return BadRequest();
+            }
+        }
+
+        [HttpPost]
+        [Route("RemoveMissingComponent")]
+        public async Task<ActionResult> RemoveMissingComponent([FromBody] MissingComponent missingComponente)
+        {
+            try
+            {
+                var mc = await _context.missingComponents.FirstOrDefaultAsync(m => m.LineId.Equals(missingComponente.LineId) && m.ComponentId.Equals(missingComponente.ComponentId));
+                if (mc == null)
+                {
+                    return BadRequest();
+                }
+                _context.missingComponents.Remove(mc);
+                await _context.SaveChangesAsync();
+                Console.WriteLine("MissingCoponente: LineId-" + missingComponente.LineId.ToString() + " , ComponenteId-" + missingComponente.ComponentId.ToString() + " - removido com Sucesso");
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Erro ao adicionar missingComponente");
+                Console.WriteLine(e.Message);
+                return BadRequest();
+            }
+        }
     }    
 }

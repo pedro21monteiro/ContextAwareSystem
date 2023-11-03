@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer;
 using Models.cdc_Models;
+using Models.FunctionModels;
 
 namespace ContinentalTestDb.Data
 {
@@ -34,11 +35,14 @@ namespace ContinentalTestDb.Data
         public DbSet<Stop> Stops { get; set; }
         public DbSet<Supervisor> Supervisors { get; set; }
         public DbSet<Worker> Workers { get; set; }
-        public DbSet<Request> Requests { get; set; }
         public DbSet<ComponentProduct> ComponentProducts { get; set; }
 
         //----------Implementação do cdc
         public DbSet<CDC_Stop> cdc_Stops { get; set; }
         public DbSet<CDC_Production> cdc_Productions { get; set; }
+
+        //----------Testes de funções extras da aplicação
+        public DbSet<Request> Requests { get; set; }
+        public DbSet<MissingComponent> MissingComponents { get; set; }
     }
 }

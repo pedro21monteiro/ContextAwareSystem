@@ -15,8 +15,4 @@
     <None Remove="NovaPasta2\**" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ContinentalModels\" />
-  </ItemGroup>
-
 </Project>

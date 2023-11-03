@@ -1,0 +1,48 @@
+﻿@using Models.FunctionModels
+@model IEnumerable<MissingComponent>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LineId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ComponentId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderDate)
+
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LineId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ComponentId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderDate)
+            </td>
+             <td>
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

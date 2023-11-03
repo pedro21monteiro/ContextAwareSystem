@@ -1,6 +1,5 @@
 ﻿using ContextAcquisition.Data;
 using ContextAcquisition.Services;
-using Models.ContextModels;
 using System.Net.Http;
 using System;
 using System.Threading.Tasks;
@@ -8,6 +7,7 @@ using System.Timers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Services.DataServices;
+using Models.FunctionModels;
 
 namespace ContextAcquisition
 {

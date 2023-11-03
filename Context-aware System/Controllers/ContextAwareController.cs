@@ -80,7 +80,19 @@ namespace Context_aware_System.Controllers
                 rdi.TagReference = product.LabelReference;
                 //dizer o turno do momento
                 rdi.WorkShift = _systemLogic.GetAtualWorkShift(DateTime.Now).Shift;
-                //--------------------------------------------------------------Falta implementar a função dos missing Components
+                //Função dos missing Components, vai ver àquela linha se tem algum componente em falta
+                var missingComponents = await _context.missingComponents.Where(m => m.LineId == line.Id).ToListAsync();
+                if (missingComponents.Any())
+                {
+                    foreach(var mc in missingComponents)
+                    {
+                        var componente = await _DataService.GetComponentById(mc.ComponentId);
+                        if (componente != null)
+                        {
+                            rdi.listMissingComponentes.Add(componente);
+                        }
+                    }
+                }
                 rdi.Message = "Info obtida com sucesso!!";
             }
             //se não for wearable vai ser um coordenador
@@ -545,6 +557,37 @@ namespace Context_aware_System.Controllers
             rci.Message = "Info obtida com sucesso!!";
 
             return Ok(rci);
+        }
+
+        /// <summary>
+        /// Devolve a informação sobre os componentes em falta, as respetivas linhas afetadas e a data em que o pedido
+        /// de reposição do componente foi efetuado.
+        /// </summary>
+        [HttpGet]
+        [Route("GetMissingComponents")]
+        public async Task<IActionResult> GetMissingComponents()
+        {
+            //Formato da resposta
+            ResponseGetMissingComponents rgmc = new ResponseGetMissingComponents();
+            var missingComponentes = await _context.missingComponents.ToListAsync();
+            if(missingComponentes != null)
+            {
+                foreach(var missingComponente in missingComponentes)
+                {
+                    var line = await _DataService.GetLineById(missingComponente.LineId);
+                    var componente = await _DataService.GetComponentById(missingComponente.ComponentId);
+                    if(line!= null && componente != null)
+                    {
+                        MissingComponentResponse mcr = new MissingComponentResponse();
+                        mcr.OrderDate = missingComponente.OrderDate;
+                        mcr.Line = line;
+                        mcr.Component = componente;
+                        rgmc.listMissingComponentes.Add(mcr);
+                    }
+                }
+            }
+            rgmc.Message = "Info obtida com sucesso!!";
+            return Ok(rgmc);
         }
 
         /// <summary>

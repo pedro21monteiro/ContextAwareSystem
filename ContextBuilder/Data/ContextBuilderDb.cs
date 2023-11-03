@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Models.ContextModels;
+using Models.FunctionModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,5 +28,6 @@ namespace ContextBuilder.Data
         public DbSet<Production> Productions { get; set; }
         public DbSet<Stop> Stops { get; set; }
         public DbSet<Request> Requests { get; set; }
+        public DbSet<MissingComponent> missingComponents { get; set; }
     }
 }

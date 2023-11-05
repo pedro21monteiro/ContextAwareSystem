@@ -38,16 +38,22 @@ namespace ContinentalTestDb.Controllers
         public async Task<IActionResult> Create([Bind("Id,Hour,Day,Quantity,Production_PlanId")] Production production)
         {
             var pp = _context.Production_Plans.SingleOrDefault(p => p.Id == production.Production_PlanId);
-            if (pp != null)
+            if (pp == null)
             {
-                production.Prod_Plan = pp;
-                _context.Add(production);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
+                ModelState.AddModelError("Production_PlanId", "Production_PlanId inválido. Insira um Production_PlanId válido.");
+                ViewData["Production_PlanId"] = new SelectList(_context.Production_Plans, "Id", "Name", production.Production_PlanId);
+                return View(production);
             }
-            ViewData["Production_PlanId"] = new SelectList(_context.Production_Plans, "Id", "Name", production.Production_PlanId);
-            return View(production);
+            if(production.Hour < 0 || production.Hour >= 24)
+            {
+                ModelState.AddModelError("Hour", "Hour inválido. Insira uma hora válida (0-23).");
+                ViewData["Production_PlanId"] = new SelectList(_context.Production_Plans, "Id", "Name", production.Production_PlanId);
+                return View(production);
+            }
+            production.Prod_Plan = pp;
+            _context.Add(production);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));            
         }
 
         public async Task<IActionResult> Edit(int? id)
@@ -74,31 +80,37 @@ namespace ContinentalTestDb.Controllers
             {
                 return NotFound();
             }
-
             var pp = _context.Production_Plans.SingleOrDefault(p => p.Id == production.Production_PlanId);
-            if (pp != null)
+            if (pp == null)
             {
-                try
-                {
-                    production.Prod_Plan = pp;
-                    _context.Update(production);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProductionExists(production.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                ModelState.AddModelError("Production_PlanId", "Production_PlanId inválido. Insira um Production_PlanId válido.");
+                ViewData["Production_PlanId"] = new SelectList(_context.Production_Plans, "Id", "Name", production.Production_PlanId);
+                return View(production);
             }
-            ViewData["Production_PlanId"] = new SelectList(_context.Production_Plans, "Id", "Name", production.Production_PlanId);
-            return View(production);
+            if (production.Hour < 0 || production.Hour >= 24)
+            {
+                ModelState.AddModelError("Hour", "Hour inválido. Insira uma hora válida (0-23).");
+                ViewData["Production_PlanId"] = new SelectList(_context.Production_Plans, "Id", "Name", production.Production_PlanId);
+                return View(production);
+            }
+            try
+            {
+                production.Prod_Plan = pp;
+                _context.Update(production);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ProductionExists(production.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Delete(int? id)

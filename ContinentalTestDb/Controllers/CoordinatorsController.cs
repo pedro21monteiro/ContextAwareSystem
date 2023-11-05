@@ -37,15 +37,16 @@ namespace ContinentalTestDb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,WorkerId")] Coordinator coordinator)
         {
-            var w = _context.Workers.SingleOrDefault(w => w.Id == coordinator.WorkerId);
-            if (w != null)
+            var worker = await _context.Workers.SingleOrDefaultAsync(w => w.Id == coordinator.WorkerId);
+            if (worker == null)
             {
-                _context.Add(coordinator);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                ModelState.AddModelError("WorkerId", "WorkerId inválido. Insira um WorkerId válido.");
+                ViewData["WorkerId"] = new SelectList(_context.Workers, "Id", "UserName", coordinator.WorkerId);
+                return View(coordinator);
             }
-            ViewData["WorkerId"] = new SelectList(_context.Workers, "Id", "UserName", coordinator.WorkerId);
-            return View(coordinator);
+            _context.Add(coordinator);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Edit(int? id)
@@ -54,7 +55,6 @@ namespace ContinentalTestDb.Controllers
             {
                 return NotFound();
             }
-
             var coordinator = await _context.Coordinators.FindAsync(id);
             if (coordinator == null)
             {

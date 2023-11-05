@@ -182,7 +182,6 @@ namespace ContinentalTestDb.Controllers
             else
             {
                 //adicionar componentproduct à tabela de relação
-
                 ComponentProduct cp = new ComponentProduct();
                 cp.Product = product;
                 cp.Component = component;

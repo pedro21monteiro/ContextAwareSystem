@@ -9,6 +9,8 @@ namespace Models.ContinentalModels
         [Required]
         public int Hour { get; set; }
         [Required]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         public DateTime Day { get; set; }
         [Required]
         public int Quantity { get; set; }

@@ -15,10 +15,10 @@ namespace ContextAcquisition.Services
     public class Logic : ILogic
     {
         //private static string connectionString = "https://localhost:7284/api/ContextBuilder/";
-        private static string continentalTestAPIHost = System.Environment.GetEnvironmentVariable("CONTAPI") ?? "https://localhost:7013";
+        //private static string continentalTestAPIHost = System.Environment.GetEnvironmentVariable("CONTAPI") ?? "https://localhost:7013";
         private static int UrgentStopTime = 15;
         private static string AlertAppConnectionString = "https://192.168.28.86:8091/api/Alert/SendNotification/";
-        private static string builderHost = System.Environment.GetEnvironmentVariable("BUILDER") ?? "https://localhost:7284";
+        //private static string builderHost = System.Environment.GetEnvironmentVariable("BUILDER") ?? "https://localhost:7284";
         private static readonly ContextAcquisitonDb _context = new ContextAcquisitonDb();
         private static readonly IDataService _dataService = new DataService();
 
@@ -81,48 +81,80 @@ namespace ContextAcquisition.Services
         
         public static async Task UpdateStop(Stop stop)
         {
-            try
+            var sExistInContext = _context.Stops.SingleOrDefault(s => s.Id == stop.Id);
+            if (sExistInContext == null)
             {
-                HttpClient _httpClient = new HttpClient();
-                string json = JsonConvert.SerializeObject(stop);
-                HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await _httpClient.PostAsync($"{builderHost}/api/DataChange/ChangeStop", content);
-                if (response.IsSuccessStatusCode)
+                try
                 {
-                    Console.WriteLine("Stop: " + stop.Id.ToString() + " - Atualizado com suceso");
+                    _context.Add(stop);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine("stop: " + stop.Id.ToString() + " - Adicionado com suceso");
                 }
-                else
+                catch (Exception e)
                 {
-                    Console.WriteLine("Erro ao atualizar Stop: " + stop.Id.ToString());
+                    Console.WriteLine(e.Message);
                 }
             }
-            catch (Exception ex)
+            else
             {
-                Console.WriteLine(ex.ToString());
+                //fazer update
+                try
+                {
+                    if (stop.ReasonId != null)
+                    {
+                        sExistInContext.ReasonId = stop.ReasonId;
+                    }
+                    sExistInContext.LineId = stop.LineId;
+                    //o resto do stop
+                    sExistInContext.Planned = stop.Planned;
+                    sExistInContext.InitialDate = stop.InitialDate;
+                    sExistInContext.EndDate = stop.EndDate;
+                    sExistInContext.Duration = stop.Duration;
+                    sExistInContext.Shift = stop.Shift;
+                    _context.Update(sExistInContext);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine("stop: " + stop.Id.ToString() + " - atualizado com suceso");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
             }
         }
         
         public static async Task UpdateProduction(Production production)
         {
-            try
+            var pExistInContext = _context.Productions.SingleOrDefault(p => p.Id == production.Id);
+            if (pExistInContext == null)
             {
-                HttpClient _httpClient = new HttpClient();
-                string json = JsonConvert.SerializeObject(production);
-                HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await _httpClient.PostAsync($"{builderHost}/api/DataChange/ChangeProduction", content);
-
-                if (response.IsSuccessStatusCode)
+                try
                 {
-                    Console.WriteLine("Production: " + production.Id.ToString() + " - Atualizado com suceso");
+                    _context.Add(production);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine("Production: " + production.Id.ToString() + " - Adicionado com suceso");
                 }
-                else
+                catch (Exception e)
                 {
-                    Console.WriteLine("Erro ao atualizar Production: " + production.Id.ToString());
+                    Console.WriteLine(e.Message);
                 }
             }
-            catch (Exception ex)
+            else
             {
-                Console.WriteLine(ex.ToString());
+                //fazer update
+                try
+                {
+                    pExistInContext.Production_PlanId = production.Production_PlanId;
+                    pExistInContext.Hour = production.Hour;
+                    pExistInContext.Day = production.Day;
+                    pExistInContext.Quantity = production.Quantity;
+                    _context.Update(pExistInContext);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine("Production: " + production.Id.ToString() + " - Atualizada com suceso");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
             }
         }
 
@@ -197,9 +229,8 @@ namespace ContextAcquisition.Services
         {
             try
             {
-                TimeSpan ts = stop.EndDate.Subtract(stop.InitialDate);
                 //ver se a paragem durou mais de 15 min, se não é planeada e se foi no dia de hoje
-                if (ts.TotalMinutes >= UrgentStopTime && stop.Planned == false && stop.InitialDate.Date.Equals(DateTime.Now.Date))
+                if (stop.Duration.TotalMinutes >= 15 && stop.Planned == false && stop.InitialDate.Date.Equals(DateTime.Now.Date))
                 {
                     //Soar o aviso
                     var asr = new AlertStopRequest
@@ -238,18 +269,17 @@ namespace ContextAcquisition.Services
                     Console.WriteLine("Paragem - " + stop.Id.ToString() + " não é urgente");
                 }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
                 Console.WriteLine("Alerta da paragem - " + stop.Id.ToString() + " Erro ao enviar Alerta");
-                Console.WriteLine(ex.ToString());
+                Console.WriteLine(e.Message);
             }           
         }
 
         //vai verificar se a produção aconteceu nas ultimas 24 horas
         public static async Task CheckIfItIsNewProduction(Production production)
         {
-            DateTime ProductionDateTime = new DateTime();
-            ProductionDateTime = production.Day.Date;
+            DateTime ProductionDateTime = production.Day.Date;
             ProductionDateTime.AddHours(production.Hour);
             try
             {
@@ -276,10 +306,10 @@ namespace ContextAcquisition.Services
                     Console.WriteLine("Production - " + production.Id.ToString() + " não é das ultimas 24 horas");
                 }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
                 Console.WriteLine("Alerta de nova production - " + production.Id.ToString() + " Erro ao enviar Alerta");
-                Console.WriteLine(ex.ToString());
+                Console.WriteLine(e.Message);
             }
         }
     }

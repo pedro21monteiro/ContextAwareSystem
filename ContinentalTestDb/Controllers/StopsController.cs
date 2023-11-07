@@ -38,23 +38,41 @@ namespace ContinentalTestDb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Planned,InitialDate,EndDate,Duration,Shift,LineId,ReasonId")] Stop stop)
         {
-
-            var l = _context.Lines.SingleOrDefault(l => l.Id == stop.LineId);
-            var r = _context.Reasons.SingleOrDefault(r => r.Id == stop.ReasonId);
-            if (l != null)
+            var line = await _context.Lines.SingleOrDefaultAsync(l => l.Id == stop.LineId);
+            if (line == null)
             {
-                stop.Line = l;
-                if(r != null)
-                {
-                    stop.Reason = r;
-                }
-                _context.Add(stop);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                ModelState.AddModelError("LineId", "LineId inválido. Insira um LineId válido.");
+                ViewData["LineId"] = new SelectList(_context.Lines, "Id", "Name", stop.LineId);
+                ViewData["ReasonId"] = new SelectList(_context.Reasons, "Id", "Description", stop.ReasonId);
+                return View(stop);
             }
-            ViewData["LineId"] = new SelectList(_context.Lines, "Id", "Name", stop.LineId);
-            ViewData["ReasonId"] = new SelectList(_context.Reasons, "Id", "Description", stop.ReasonId);
-            return View(stop);
+            if(stop.InitialDate >= stop.EndDate)
+            {
+                ModelState.AddModelError("InitialDate", "InitialDate inválido. Tem de inserir um initial date menor que um EndDate.");
+                ViewData["LineId"] = new SelectList(_context.Lines, "Id", "Name", stop.LineId);
+                ViewData["ReasonId"] = new SelectList(_context.Reasons, "Id", "Description", stop.ReasonId);
+                return View(stop);
+            }
+            stop.Line = line;
+            //ver se a reason existe 
+            var reason = await _context.Reasons.SingleOrDefaultAsync(r => r.Id == stop.ReasonId);
+            if (reason != null)
+            {
+                stop.Reason = reason;
+            }
+            //adicionar a duration
+            TimeSpan duration = stop.EndDate - stop.InitialDate;
+            if (duration.TotalHours <= 24)
+            {
+                stop.Duration = duration;
+            }
+            else
+            {
+                stop.Duration = new TimeSpan(23, 59, 59);
+            }
+            _context.Add(stop);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Edit(int? id)
@@ -82,37 +100,55 @@ namespace ContinentalTestDb.Controllers
             {
                 return NotFound();
             }
-
-            var l = _context.Lines.SingleOrDefault(l => l.Id == stop.LineId);
-            var r = _context.Reasons.SingleOrDefault(r => r.Id == stop.ReasonId);
-            if (l != null)
-            {             
-                try
-                {
-                    stop.Line = l;
-                    if (r != null)
-                    {
-                        stop.Reason = r;
-                    }
-                    _context.Update(stop);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!StopExists(stop.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+            var line = await _context.Lines.SingleOrDefaultAsync(l => l.Id == stop.LineId);
+            if (line == null)
+            {
+                ModelState.AddModelError("LineId", "LineId inválido. Insira um LineId válido.");
+                ViewData["LineId"] = new SelectList(_context.Lines, "Id", "Name", stop.LineId);
+                ViewData["ReasonId"] = new SelectList(_context.Reasons, "Id", "Description", stop.ReasonId);
+                return View(stop);
             }
-            ViewData["LineId"] = new SelectList(_context.Lines, "Id", "Name", stop.LineId);
-            ViewData["ReasonId"] = new SelectList(_context.Reasons, "Id", "Description", stop.ReasonId);
-            return View(stop);
+            if (stop.InitialDate >= stop.EndDate)
+            {
+                ModelState.AddModelError("InitialDate", "InitialDate inválido. Tem de inserir um initial date menor que um EndDate.");
+                ViewData["LineId"] = new SelectList(_context.Lines, "Id", "Name", stop.LineId);
+                ViewData["ReasonId"] = new SelectList(_context.Reasons, "Id", "Description", stop.ReasonId);
+                return View(stop);
+            }
+            try
+            {
+                stop.Line = line;
+                //ver se a reason existe 
+                var reason = await _context.Reasons.SingleOrDefaultAsync(r => r.Id == stop.ReasonId);
+                if (reason != null)
+                {
+                    stop.Reason = reason;
+                }
+                //adicionar a duration
+                TimeSpan duration = stop.EndDate - stop.InitialDate;
+                if (duration.TotalHours <= 24)
+                {
+                    stop.Duration = duration;
+                }
+                else
+                {
+                    stop.Duration = new TimeSpan(23, 59, 59);
+                }
+                _context.Update(stop);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!StopExists(stop.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));            
         }
 
         public async Task<IActionResult> Delete(int? id)

@@ -14,7 +14,7 @@ namespace ContextAcquisition
     class Program
     {
         //Vai haver duas funcionalidades para fazer a verificação de alteração de dados 1-DataMonitoringUsingDatabase, 2-CDC(Change Data Capture)
-        public static int functionDataMonitoring = 2;
+        public static int functionDataMonitoring = 1;
 
         public static System.Timers.Timer _timer;
         //Singleton para o ContextAcquisitonDb

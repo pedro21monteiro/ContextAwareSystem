@@ -1,8 +1,4 @@
-﻿using Context_aware_System.Controllers;
-using Context_aware_System.Data;
-using ContextServer.Data;
-using ContextServer.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models.ContextModels;
 using Models.CustomModels;

@@ -9,7 +9,24 @@ namespace ContinentalTestAPI.Data
     {
         public ContinentalDb(DbContextOptions<ContinentalDb> opt) : base(opt)
         {
-
+            Components = Set<Component>();
+            Coordinators = Set<Coordinator>();
+            Devices = Set<Device>();
+            Lines = Set<Line>();
+            Operators = Set<Operator>();
+            Products = Set<Product>();
+            Productions = Set<Production>();
+            Production_Plans = Set<Production_Plan>();
+            Reasons = Set<Reason>();
+            Schedule_Worker_Lines = Set<Schedule_Worker_Line>();
+            Stops = Set<Stop>();
+            Supervisors = Set<Supervisor>();
+            Workers = Set<Worker>();
+            requests = Set<Request>();
+            ComponentProducts = Set<ComponentProduct>();
+            // Cdcs
+            cdc_Stops = Set<CDC_Stop>();
+            cdc_Productions = Set<CDC_Production>();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

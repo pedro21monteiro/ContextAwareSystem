@@ -4,6 +4,7 @@ using ContextServer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Context_aware_System.Migrations
 {
     [DbContext(typeof(ContextAwareDb))]
-    partial class ContextAwareDbModelSnapshot : ModelSnapshot
+    [Migration("20231110112637_addAlertsHistory")]
+    partial class addAlertsHistory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -92,10 +94,6 @@ namespace Context_aware_System.Migrations
 
                     b.Property<bool>("AlertSuccessfullySent")
                         .HasColumnType("bit");
-
-                    b.Property<string>("ErrorMessage")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("TypeOfAlet")
                         .HasColumnType("int");

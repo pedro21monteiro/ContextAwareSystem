@@ -11,6 +11,7 @@ namespace ContextBuilder.Controllers
 
     public class ContextBuilderController : Controller
     {
+        private static string AlertAppConnectionString = "https://192.168.28.86:8091/api/Alert/SendNotification/";
         private readonly ContextBuilderDb _context;
 
         public ContextBuilderController(ContextBuilderDb context)
@@ -53,6 +54,8 @@ namespace ContextBuilder.Controllers
                 _context.Add(missingComponente);
                 await _context.SaveChangesAsync();
                 Console.WriteLine("MissingCoponente: LineId-" + missingComponente.LineId.ToString() + " , ComponenteId-" + missingComponente.ComponentId.ToString() + " - Adicionado com Sucesso");
+                //no final enviar o alerta
+                await SendAlert(missingComponente);
                 return Ok();
             }
             catch (Exception e)
@@ -84,6 +87,57 @@ namespace ContextBuilder.Controllers
                 Console.WriteLine("Erro ao adicionar missingComponente");
                 Console.WriteLine(e.Message);
                 return BadRequest();
+            }
+        }
+
+
+        //Enviar avisos para o sistema de alarmes
+        [HttpPost]
+        [Route("SendAlert")]
+        public async Task SendAlert(MissingComponent missingComponente)
+        {
+            var asr = new SendAlertRequest
+            {
+                MissingComponent = missingComponente,
+                Message = "O componente " + missingComponente.ComponentId + "está a faltar na linha " + missingComponente.LineId + ", por favor efetuar a reposição.",
+            };
+            var alertHistory = new AlertsHistory
+            {
+                TypeOfAlet = 3,
+                AlertDate = DateTime.Now.Date,
+                AlertMessage = asr.Message
+            };
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    var response = await client.PostAsJsonAsync(AlertAppConnectionString, asr);
+                    response.EnsureSuccessStatusCode();
+                    if (response.IsSuccessStatusCode)
+                    {
+                        Console.WriteLine("Alerta de componente em falta: CoponenteId - " + missingComponente.ComponentId +
+                            " LineId- " + missingComponente.LineId + "Enviado com sucesso");
+                        alertHistory.AlertSuccessfullySent = true;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Alerta de componente em falta: CoponenteId - " + missingComponente.ComponentId +
+                            " LineId- " + missingComponente.LineId + "Erro ao enviar Alerta");
+                        alertHistory.AlertSuccessfullySent = false;
+                    }
+                    _context.Add(alertHistory);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                alertHistory.ErrorMessage = e.Message;
+                alertHistory.AlertSuccessfullySent = false;
+                _context.Add(alertHistory);
+                await _context.SaveChangesAsync();
+                Console.WriteLine("Alerta de componente em falta: CoponenteId - " + missingComponente.ComponentId +
+                           " LineId- " + missingComponente.LineId + "Erro ao enviar Alerta");
+                Console.WriteLine(e.Message);
             }
         }
     }    

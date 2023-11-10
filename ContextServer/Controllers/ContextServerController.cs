@@ -5,7 +5,6 @@ using Models.CustomModels;
 using Models.FunctionModels;
 using Microsoft.EntityFrameworkCore;
 using Models.ContextModels;
-using Context_aware_System.Data;
 using Services.DataServices;
 
 namespace Context_aware_System.Controllers
@@ -725,6 +724,16 @@ namespace Context_aware_System.Controllers
             rnr.Message = "Info obtida com sucesso";
             rnr.nextDate = anterior;
             return Ok(rnr);
+        }
+
+        /// <summary>
+        /// Retorna o histórico de alertas enviados pela aplicação.
+        /// </summary>
+        [HttpGet]
+        [Route("GetAlertsHistory")]
+        public async Task<IActionResult> GetAlertsHistory()
+        {
+            return Ok(await _context.alertsHistories.ToListAsync());
         }
     }
 }

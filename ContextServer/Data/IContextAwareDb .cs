@@ -2,7 +2,7 @@
 using Models.ContextModels;
 using Models.FunctionModels;
 
-namespace Context_aware_System.Data
+namespace ContextServer.Data
 {
     public interface IContextAwareDb 
     {
@@ -11,5 +11,6 @@ namespace Context_aware_System.Data
         public DbSet<Request> requests { get; set; }
         public DbSet<LastVerificationRegist> lastVerificationRegists { get; set; }
         public DbSet<MissingComponent> missingComponents { get; set; }
+        public DbSet<AlertsHistory> alertsHistories { get; set; }
     }
 }

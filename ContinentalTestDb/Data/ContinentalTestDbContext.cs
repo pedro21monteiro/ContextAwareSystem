@@ -10,7 +10,27 @@ namespace ContinentalTestDb.Data
     {
         public ContinentalTestDbContext(DbContextOptions<ContinentalTestDbContext> opt) : base(opt)
         {
-          
+            //Inicializar as propriedades no construtor
+            Components = Set<Component>();
+            Coordinators = Set<Coordinator>();
+            Devices = Set<Device>();
+            Lines = Set<Line>();
+            Operators = Set<Operator>();
+            Products = Set<Product>();
+            Productions = Set<Production>();
+            Production_Plans = Set<Production_Plan>();
+            Reasons = Set<Reason>();
+            Schedule_Worker_Lines = Set<Schedule_Worker_Line>();
+            Stops = Set<Stop>();
+            Supervisors = Set<Supervisor>();
+            Workers = Set<Worker>();
+            ComponentProducts = Set<ComponentProduct>();
+            // Implementação do CDC
+            cdc_Stops = Set<CDC_Stop>();
+            cdc_Productions = Set<CDC_Production>();
+            // Testes de funções extras da aplicação
+            Requests = Set<Request>();
+            MissingComponents = Set<MissingComponent>();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

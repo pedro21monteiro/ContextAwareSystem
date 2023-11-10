@@ -1,5 +1,4 @@
-﻿using Context_aware_System.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Models.ContextModels;
 using Models.FunctionModels;
 
@@ -9,7 +8,13 @@ namespace ContextServer.Data
     {
         public ContextAwareDb(DbContextOptions<ContextAwareDb> opt) : base(opt)
         {
-
+            //Inicializar as propriedades no construtor
+            Productions = Set<Production>();
+            Stops = Set<Stop>();
+            requests = Set<Request>();
+            lastVerificationRegists = Set<LastVerificationRegist>();
+            missingComponents = Set<MissingComponent>();
+            alertsHistories = Set<AlertsHistory>();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -26,5 +31,6 @@ namespace ContextServer.Data
         public DbSet<Request> requests { get; set; }
         public DbSet<LastVerificationRegist> lastVerificationRegists { get; set; }
         public DbSet<MissingComponent> missingComponents { get; set; }
+        public DbSet<AlertsHistory> alertsHistories { get; set; }
     }
 }

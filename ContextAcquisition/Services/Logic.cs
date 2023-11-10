@@ -16,7 +16,6 @@ namespace ContextAcquisition.Services
     {
         //private static string connectionString = "https://localhost:7284/api/ContextBuilder/";
         //private static string continentalTestAPIHost = System.Environment.GetEnvironmentVariable("CONTAPI") ?? "https://localhost:7013";
-        private static int UrgentStopTime = 15;
         private static string AlertAppConnectionString = "https://192.168.28.86:8091/api/Alert/SendNotification/";
         //private static string builderHost = System.Environment.GetEnvironmentVariable("BUILDER") ?? "https://localhost:7284";
         private static readonly ContextAcquisitonDb _context = new ContextAcquisitonDb();
@@ -227,53 +226,64 @@ namespace ContextAcquisition.Services
         //Funções para ver se é para adicionar avisos
         public static async Task CheckIfIsUrgentStop(Stop stop)
         {
+            //ver se a paragem durou mais de 15 min, se não é planeada e se foi no dia de hoje
+            if (stop.Duration.TotalMinutes < 15 || stop.Planned == true || !stop.InitialDate.Date.Equals(DateTime.Now.Date))
+            {
+                Console.WriteLine("Paragem - " + stop.Id.ToString() + " não é urgente");
+                return;
+            }
+            //a paragem é urgente
+            //Soar o aviso
+            var asr = new SendAlertRequest
+            {
+                Stop = stop,
+            };
+
+            if (stop.ReasonId != null)
+            {
+                var reason = await _dataService.GetReasonById((int)stop.ReasonId);
+                if (reason != null)
+                {
+                    asr.Message = "Paragem urgente detetada na linha - " + stop.LineId + " Razão da paragem: " + reason.Description;
+                }
+            }
+            var alertHistory = new AlertsHistory
+            {
+                TypeOfAlet = 1,
+                AlertDate = DateTime.Now.Date,
+                AlertMessage = asr.Message
+            };
             try
             {
-                //ver se a paragem durou mais de 15 min, se não é planeada e se foi no dia de hoje
-                if (stop.Duration.TotalMinutes >= 15 && stop.Planned == false && stop.InitialDate.Date.Equals(DateTime.Now.Date))
+                using (var client = new HttpClient())
                 {
-                    //Soar o aviso
-                    var asr = new AlertStopRequest
+                    var response = await client.PostAsJsonAsync(AlertAppConnectionString, asr);
+                    response.EnsureSuccessStatusCode();
+                    if (response.IsSuccessStatusCode)
                     {
-                        lineId = stop.LineId,
-                        shift = stop.Shift,
-                        dateStart = stop.InitialDate,
-                        dateEnd = stop.EndDate
-                    };
-
-                    if (stop.ReasonId != null)
-                    {
-                        var reason = await _dataService.GetReasonById((int)stop.ReasonId);
-                        if (reason != null)
-                        {
-                            asr.message = reason.Description;
-                        }
+                        Console.WriteLine("Alerta da paragem - " + stop.Id.ToString() + " Enviado com sucesso");
+                        //guardar alerta na bd
+                        alertHistory.AlertSuccessfullySent = true;
                     }
-                    using (var client = new HttpClient())
+                    else
                     {
-                        var response = await client.PostAsJsonAsync(AlertAppConnectionString, asr);
-                        response.EnsureSuccessStatusCode();
-
-                        if (response.IsSuccessStatusCode)
-                        {
-                            Console.WriteLine("Alerta da paragem - " + stop.Id.ToString() + " Enviado com sucesso");
-                        }
-                        else
-                        {
-                            Console.WriteLine("Alerta da paragem - " + stop.Id.ToString() + " Erro ao enviar Alerta");
-                        }
+                        Console.WriteLine("Alerta da paragem - " + stop.Id.ToString() + " Erro ao enviar Alerta");
+                        //guardar alerta na bd
+                        alertHistory.AlertSuccessfullySent = false;
                     }
                 }
-                else
-                {
-                    Console.WriteLine("Paragem - " + stop.Id.ToString() + " não é urgente");
-                }
+                _context.Add(alertHistory);
+                await _context.SaveChangesAsync();
             }
             catch (Exception e)
             {
+                alertHistory.ErrorMessage = e.Message;
+                alertHistory.AlertSuccessfullySent = false;
+                _context.Add(alertHistory);
+                await _context.SaveChangesAsync();
                 Console.WriteLine("Alerta da paragem - " + stop.Id.ToString() + " Erro ao enviar Alerta");
                 Console.WriteLine(e.Message);
-            }           
+            }             
         }
 
         //vai verificar se a produção aconteceu nas ultimas 24 horas
@@ -281,33 +291,50 @@ namespace ContextAcquisition.Services
         {
             DateTime ProductionDateTime = production.Day.Date;
             ProductionDateTime.AddHours(production.Hour);
+            TimeSpan ts = DateTime.Now.Subtract(ProductionDateTime);
+            if (ts.TotalHours >= 24)
+            {
+                Console.WriteLine("Production - " + production.Id.ToString() + " não é das ultimas 24 horas");
+                return;
+            }
+            //Soar o aviso
+            var asr = new SendAlertRequest
+            {
+                Production = production,
+                Message = "Foi detetada uma nova produção de " + production.Quantity + "produtos no plano de produção" + production.Production_PlanId,
+            };
+            var alertHistory = new AlertsHistory
+            {
+                TypeOfAlet = 2,
+                AlertDate = DateTime.Now.Date,
+                AlertMessage = asr.Message
+            };
             try
             {
-                TimeSpan ts = DateTime.Now.Subtract(ProductionDateTime);
-                if (ts.TotalHours < 24)
+                using (var client = new HttpClient())
                 {
-                    using (var client = new HttpClient())
+                    var response = await client.PostAsJsonAsync(AlertAppConnectionString, asr);
+                    response.EnsureSuccessStatusCode();
+                    if (response.IsSuccessStatusCode)
                     {
-                        var response = await client.PostAsJsonAsync(AlertAppConnectionString, production);
-                        response.EnsureSuccessStatusCode();
-
-                        if (response.IsSuccessStatusCode)
-                        {
-                            Console.WriteLine("Alerta de nova production - " + production.Id.ToString() + " Enviado com sucesso");
-                        }
-                        else
-                        {
-                            Console.WriteLine("Alerta de nova production - " + production.Id.ToString() + " Erro ao enviar Alerta");
-                        }
+                        Console.WriteLine("Alerta de nova production - " + production.Id.ToString() + " Enviado com sucesso");
+                        alertHistory.AlertSuccessfullySent = true;
                     }
-                }
-                else
-                {
-                    Console.WriteLine("Production - " + production.Id.ToString() + " não é das ultimas 24 horas");
+                    else
+                    {
+                        Console.WriteLine("Alerta de nova production - " + production.Id.ToString() + " Erro ao enviar Alerta");
+                        alertHistory.AlertSuccessfullySent = false;
+                    }
+                    _context.Add(alertHistory);
+                    await _context.SaveChangesAsync();
                 }
             }
             catch (Exception e)
             {
+                alertHistory.ErrorMessage = e.Message;
+                alertHistory.AlertSuccessfullySent = false;
+                _context.Add(alertHistory);
+                await _context.SaveChangesAsync();
                 Console.WriteLine("Alerta de nova production - " + production.Id.ToString() + " Erro ao enviar Alerta");
                 Console.WriteLine(e.Message);
             }

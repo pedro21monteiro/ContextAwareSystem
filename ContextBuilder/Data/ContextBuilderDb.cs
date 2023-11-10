@@ -13,7 +13,11 @@ namespace ContextBuilder.Data
     {
         public ContextBuilderDb(DbContextOptions<ContextBuilderDb> opt) : base(opt)
         {
-
+            Productions = Set<Production>();
+            Stops = Set<Stop>();
+            Requests = Set<Request>();
+            missingComponents = Set<MissingComponent>();
+            alertsHistories = Set<AlertsHistory>();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -29,5 +33,6 @@ namespace ContextBuilder.Data
         public DbSet<Stop> Stops { get; set; }
         public DbSet<Request> Requests { get; set; }
         public DbSet<MissingComponent> missingComponents { get; set; }
+        public DbSet<AlertsHistory> alertsHistories { get; set; }
     }
 }

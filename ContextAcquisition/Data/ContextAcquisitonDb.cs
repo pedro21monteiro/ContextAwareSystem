@@ -13,7 +13,10 @@ namespace ContextAcquisition.Data
     {
         public ContextAcquisitonDb()
         {
-
+            Productions = Set<Production>();
+            Stops = Set<Stop>();
+            LastVerificationRegists = Set<LastVerificationRegist>();
+            alertsHistories = Set<AlertsHistory>();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -28,5 +31,6 @@ namespace ContextAcquisition.Data
         public DbSet<Production> Productions { get; set; }
         public DbSet<Stop> Stops { get; set; }
         public DbSet<LastVerificationRegist> LastVerificationRegists { get; set; }
+        public DbSet<AlertsHistory> alertsHistories { get; set; }
     }
 }

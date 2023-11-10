@@ -1,6 +1,4 @@
-﻿using ContextServer.Data;
-using ContextServer.Services;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Models.ContextModels;
 using System;
 using System.Collections.Generic;

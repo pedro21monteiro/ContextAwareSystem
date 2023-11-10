@@ -11,17 +11,17 @@ using Services.DataServices;
 namespace Context_aware_System.Controllers
 
 {
-    [Route("api/ContextAware")]
+    [Route("api/ContextServer")]
     [ApiController]
 
-    public class ContextAwareController : Controller
+    public class ContextServerController : Controller
     {
         private readonly IContextAwareDb _context;
         private readonly SystemLogic _systemLogic;
         private readonly IDataService _DataService;
         //para experimentar os datetimes 2023-11-20T11:11:11Z
 
-        public ContextAwareController(IContextAwareDb context, SystemLogic systemLogic, IDataService dataService)
+        public ContextServerController(IContextAwareDb context, SystemLogic systemLogic, IDataService dataService)
         {
             _context = context;
             _systemLogic = systemLogic;

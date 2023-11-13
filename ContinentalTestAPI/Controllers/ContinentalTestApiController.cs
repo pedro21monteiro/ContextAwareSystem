@@ -23,7 +23,6 @@ namespace ContinentalTestAPI.Controllers
         {
             List<Component> listComponents = new List<Component>();
             listComponents = await _context.Components.ToListAsync();
-            //o id só pode existir um
             if (id != null)
             {
                 listComponents = listComponents.Where(c => c.Id.Equals(id)).ToList();

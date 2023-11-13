@@ -250,7 +250,7 @@ namespace ContextAcquisition.Services
             var alertHistory = new AlertsHistory
             {
                 TypeOfAlet = 1,
-                AlertDate = DateTime.Now.Date,
+                AlertDate = DateTime.Now,
                 AlertMessage = asr.Message
             };
             try
@@ -306,7 +306,7 @@ namespace ContextAcquisition.Services
             var alertHistory = new AlertsHistory
             {
                 TypeOfAlet = 2,
-                AlertDate = DateTime.Now.Date,
+                AlertDate = DateTime.Now,
                 AlertMessage = asr.Message
             };
             try

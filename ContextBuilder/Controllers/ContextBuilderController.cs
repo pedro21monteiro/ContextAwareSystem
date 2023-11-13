@@ -104,7 +104,7 @@ namespace ContextBuilder.Controllers
             var alertHistory = new AlertsHistory
             {
                 TypeOfAlet = 3,
-                AlertDate = DateTime.Now.Date,
+                AlertDate = DateTime.Now,
                 AlertMessage = asr.Message
             };
             try

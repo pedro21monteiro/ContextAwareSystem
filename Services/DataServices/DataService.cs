@@ -175,7 +175,6 @@ namespace Services.DataServices
                 }
                 searchLink += "lineId=" + lineId.ToString();
             }
-
             try
             {
                 return await httpClient.GetFromJsonAsync<List<Device>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetDevices/" + searchLink);

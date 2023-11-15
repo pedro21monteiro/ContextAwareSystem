@@ -18,5 +18,11 @@ namespace Models.FunctionModels
         public int LineId { get; set; }
         public int ComponentId { get; set; }
         public DateTime OrderDate { get; set; }
+
+
+        public string String()
+        {
+            return "MissingCoponente: LineId - " + LineId + " , ComponenteId - " + ComponentId;
+        }
     }
 }

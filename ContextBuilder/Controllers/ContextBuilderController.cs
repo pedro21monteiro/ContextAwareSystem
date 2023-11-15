@@ -39,22 +39,21 @@ namespace ContextBuilder.Controllers
             }
         }
 
-        //Receber os missingCompoentes
         [HttpPost]
         [Route("AddMissingComponent")]
         public async Task<ActionResult> AddMissingComponent([FromBody] MissingComponent missingComponente)
         {
             try
             {
-                var mc = await _context.missingComponents.FirstOrDefaultAsync(m => m.LineId.Equals(missingComponente.LineId) && m.ComponentId.Equals(missingComponente.ComponentId));
+                var mc = await _context.missingComponents
+                    .FirstOrDefaultAsync(m => m.LineId.Equals(missingComponente.LineId) && m.ComponentId.Equals(missingComponente.ComponentId));
                 if(mc != null) 
                 {
                     return BadRequest();
                 }
                 _context.Add(missingComponente);
                 await _context.SaveChangesAsync();
-                Console.WriteLine("MissingCoponente: LineId-" + missingComponente.LineId.ToString() + " , ComponenteId-" + missingComponente.ComponentId.ToString() + " - Adicionado com Sucesso");
-                //no final enviar o alerta
+                Console.WriteLine(missingComponente.String() + " - Adicionado com Sucesso");
                 await SendAlert(missingComponente);
                 return Ok();
             }
@@ -79,7 +78,7 @@ namespace ContextBuilder.Controllers
                 }
                 _context.missingComponents.Remove(mc);
                 await _context.SaveChangesAsync();
-                Console.WriteLine("MissingCoponente: LineId-" + missingComponente.LineId.ToString() + " , ComponenteId-" + missingComponente.ComponentId.ToString() + " - removido com Sucesso");
+                Console.WriteLine(missingComponente.String() + " - removido com Sucesso");
                 return Ok();
             }
             catch (Exception e)

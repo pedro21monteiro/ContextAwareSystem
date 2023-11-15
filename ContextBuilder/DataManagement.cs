@@ -4,8 +4,7 @@ namespace ContextBuilder
 {
     public class DataManagement : BackgroundService
     {
-        //private const int generalDelay = 24 * 60 * 10 * 1000 * 6; // 60 minuto = 1 hora *24
-        private const int generalDelay =  10 * 1000 * 2;//1 minuto
+        private const int generalDelay =  1000 * 60 * 60 * 24;//24 horas
         private IServiceProvider _sp;
         public DataManagement(IServiceProvider sp)
         {
@@ -17,44 +16,74 @@ namespace ContextBuilder
             while(!stoppingToken.IsCancellationRequested)
             {
                 await Task.Delay(generalDelay, stoppingToken);
-                //de 24 em 24 horas vai ver os requests e eliminar os que foram à mais de 1 ano e 8 meses
                 Console.WriteLine(DateTime.Now.ToString());
                 try
                 {
                     await CleanRequests();
+                    await CleanMissingComponents();
+                    await CleanAlertHistories();
                 }
-                catch(Exception ex)
+                catch(Exception e)
                 {
-                    Console.WriteLine(ex.ToString());
+                    Console.WriteLine(e.Message);
                 }
             }
         }
-
-        private Task CleanRequests()
+        private async Task CleanRequests()
         {
             using (var scope = _sp.CreateScope())
             {
                 var _context = scope.ServiceProvider.GetRequiredService<ContextBuilderDb>();
-                bool alterou = false;
                 foreach (var request in _context.Requests)
                 {
                     TimeSpan ts = DateTime.Now.Subtract(request.Date);
                     //1 ano e 8 meses
-                    if (ts.Days > 605)
+                    if (ts.TotalDays > 605)
                     {
                         _context.Requests.Remove(request);
-                        alterou = true;
+                        await _context.SaveChangesAsync();
                         Console.WriteLine("Request: " + request.Id.ToString() + " - Removido com Sucesso");
                     }
                 }
-                if(alterou == true)
-                {
-                    _context.SaveChangesAsync();
-                }
-                
             }
-            return Task.CompletedTask;
-            //return Task.FromResult("Done");
+            return;
+        }
+        private async Task CleanMissingComponents()
+        {
+            using (var scope = _sp.CreateScope())
+            {
+                var _context = scope.ServiceProvider.GetRequiredService<ContextBuilderDb>();
+                foreach (var missingComponent in _context.missingComponents)
+                {
+                    TimeSpan ts = DateTime.Now.Subtract(missingComponent.OrderDate);
+                    if (ts.TotalDays > 30)
+                    {
+                        _context.missingComponents.Remove(missingComponent);
+                        await _context.SaveChangesAsync();
+                        Console.WriteLine("MissingComponent: " + missingComponent.Id + " - Removido com Sucesso");
+                    }
+                }
+            }
+            return;
+        }
+
+        private async Task CleanAlertHistories()
+        {
+            using (var scope = _sp.CreateScope())
+            {
+                var _context = scope.ServiceProvider.GetRequiredService<ContextBuilderDb>();
+                foreach (var alertHistorie in _context.alertsHistories)
+                {
+                    TimeSpan ts = DateTime.Now.Subtract(alertHistorie.AlertDate);
+                    if (ts.TotalDays > 90)
+                    {
+                        _context.alertsHistories.Remove(alertHistorie);
+                        await _context.SaveChangesAsync();
+                        Console.WriteLine("Alert: " + alertHistorie.Id + " - Removido com Sucesso");
+                    }
+                }
+            }
+            return;
         }
     }
 }

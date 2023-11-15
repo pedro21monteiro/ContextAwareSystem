@@ -195,7 +195,7 @@ namespace Context_aware_System.Controllers
         /// Fornece informações sobre as paragens que ocorreram de acordo com as datas inseridas, dependendo de se as paragens foram planeadas ou não.
         /// </summary>
         [HttpGet]
-        [Route("NewStopsInfo")]
+        [Route("StopsInfo")]
         public async Task<IActionResult> StopsInfo(DateTime? dtInitial, DateTime? dtFinal, bool? planned)
         {
             ResponseStopsInfo rnsi = new ResponseStopsInfo();
@@ -311,8 +311,8 @@ namespace Context_aware_System.Controllers
         }
 
         /// <summary>
-        /// Disponibiliza informações relativas ao supervisor e às linhas de produção que ele está a 
-        /// supervisionar no dia atual, juntamente com os respetivos horários de trabalho, de acordo com o pedido.
+        /// Disponibiliza informações relativas ao supervisor e às linhas de produção que ele esteve a 
+        /// supervisionar no dia inserido, juntamente com os respetivos horários de trabalho, de acordo com o pedido.
         /// </summary>
         [HttpGet]
         [Route("SupervisorInfo")]

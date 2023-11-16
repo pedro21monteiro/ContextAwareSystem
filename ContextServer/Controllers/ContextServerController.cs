@@ -105,6 +105,7 @@ namespace Context_aware_System.Controllers
                     rdi.Message = "Erro ao identificar o coordinador";
                     return NotFound(rdi);
                 }
+                rdi.Coordinator = coordinator;
                 var worker = await _DataService.GetWorkerById(coordinator.WorkerId);
                 if (worker == null)
                 {

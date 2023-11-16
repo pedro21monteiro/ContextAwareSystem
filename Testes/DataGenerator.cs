@@ -199,5 +199,31 @@ namespace Testes
             };
             return fakeWorkers;
         }
+
+        //------------------Funções dos services a testar
+        public static Device? GetDeviceById(int id)
+        {
+            return GetFakeDevices().FirstOrDefault(d => d.Id == id);
+        }
+
+        public static Line? GetLineById(int id)
+        {
+            return GetFakeLines().FirstOrDefault(l => l.Id == id);
+        }
+
+        public static Coordinator? GetCoordinatorById(int id)
+        {
+            return GetFakeCoordinators().FirstOrDefault(c => c.Id == id);
+        }
+
+        public static Worker? GetWorkerById(int id)
+        {
+            return GetFakeWorkers().FirstOrDefault(w => w.Id == id);
+        }
+        public static List<Line>? GetLinesByCoordinatorId(int coordinatorId)
+        {
+            return GetFakeLines().Where(w => w.CoordinatorId == coordinatorId).ToList();
+        }
+
     }
 }

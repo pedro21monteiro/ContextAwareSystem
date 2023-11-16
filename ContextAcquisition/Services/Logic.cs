@@ -244,7 +244,7 @@ namespace ContextAcquisition.Services
                 var reason = await _dataService.GetReasonById((int)stop.ReasonId);
                 if (reason != null)
                 {
-                    asr.Message = "Paragem urgente detetada na linha - " + stop.LineId + " Razão da paragem: " + reason.Description;
+                    asr.Message = "Paragem urgente detetada, Id-" + stop.Id + ", LineId-" + stop.LineId + " Razão - " + reason.Description;
                 }
             }
             var alertHistory = new AlertsHistory
@@ -301,7 +301,7 @@ namespace ContextAcquisition.Services
             var asr = new SendAlertRequest
             {
                 Production = production,
-                Message = "Foi detetada uma nova produção de " + production.Quantity + "produtos no plano de produção" + production.Production_PlanId,
+                Message = "Foi detetada uma nova produção, Id-" + production.Id  + ", Quantidade-" + production.Quantity + ", ProductionPlan- " + production.Production_PlanId,
             };
             var alertHistory = new AlertsHistory
             {

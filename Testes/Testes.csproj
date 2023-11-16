@@ -27,6 +27,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ContextAcquisition\ContextAcquisition.csproj" />
     <ProjectReference Include="..\ContextBuilder\ContextBuilder.csproj" />
+    <ProjectReference Include="..\ContextServer\ContextServer.csproj" />
     <ProjectReference Include="..\ContinentalTestDb\ContinentalTestDb.csproj" />
   </ItemGroup>
 

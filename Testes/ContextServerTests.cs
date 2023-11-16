@@ -1,95 +1,123 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Context_aware_System.Controllers;
+using ContextServer.Data;
+using ContextServer.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models.ContextModels;
 using Models.CustomModels;
 using Moq;
 using Newtonsoft.Json;
+using Services.DataServices;
 using System.Linq;
 
 namespace Testes
 {
     public class ContextServerTests
     {
-        //Mock<IContextAwareDb> context;
-        //SystemLogic systemLogic;
-        //ContextAwareController controller;
-        //DataService dataService;
+        Mock<IContextAwareDb> _context;
+        SystemLogic systemLogic;
+        ContextServerController controller;
+        Mock<IDataService> _dataService;
 
-        //public ContextServerTests()
-        //{
-        //    //Arrange
-        //    context = new Mock<IContextAwareDb>();
-        //    systemLogic = new SystemLogic();
-        //    dataService = new DataService();
+        public ContextServerTests()
+        {
+            //Arrange
+            _context = new Mock<IContextAwareDb>();
+            systemLogic = new SystemLogic();
+            _dataService = new Mock<IDataService>();
 
-        //    controller = new ContextAwareController(context.Object, systemLogic,dataService);
-        //    //moks
-        //    var mockComponets = DbSetMock.CreateFrom(DataGenerator.GetFakeComponentes());
-        //    var mockCoordinators = DbSetMock.CreateFrom(DataGenerator.GetFakeCoordinators());
-        //    var mockDevices = DbSetMock.CreateFrom(DataGenerator.GetFakeDevices());
-        //    var mockLines = DbSetMock.CreateFrom(DataGenerator.GetFakeLines());
-        //    var mockOperators = DbSetMock.CreateFrom(DataGenerator.GetFakeOperators());
-        //    var mockProducts = DbSetMock.CreateFrom(DataGenerator.GetFakeProducts());
-        //    var mockProductions = DbSetMock.CreateFrom(DataGenerator.GetFakeProductions());
-        //    var mockProduction_Plans = DbSetMock.CreateFrom(DataGenerator.GetFakeProduction_Plans());
-        //    var mockReasons = DbSetMock.CreateFrom(DataGenerator.GetFakeReasons());
-        //    var mockSchedules = DbSetMock.CreateFrom(DataGenerator.GetFakeSchedule_Worker_Lines());
-        //    var mockStops = DbSetMock.CreateFrom(DataGenerator.GetFakeStops());
-        //    var mockSupervisors = DbSetMock.CreateFrom(DataGenerator.GetFakeSupervisors());
-        //    var mockWorkers = DbSetMock.CreateFrom(DataGenerator.GetFakeWorkers());
-        //    //trocar o contexto pelo do datagenerator
-        //    context.Setup(x => x.Components).Returns(mockComponets.Object);
-        //    context.Setup(x => x.Coordinators).Returns(mockCoordinators.Object);
-        //    context.Setup(x => x.Devices).Returns(mockDevices.Object);
-        //    context.Setup(x => x.Lines).Returns(mockLines.Object);
-        //    context.Setup(x => x.Operators).Returns(mockOperators.Object);
-        //    context.Setup(x => x.Products).Returns(mockProducts.Object);
-        //    context.Setup(x => x.Productions).Returns(mockProductions.Object);
-        //    context.Setup(x => x.Production_Plans).Returns(mockProduction_Plans.Object);
-        //    context.Setup(x => x.Reasons).Returns(mockReasons.Object);
-        //    context.Setup(x => x.Schedule_Worker_Lines).Returns(mockSchedules.Object);
-        //    context.Setup(x => x.Stops).Returns(mockStops.Object);
-        //    context.Setup(x => x.Supervisors).Returns(mockSupervisors.Object);
-        //    context.Setup(x => x.Workers).Returns(mockWorkers.Object);
-        //}
-        ////----------DeviceInfo---------------
-        //[Fact]
-        //public async Task DeviceInfo_Test_DeviceNotFound()
-        //{
-        //    var response = await controller.DeviceInfo(10);
-        //    // Assert
-        //    var rdi = (response as NotFoundObjectResult).Value as ResponseDeviceInfo;
-        //    Assert.Equal("Erro ao identificar o Device!!", rdi.Message);
-        //}
+            controller = new ContextServerController(_context.Object, systemLogic, _dataService.Object);
+            //trocar os dados pelos do datagenerator
+            _dataService.Setup(x => x.GetDeviceById(It.IsAny<int>())).ReturnsAsync((int id) => DataGenerator.GetDeviceById(id));
+            _dataService.Setup(x => x.GetLineById(It.IsAny<int>())).ReturnsAsync((int id) => DataGenerator.GetLineById(id));
+            _dataService.Setup(x => x.GetWorkerById(It.IsAny<int>())).ReturnsAsync((int id) => DataGenerator.GetWorkerById(id));
+            _dataService.Setup(x => x.GetCoordinatorById(It.IsAny<int>())).ReturnsAsync((int id) => DataGenerator.GetCoordinatorById(id));
+            _dataService.Setup(x => x.GetLinesByCoordinatorId(It.IsAny<int>())).ReturnsAsync((int id) => DataGenerator.GetLinesByCoordinatorId(id));
 
-        //[Fact]
-        //public async Task DeviceInfo_Test_LineNotFound()
-        //{
-        //    var response = await controller.DeviceInfo(4);
-        //    // Assert
-        //    var rdi = (response as NotFoundObjectResult).Value as ResponseDeviceInfo;
-        //    Assert.Equal("Erro ao identificar a linha de produção!!", rdi.Message);
-        //}
+            ////moks
+            //var mockComponets = DbSetMock.CreateFrom(DataGenerator.GetFakeComponentes());
+            //var mockCoordinators = DbSetMock.CreateFrom(DataGenerator.GetFakeCoordinators());
+            //var mockDevices = DbSetMock.CreateFrom(DataGenerator.GetFakeDevices());
+            //var mockLines = DbSetMock.CreateFrom(DataGenerator.GetFakeLines());
+            //var mockOperators = DbSetMock.CreateFrom(DataGenerator.GetFakeOperators());
+            //var mockProducts = DbSetMock.CreateFrom(DataGenerator.GetFakeProducts());
+            //var mockProductions = DbSetMock.CreateFrom(DataGenerator.GetFakeProductions());
+            //var mockProduction_Plans = DbSetMock.CreateFrom(DataGenerator.GetFakeProduction_Plans());
+            //var mockReasons = DbSetMock.CreateFrom(DataGenerator.GetFakeReasons());
+            //var mockSchedules = DbSetMock.CreateFrom(DataGenerator.GetFakeSchedule_Worker_Lines());
+            //var mockStops = DbSetMock.CreateFrom(DataGenerator.GetFakeStops());
+            //var mockSupervisors = DbSetMock.CreateFrom(DataGenerator.GetFakeSupervisors());
+            //var mockWorkers = DbSetMock.CreateFrom(DataGenerator.GetFakeWorkers());
+            ////trocar o contexto pelo do datagenerator
+            //context.Setup(x => x.Components).Returns(mockComponets.Object);
+            //context.Setup(x => x.Coordinators).Returns(mockCoordinators.Object);
+            //context.Setup(x => x.Devices).Returns(mockDevices.Object);
+            //context.Setup(x => x.Lines).Returns(mockLines.Object);
+            //context.Setup(x => x.Operators).Returns(mockOperators.Object);
+            //context.Setup(x => x.Products).Returns(mockProducts.Object);
+            //context.Setup(x => x.Productions).Returns(mockProductions.Object);
+            //context.Setup(x => x.Production_Plans).Returns(mockProduction_Plans.Object);
+            //context.Setup(x => x.Reasons).Returns(mockReasons.Object);
+            //context.Setup(x => x.Schedule_Worker_Lines).Returns(mockSchedules.Object);
+            //context.Setup(x => x.Stops).Returns(mockStops.Object);
+            //context.Setup(x => x.Supervisors).Returns(mockSupervisors.Object);
+            //context.Setup(x => x.Workers).Returns(mockWorkers.Object);
+        }
+        //----------DeviceInfo---------------
+        [Fact]
+        public async Task DeviceInfo_Test_DeviceNotFound()
+        {   
+            var response = await controller.DeviceInfo(10);
+            // Assert
+            Assert.IsType<NotFoundObjectResult>(response); 
+            var rdi = (response as NotFoundObjectResult)?.Value as ResponseDeviceInfo;
+            Assert.NotNull(rdi);
+            Assert.Equal("Erro ao identificar o Device", rdi.Message);
+        }
 
-        //[Fact]
-        //public async Task DeviceInfo_Test_Ok()
-        //{
-        //    var response = await controller.DeviceInfo(2);
-        //    // Assert
-        //    var rdi = (response as OkObjectResult).Value as ResponseDeviceInfo;
+        [Fact]
+        public async Task DeviceInfo_Test_LineNotFound()
+        {
+            var response = await controller.DeviceInfo(4);
+            // Assert
+            Assert.IsType<NotFoundObjectResult>(response);
+            var rdi = (response as NotFoundObjectResult).Value as ResponseDeviceInfo;
+            Assert.NotNull(rdi);
+            Assert.Equal("Erro ao identificar a line", rdi.Message);
+        }
 
-        //    Assert.Equal("Info obtida com sucesso!!", rdi.Message);
-        //}
+        [Fact]
+        public async Task DeviceInfo_Test_Ok()
+        {
+            var response = await controller.DeviceInfo(2);
+            // Assert
+            var rdi = (response as OkObjectResult).Value as ResponseDeviceInfo;
 
-        //[Fact]
-        //public async Task DeviceInfo_CoordinatorNotFound()
-        //{
-        //    var response = await controller.DeviceInfo(5);
-        //    // Assert
-        //    var rdi = (response as NotFoundObjectResult).Value as ResponseDeviceInfo;
+            Assert.IsType<OkObjectResult>(response);
+            Assert.Equal(1, rdi.Line.Id);
+            Assert.Equal("Tablet/Outro-Coordenator", rdi.Type);
+            Assert.Equal("Info obtida com sucesso!!", rdi.Message);
+            Assert.Equal(1,rdi.Worker.Id);
+            Assert.Equal(1, rdi.Coordinator.Id);
+            Assert.Equal(5, rdi.listResponsavelLines.Count);
+        }
 
-        //    Assert.Equal("Erro ao identificar o worker!!", rdi.Message);
-        //}
+        [Fact]
+        public async Task DeviceInfo_CoordinatorNotFound()
+        {
+            var response = await controller.DeviceInfo(5);
+            // Assert
+            var rdi = (response as NotFoundObjectResult).Value as ResponseDeviceInfo;
+
+            Assert.IsType<NotFoundObjectResult>(response);
+            Assert.Equal("Erro ao identificar o coordinador", rdi.Message);
+            Assert.Equal(3, rdi.Line.Id);
+        }
+
+
+
+
+
 
         ////Operatorinfo
         //[Fact]

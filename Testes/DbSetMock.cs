@@ -13,6 +13,8 @@ namespace Testes
             mock.As<IQueryable<T>>().Setup(x => x.Expression).Returns(internalQueryable.Expression);
             mock.As<IQueryable<T>>().Setup(x => x.ElementType).Returns(internalQueryable.ElementType);
             mock.As<IQueryable<T>>().Setup(x => x.GetEnumerator()).Returns(() => internalQueryable.GetEnumerator());
+
+        
             return mock;
         }
     }

@@ -12,5 +12,6 @@ namespace ContextServer.Data
         public DbSet<LastVerificationRegist> lastVerificationRegists { get; set; }
         public DbSet<MissingComponent> missingComponents { get; set; }
         public DbSet<AlertsHistory> alertsHistories { get; set; }
+
     }
 }

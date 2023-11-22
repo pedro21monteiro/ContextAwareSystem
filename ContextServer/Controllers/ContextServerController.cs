@@ -73,7 +73,7 @@ namespace Context_aware_System.Controllers
                 if(product == null)
                 {
                     rdi.Message = "Erro ao identificar o Produto";
-                    return Ok(rdi);
+                    return NotFound(rdi);
                 }
                 rdi.ProductName = product.Name;
                 rdi.TagReference = product.LabelReference;
@@ -281,6 +281,11 @@ namespace Context_aware_System.Controllers
                 productionPlans = filteredProductionPlans;
             }
             if (productionPlans == null)
+            {
+                rli.Message = "Não existem Planos de produções nessas datas";
+                return Ok(rli);
+            }
+            if (!productionPlans.Any())
             {
                 rli.Message = "Não existem Planos de produções nessas datas";
                 return Ok(rli);

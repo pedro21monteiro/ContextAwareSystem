@@ -3,6 +3,7 @@ using ContextAcquisition.Services;
 using ContinentalTestDb.Data;
 using Microsoft.EntityFrameworkCore;
 using Models.ContextModels;
+using Moq;
 
 namespace Testes
 {
@@ -11,7 +12,7 @@ namespace Testes
     {
         public readonly ContextAcquisitonDb _context = new ContextAcquisitonDb();
         public readonly ContinentalTestDbContext _contextContinental;
-        public readonly Logic logic = new Logic();
+        public readonly Logic _logic = new Logic();
 
         public ContextAcquisitionTests()
         {
@@ -24,6 +25,8 @@ namespace Testes
             _contextContinental = new ContinentalTestDbContext(optionsBuilder.Options);
         }
 
+
+        //----------------------------------------------Integration Tests----------------------------------
         //productions
         [Fact]
         public async Task Productions_Integration_Test()

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Models.ContextModels;
 using Models.FunctionModels;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ContextBuilder.Data
 {
-    public class ContextBuilderDb : DbContext
+    public class ContextBuilderDb : DbContext , IContextBuilderDb
     {
         public ContextBuilderDb(DbContextOptions<ContextBuilderDb> opt) : base(opt)
         {
@@ -34,5 +35,17 @@ namespace ContextBuilder.Data
         public DbSet<Request> Requests { get; set; }
         public DbSet<MissingComponent> missingComponents { get; set; }
         public DbSet<AlertsHistory> alertsHistories { get; set; }
+
+        //-------------
+        public async Task<int> SaveChangesAsync()
+        {
+            return await base.SaveChangesAsync();
+        }
+
+        public new EntityEntry<TEntity> Add<TEntity>(TEntity entity) where TEntity : class
+        {
+            return base.Add(entity);
+        }
+
     }
 }

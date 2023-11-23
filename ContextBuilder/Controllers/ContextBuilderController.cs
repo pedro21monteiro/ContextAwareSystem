@@ -12,9 +12,9 @@ namespace ContextBuilder.Controllers
     public class ContextBuilderController : Controller
     {
         private static string AlertAppConnectionString = "https://192.168.28.86:8091/api/Alert/SendNotification/";
-        private readonly ContextBuilderDb _context;
+        private readonly IContextBuilderDb _context;
 
-        public ContextBuilderController(ContextBuilderDb context)
+        public ContextBuilderController(IContextBuilderDb context)
         {
             _context = context;
         }

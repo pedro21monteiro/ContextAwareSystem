@@ -12,7 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHostedService<DataManagement>();
 
-builder.Services.AddDbContext<ContextBuilderDb>(options =>
+builder.Services.AddDbContext<IContextBuilderDb, ContextBuilderDb>(options =>
 {
     var dbname = System.Environment.GetEnvironmentVariable("DBNAME") ?? "ContextDb";
     var dbhost = System.Environment.GetEnvironmentVariable("DBHOST") ?? "192.168.28.86";

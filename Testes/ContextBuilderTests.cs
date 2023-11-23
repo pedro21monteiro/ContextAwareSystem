@@ -1,8 +1,10 @@
-﻿using ContextBuilder.Controllers;
+﻿using ContextBuilder;
+using ContextBuilder.Controllers;
 using ContextBuilder.Data;
 using FakeItEasy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MockQueryable.FakeItEasy;
 using Models.ContextModels;
 using Models.FunctionModels;
 
@@ -10,64 +12,168 @@ namespace Testes
 {
     public class ContextBuilderTests
     {
-        //public readonly ContextAcquisitonDb _context = new ContextAcquisitonDb();
-        //public readonly ContinentalTestDbContext _contextContinental;
+        //----------------------CreateRequest
+        [Fact]
+        public void CreateResquest_ValidRequest_ReturnsOkResult()
+        {
+            // Arrange
+            var fakeContext = A.Fake<IContextBuilderDb>();
 
-        //public ContextBuilderTests()
-        //{
-        //    var optionsBuilder = new DbContextOptionsBuilder<ContinentalTestDbContext>();
+            var request = new Request
+            {
+                Type = 2,
+                Date = DateTime.Now,
+                WorkerId = 1,
+                LineId = 1
+            };
+            var listRequests = new List<Request>();
 
-        //    var dbname = System.Environment.GetEnvironmentVariable("DBNAME") ?? "ContinentalTestDb";
-        //    var dbhost = System.Environment.GetEnvironmentVariable("DBHOST") ?? "192.168.28.86";
-        //    var dbuser = System.Environment.GetEnvironmentVariable("DBUSER") ?? "sa";
-        //    var dbpass = System.Environment.GetEnvironmentVariable("DBPASS") ?? "xA6UCjFY";
+            // Act
+            var controller = new ContextBuilderController(fakeContext);
+            var response = controller.CreateResquest(request).GetAwaiter().GetResult();
 
-        //    optionsBuilder.UseSqlServer("Data Source=" + dbhost + $";Database={dbname};User ID=" + dbuser + ";Password=" + dbpass + ";TrustServerCertificate=Yes;");
+            // Assert
+            Assert.IsType<OkResult>(response);
 
-        //    _contextContinental = new ContinentalTestDbContext(optionsBuilder.Options);
-        //}
+            // Verifique se o método Add foi chamado para a entidade Request
+            A.CallTo(() => fakeContext.Add(request)).MustHaveHappenedOnceExactly();
 
-        ////requests
-        //[Fact]
-        //public void RequestsTest()
-        //{
-        //    var requestsContinental = _contextContinental.Requests.ToList();
-        //    var requestsContext = _context.Requests.ToList();
+            // Verifique se o método SaveChangesAsync foi chamado
+            A.CallTo(() => fakeContext.SaveChangesAsync()).MustHaveHappenedOnceExactly();
+        }
 
-        //    bool teste = true;
-        //    foreach (var request in requestsContinental)
-        //    {
-        //        //tem de estar na bd do contexto senão retorna erro
-        //        if (!requestsContext.Exists(r => r.Type == request.Type && r.Date.Equals(request.Date)
-        //        && r.WorkerId == request.WorkerId))
-        //        {
-        //            teste = false;
-        //        }
-        //    }
+        //----------------------AddMissingComponent
+        [Fact]
+        public void AddMissingComponent_ReturnsBadRequest()
+        {
+            // Arrange
+            var fakeContext = A.Fake<IContextBuilderDb>();
 
-        //    Assert.True(teste);
-        //}
+            var missingComponent = new MissingComponent
+            {
+                LineId = 1,
+                ComponentId = 1,
+                OrderDate = DateTime.Now
+            };
+
+            var listMissingComponents = new List<MissingComponent>
+                {
+                   new MissingComponent { Id = 1, LineId = 1 ,ComponentId = 1, OrderDate = DateTime.Now.AddDays(-1)}
+                };
+
+            var fakeMissingComponentes = listMissingComponents.AsQueryable().BuildMockDbSet();
+            A.CallTo(() => fakeContext.missingComponents).Returns(fakeMissingComponentes);
+
+            // Act
+            var controller = new ContextBuilderController(fakeContext);
+            var response = controller.AddMissingComponent(missingComponent).GetAwaiter().GetResult();
+
+            // Assert
+            Assert.IsType<BadRequestResult>(response);
+        }
 
         [Fact]
-        //public async Task CreateResquest_ValidRequest_ReturnsOkResult()
-        //{
-        //    // Arrange
-        //    var optionsBuilder = new DbContextOptions<ContextBuilderDb>();
-        //    var contextBuilder = new ContextBuilderDb(optionsBuilder);
-        //    var mockContext = A.Fake<ContextBuilderDb(optionsBuilder)>();
+        public void AddMissingComponent_Returns_Ok()
+        {
+            // Arrange
+            var fakeContext = A.Fake<IContextBuilderDb>();
 
-        //    var request = new Request
-        //    {
-        //        Id = 1, Type = 2, Date = DateTime.Now, WorkerId = 1, LineId = 1  
-        //    };
+            var missingComponent = new MissingComponent
+            {
+                LineId = 1,
+                ComponentId = 1,
+                OrderDate = DateTime.Now
+            };
 
-        //    // Act
-        //    var controller = new ContextBuilderController(mockContext);
-        //    var response = await controller.CreateResquest(request);
+            var listMissingComponents = new List<MissingComponent>
+                {
+                   new MissingComponent { Id = 1, LineId = 1 ,ComponentId = 2, OrderDate = DateTime.Now.AddDays(-1)}
+                };
 
-        //    // Assert
-        //    Assert.IsType<OkObjectResult>(response);
-        //}
+            var fakeMissingComponentes = listMissingComponents.AsQueryable().BuildMockDbSet();
+            A.CallTo(() => fakeContext.missingComponents).Returns(fakeMissingComponentes);
+
+            // Act
+            var controller = new ContextBuilderController(fakeContext);
+            var response = controller.AddMissingComponent(missingComponent).GetAwaiter().GetResult();
+
+            // Assert
+            Assert.IsType<OkResult>(response);
+
+            // Verifique se o método Add foi chamado para a entidade MissingComponent
+            A.CallTo(() => fakeContext.Add(missingComponent)).MustHaveHappenedOnceExactly();
+
+            // Verifique se o método SaveChangesAsync foi chamado- vai ser chamado 2 vez uma para guardao o mc e outra no SendAlert
+            A.CallTo(() => fakeContext.SaveChangesAsync()).MustHaveHappenedTwiceExactly();
+
+        }
+
+        //------------------RemoveMissingComponent
+        [Fact]
+        public void RemoveMissingComponent_Returns_Ok()
+        {
+            // Arrange
+            var fakeContext = A.Fake<IContextBuilderDb>();
+
+            var missingComponent = new MissingComponent
+            {
+                LineId = 1,
+                ComponentId = 1,
+                OrderDate = DateTime.Now
+            };
+
+            var listMissingComponents = new List<MissingComponent>
+                {
+                   new MissingComponent { Id = 1, LineId = 1 ,ComponentId = 1, OrderDate = DateTime.Now.AddDays(-1)}
+                };
+
+            var fakeMissingComponentes = listMissingComponents.AsQueryable().BuildMockDbSet();
+            A.CallTo(() => fakeContext.missingComponents).Returns(fakeMissingComponentes);
+
+            // Act
+            var controller = new ContextBuilderController(fakeContext);
+            var response = controller.RemoveMissingComponent(missingComponent).GetAwaiter().GetResult();
+
+            // Assert
+            Assert.IsType<OkResult>(response);
+
+            // Verifique se o método Add foi chamado para a entidade MissingComponent
+            A.CallTo(() => fakeContext.missingComponents.Remove(A<MissingComponent>.Ignored)).MustHaveHappenedOnceExactly();
+
+            // Verifique se o método SaveChangesAsync foi chamado- vai ser chamado 2 vez uma para guardao o mc e outra no SendAlert
+            A.CallTo(() => fakeContext.SaveChangesAsync()).MustHaveHappenedOnceExactly();
+
+        }
+
+        [Fact]
+        public void RemoveMissingComponent_Returns_BadRequest()
+        {
+            // Arrange
+            var fakeContext = A.Fake<IContextBuilderDb>();
+
+            var missingComponent = new MissingComponent
+            {
+                LineId = 1,
+                ComponentId = 1,
+                OrderDate = DateTime.Now
+            };
+
+            var listMissingComponents = new List<MissingComponent>
+                {
+                   new MissingComponent { Id = 1, LineId = 1 ,ComponentId = 2, OrderDate = DateTime.Now.AddDays(-1)}
+                };
+
+            var fakeMissingComponentes = listMissingComponents.AsQueryable().BuildMockDbSet();
+            A.CallTo(() => fakeContext.missingComponents).Returns(fakeMissingComponentes);
+
+            // Act
+            var controller = new ContextBuilderController(fakeContext);
+            var response = controller.RemoveMissingComponent(missingComponent).GetAwaiter().GetResult();
+
+            // Assert
+            Assert.IsType<BadRequestResult>(response);
+        }
+
 
     }
 }

@@ -403,6 +403,11 @@ namespace Context_aware_System.Controllers
                 rgpi.Message = "Não existem Planos de produções nessas datas";
                 return Ok(rgpi);
             }
+            if (!productionPlans.Any())
+            {
+                rgpi.Message = "Não existem Planos de produções nessas datas";
+                return Ok(rgpi);
+            }
             foreach (var pp in productionPlans)
             {
                 var productions = await _DataService.GetProductionsByProdPlanId(pp.Id);

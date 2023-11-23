@@ -28,6 +28,7 @@ namespace Testes
         public List<Worker> fakeWorkers = new List<Worker>();
         //Dados Context
         public List<MissingComponent> fakeMissingComponents = new List<MissingComponent>();
+        public List<AlertsHistory> fakeAlertsHistories = new List<AlertsHistory>();
 
         //Componentes
         //public static List<Component> GetFakeComponentes()
@@ -293,6 +294,21 @@ namespace Testes
             return fakeProductions.Where(p => p.Production_PlanId == id).ToList();
         }
 
+        public Supervisor? GetSupervisorByWorkerId(int id)
+        {
+            return fakeSupervisors.Where(s => s.WorkerId == id).FirstOrDefault();
+        }
+        public List<Schedule_Worker_Line>? GetSchedulesBySupervisorId(int id)
+        {
+            return fakeSchedule_Worker_Lines.Where(s => s.SupervisorId == id).ToList();
+        }
+
+        public List<ComponentProduct>? GetComponentProductsByProductId(int id)
+        {
+            return fakeComponentProducts.Where(c => c.ProductId == id).ToList();
+        }
+
+
         //----------Funções do context
 
         public List<MissingComponent> GetMissingComponents()
@@ -301,40 +317,5 @@ namespace Testes
         }
 
 
-
-
-        //public static Worker? GetWorkerByIdFirebase(string idFirebase)
-        //{
-        //    return GetFakeWorkers().FirstOrDefault(w => w.IdFirebase == idFirebase);
-        //}
-
-        //public static Operator? GetOperatorByWorkerId(int id)
-        //{
-        //    return GetFakeOperators().FirstOrDefault(o => o.WorkerId == id);
-        //}
-
-        //public static List<Schedule_Worker_Line>? GetSchedulesByOperatorId(int id)
-        //{
-        //    return GetFakeSchedule_Worker_Lines().Where(s => s.OperatorId == id).ToList();
-        //}
-
-        //public static List<Stop>? GetStops(bool? planned)
-        //{
-        //    if(planned == null)
-        //    {
-        //        return GetFakeStops();
-        //    }
-        //    return GetFakeStops().Where(s => s.Planned == planned).ToList();
-        //}
-
-        //public static List<Production_Plan>? GetProdPlansByLineId(int id)
-        //{
-        //    return GetFakeProduction_Plans().Where(p => p.LineId == id).ToList();
-        //}
-
-        //public static List<Stop>? GetStopsByLineId(int id)
-        //{
-        //    return GetFakeStops().Where(s => s.LineId == id).ToList();
-        //}
     }
 }

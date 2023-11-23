@@ -1062,164 +1062,626 @@ namespace Testes
         }
 
         //-------------------------------------------SupervisorInfo
-        //[Fact]
-        //public async Task SupervisorInfo_Worker_NotFound()
-        //{
-        //    //test1
-        //    var response = await controller.SupervisorInfo("dsadasads", null);
-        //    // Assert
-        //    var rdi = (response as NotFoundObjectResult).Value as ResponseSupervisorInfo;
+        
+        [Fact]
+        public void SupervisorInfo_Worker_NotFound()
+        {
+            //Inicializar as mocks
+            var systemLogic = new SystemLogic();
+            var _dataService = new Mock<IDataService>();
+            var generator = new DataGenerator();
+            var fakeContext = A.Fake<IContextAwareDb>();
 
-        //    Assert.Equal("Erro ao identificar o worker!!", rdi.Message);
-        //}
+            //Atribuir valores ao dados que vou utilizar
+            generator.fakeWorkers = new List<Worker>
+            {
+               new Worker { Id = 1, IdFirebase = "hafirebase", UserName = "Hugo Anes", Email = "ha@gmail.com", Role = 2},
+               new Worker { Id = 2, IdFirebase = "hafirebase", UserName = "Hugo Anes", Email = "ha@gmail.com", Role = 2},
+               new Worker { Id = 3, IdFirebase = "rfirebase", UserName = "Rodrigo", Email = "r@gmail.com", Role = 3},
+            };
 
-        //[Fact]
-        //public async Task SupervisorInfo_Supervisor_NotFound()
-        //{
-        //    //test1
-        //    var response = await controller.SupervisorInfo("hafirebase", null);
-        //    // Assert
-        //    var rdi = (response as NotFoundObjectResult).Value as ResponseSupervisorInfo;
+            // trocar os dados do dataServices pelos do datagenerator
+            _dataService.Setup(x => x.GetWorkerByIdFirebase(It.IsAny<string>())).ReturnsAsync((string id) => generator.GetWorkerByIdFirebase(id));
 
-        //    Assert.Equal("Erro ao identificar o Supervisor!!", rdi.Message);
-        //}
+            //Inicializar Controllador com as Mocks
+            var controller = new ContextServerController(fakeContext, systemLogic, _dataService.Object);
 
-        //[Fact]
-        //public async Task SupervisorInfo_OK()
-        //{
-        //    //test1
-        //    var response = await controller.SupervisorInfo("rfirebase", null);
-        //    // Assert
-        //    var rdi = (response as OkObjectResult).Value as ResponseSupervisorInfo;
+            var response = controller.SupervisorInfo("dsadasads", null).GetAwaiter().GetResult();
 
-        //    Assert.NotNull(rdi.Supervisor);
-        //}
+            Assert.IsType<NotFoundObjectResult>(response);
+            var rsi = (response as NotFoundObjectResult)?.Value as ResponseSupervisorInfo;
+            Assert.NotNull(rsi);
+            Assert.Equal("Erro ao identificar o worker!!", rsi.Message);
 
-        ////GetProductionsInfo
-        //[Fact]
-        //public async Task GetProductionsInfo_OK_Withproductions()
-        //{
-        //    //test1
-        //    var response = await controller.GetProductionsInfo(1, null, null);
-        //    // Assert
-        //    var rdi = (response as OkObjectResult).Value as ResponseGetProductionsInfo;
+        }
 
-        //    Assert.Equal("Info obtida com sucesso!!", rdi.Message);
-        //}
+        [Fact]
+        public void SupervisorInfo_Supervisor_NotFound()
+        {
+            //Inicializar as mocks
+            var systemLogic = new SystemLogic();
+            var _dataService = new Mock<IDataService>();
+            var generator = new DataGenerator();
+            var fakeContext = A.Fake<IContextAwareDb>();
 
-        //[Fact]
-        //public async Task GetProductionsInfo_OK_WithoutProductions()
-        //{
-        //    //test1
-        //    var response = await controller.GetProductionsInfo(10, null, null);
-        //    // Assert
-        //    var rdi = (response as OkObjectResult).Value as ResponseGetProductionsInfo;
+            //Atribuir valores ao dados que vou utilizar
+            generator.fakeWorkers = new List<Worker>
+            {
+               new Worker { Id = 1, IdFirebase = "hafirebase", UserName = "Hugo Anes", Email = "ha@gmail.com", Role = 2},
+               new Worker { Id = 2, IdFirebase = "pefirebase", UserName = "Pedro", Email = "pedro@gmail.com", Role = 2},
+               new Worker { Id = 3, IdFirebase = "rfirebase", UserName = "Rodrigo", Email = "r@gmail.com", Role = 3},
+            };
+            generator.fakeSupervisors = new List<Supervisor>
+            {
+               new Supervisor { Id = 1, WorkerId = 3 },
+            };
 
-        //    Assert.Equal("Não encontrou produções nessa linha!!", rdi.Message);
-        //}
+            // trocar os dados do dataServices pelos do datagenerator
+            _dataService.Setup(x => x.GetWorkerByIdFirebase(It.IsAny<string>())).ReturnsAsync((string id) => generator.GetWorkerByIdFirebase(id));
+            _dataService.Setup(x => x.GetSupervisorByWorkerId(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetSupervisorByWorkerId(id));
+           
+            //Inicializar Controllador com as Mocks
+            var controller = new ContextServerController(fakeContext, systemLogic, _dataService.Object);
 
-        ////GetComponentsDeviceInfo
-        //[Fact]
-        //public async Task GetComponentsDeviceInfo_Device_NotFound()
-        //{
-        //    //test1
-        //    var response = await controller.GetComponentsDeviceInfo(200);
-        //    // Assert
-        //    var rdi = (response as NotFoundObjectResult).Value as ResponseGetComponentsDeviceInfo;
+            var response = controller.SupervisorInfo("pefirebase", null).GetAwaiter().GetResult();
 
-        //    Assert.Equal("Erro ao identificar o Device!!", rdi.Message);
-        //}
+            Assert.IsType<NotFoundObjectResult>(response);
+            var rsi = (response as NotFoundObjectResult)?.Value as ResponseSupervisorInfo;
+            Assert.NotNull(rsi);
+            Assert.Equal(2,rsi.Worker.Id);
+            Assert.Equal("Erro ao identificar o Supervisor!!", rsi.Message);
+        }
 
-        //[Fact]
-        //public async Task GetComponentsDeviceInfo_ProductionLine_NotFound()
-        //{
-        //    //test1
-        //    var response = await controller.GetComponentsDeviceInfo(20);
-        //    // Assert
-        //    var rdi = (response as NotFoundObjectResult).Value as ResponseGetComponentsDeviceInfo;
+        [Fact]
+        public void SupervisorInfo_OK_Test_Schedules_And_Lines()
+        {
+            //Inicializar as mocks
+            var systemLogic = new SystemLogic();
+            var _dataService = new Mock<IDataService>();
+            var generator = new DataGenerator();
+            var fakeContext = A.Fake<IContextAwareDb>();
 
-        //    Assert.Equal("Erro ao identificar a linha de produção!!", rdi.Message);
-        //}
+            //Atribuir valores ao dados que vou utilizar
+            generator.fakeWorkers = new List<Worker>
+            {
+               new Worker { Id = 1, IdFirebase = "hafirebase", UserName = "Hugo Anes", Email = "ha@gmail.com", Role = 2},
+               new Worker { Id = 2, IdFirebase = "pefirebase", UserName = "Pedro", Email = "pedro@gmail.com", Role = 2},
+               new Worker { Id = 3, IdFirebase = "rfirebase", UserName = "Rodrigo", Email = "r@gmail.com", Role = 3},
+            };
+            generator.fakeSupervisors = new List<Supervisor>
+            {
+               new Supervisor { Id = 1, WorkerId = 3 },
+            };
+            generator.fakeSchedule_Worker_Lines = new List<Schedule_Worker_Line>
+            {
+               new Schedule_Worker_Line { Id = 1, Day = new DateTime(2023, 6, 28, 0, 0, 0), Shift = 2, LineId = 1, OperatorId = 1, SupervisorId = null},           
+                new Schedule_Worker_Line { Id = 2, Day = DateTime.Now.Date, Shift = 2, LineId = 1, OperatorId = null, SupervisorId = 2},
+                new Schedule_Worker_Line { Id = 2, Day = new DateTime(2023, 11, 21, 0, 0, 0), Shift = 2, LineId = 1, OperatorId = null, SupervisorId = 1},
+            };
+            generator.fakeLines = new List<Line>
+            {
+               new Line { Id = 1, Name = "Linha1" , Priority = true, CoordinatorId = 1},
+            };
 
-        //[Fact]
-        //public async Task GetComponentsDeviceInfo_ProductionPlan_NotFound()
-        //{
-        //    //test1
-        //    var response = await controller.GetComponentsDeviceInfo(21);
-        //    // Assert
-        //    var rdi = (response as NotFoundObjectResult).Value as ResponseGetComponentsDeviceInfo;
+            // trocar os dados do dataServices pelos do datagenerator
+            _dataService.Setup(x => x.GetWorkerByIdFirebase(It.IsAny<string>())).ReturnsAsync((string id) => generator.GetWorkerByIdFirebase(id));
+            _dataService.Setup(x => x.GetSupervisorByWorkerId(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetSupervisorByWorkerId(id));
+            _dataService.Setup(x => x.GetLineById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetLineById(id));
+            _dataService.Setup(x => x.GetSchedulesBySupervisorId(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetSchedulesBySupervisorId(id));
 
-        //    Assert.Equal("O device não se encontra em nenhuma linha no momento!!", rdi.Message);
-        //}
+            //Inicializar Controllador com as Mocks
+            var controller = new ContextServerController(fakeContext, systemLogic, _dataService.Object);
 
-        //[Fact]
-        //public async Task GetComponentsDeviceInfo_Product_NotFound()
-        //{
-        //    //test1
-        //    var response = await controller.GetComponentsDeviceInfo(22);
-        //    // Assert
-        //    var rdi = (response as NotFoundObjectResult).Value as ResponseGetComponentsDeviceInfo;
 
-        //    Assert.Equal("Erro ao identificar a product!!", rdi.Message);
-        //}
+            //Teste 1---------- Não tem sechedule no dia atual
+            var response = controller.SupervisorInfo("rfirebase", null).GetAwaiter().GetResult();
+            Assert.IsType<OkObjectResult>(response);
+            var rsi = (response as OkObjectResult)?.Value as ResponseSupervisorInfo;
+            Assert.NotNull(rsi);
+            Assert.Equal(3, rsi.Worker.Id);
+            Assert.Equal(1, rsi.Supervisor.Id);
+            Assert.Equal(0,rsi.listSWL.Count);
 
-        //[Fact]
-        //public async Task GetComponentsDeviceInfo_Ok()
-        //{
-        //    //test1
-        //    var response = await controller.GetComponentsDeviceInfo(23);
-        //    // Assert
-        //    var rdi = (response as OkObjectResult).Value as ResponseGetComponentsDeviceInfo;
+            //Teste 2---------- Tem sechedule no dia inserido
+            var response2 = controller.SupervisorInfo("rfirebase", new DateTime(2023, 11, 21, 0, 0, 0)).GetAwaiter().GetResult();
+            Assert.IsType<OkObjectResult>(response2);
+            var rsi2 = (response2 as OkObjectResult)?.Value as ResponseSupervisorInfo;
+            Assert.NotNull(rsi2);
+            Assert.Equal(3, rsi2.Worker.Id);
+            Assert.Equal(1, rsi2.Supervisor.Id);
+            Assert.Equal(1, rsi2.listSWL.Count);
+            Assert.Equal(1, rsi2.listLine.Count);
+        }
 
-        //    Assert.Equal("Info obtida com sucesso!!", rdi.Message);
-        //}
+        //----------------------------------GetProductionsInfo
+        [Fact]
+        public void GetProductionsInfo_Line_NotFound()
+        {
+            //Inicializar as mocks
+            var systemLogic = new SystemLogic();
+            var _dataService = new Mock<IDataService>();
+            var generator = new DataGenerator();
+            var fakeContext = A.Fake<IContextAwareDb>();
 
-        ////Product Info
-        //[Fact]
-        //public async Task ProductInfo_Line_NotFound()
-        //{
-        //    //test1
-        //    var response = await controller.ProductInfo(200);
-        //    // Assert
-        //    var rdi = (response as NotFoundObjectResult).Value as ResponseProductInfo;
+            //Atribuir valores ao dados que vou utilizar
+            generator.fakeLines = new List<Line>
+            {
+               new Line { Id = 2, Name = "Linha2" , Priority = true, CoordinatorId = 10},
+               new Line { Id = 3, Name = "Linha3" , Priority = true, CoordinatorId = 10},
+            };
 
-        //    Assert.Equal("Erro ao identificar a Line!!", rdi.Message);
-        //}
 
-        //[Fact]
-        //public async Task ProductInfo_ProductionPlan_NotFound()
-        //{
-        //    //test1
-        //    var response = await controller.ProductInfo(2);
-        //    // Assert
-        //    var rdi = (response as NotFoundObjectResult).Value as ResponseProductInfo;
+            //trocar os dados do dataServices pelos do datagenerator 
+            _dataService.Setup(x => x.GetLineById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetLineById(id));
 
-        //    Assert.Equal("Não existe planos de produção na linha no momento!!", rdi.Message);
-        //}
+            //Inicializar Controllador com as Mocks
+            var controller = new ContextServerController(fakeContext, systemLogic, _dataService.Object);
+            var response = controller.GetProductionsInfo(1, null, null).GetAwaiter().GetResult();
 
-        //[Fact]
-        //public async Task ProductInfo_Product_NotFound()
-        //{
-        //    //test1
-        //    var response = await controller.ProductInfo(22);
-        //    // Assert
-        //    var rdi = (response as NotFoundObjectResult).Value as ResponseProductInfo;
+            //Testes
+            Assert.IsType<NotFoundObjectResult>(response);
+            var rgpi = (response as NotFoundObjectResult)?.Value as ResponseGetProductionsInfo;
+            Assert.NotNull(rgpi);
+            Assert.Equal("Erro ao identificar a Line!!", rgpi.Message);
+        }
 
-        //    Assert.Equal("Erro ao identificar a product!!", rdi.Message);
-        //}
+        [Fact]
+        public void GetProductionsInfo_OK_Test_ProductionPlans_And_Productions()
+        {
+            //Inicializar as mocks
+            var systemLogic = new SystemLogic();
+            var _dataService = new Mock<IDataService>();
+            var generator = new DataGenerator();
+            var fakeContext = A.Fake<IContextAwareDb>();
 
-        //[Fact]
-        //public async Task ProductInfo_OK()
-        //{
-        //    //test1
-        //    var response = await controller.ProductInfo(23);
-        //    // Assert
-        //    var rdi = (response as OkObjectResult).Value as ResponseProductInfo;
+            //Atribuir valores ao dados que vou utilizar
+            generator.fakeLines = new List<Line>
+            {
+               new Line { Id = 1, Name = "Linha2" , Priority = true, CoordinatorId = 1},
+               new Line { Id = 2, Name = "Linha2" , Priority = true, CoordinatorId = 10},
+               new Line { Id = 3, Name = "Linha3" , Priority = true, CoordinatorId = 10},
+            };
+            generator.fakeProduction_Plans = new List<Production_Plan>
+                {
+                   new Production_Plan { Id = 1, Goal = 100 ,Name = "Plano de produção 1", InitialDate = new DateTime(2023, 6, 28, 0, 0, 0)
+                   ,EndDate = new DateTime(2023, 6, 30, 0, 0, 0), Shift = 1, ProductId = 1, LineId = 1},
+                   new Production_Plan { Id = 2, Goal = 100 ,Name = "Plano de produção 2", InitialDate = new DateTime(2023, 6, 28, 0, 0, 0)
+                   ,EndDate = new DateTime(2023, 6, 30, 0, 0, 0), Shift = 1, ProductId = 1, LineId = 2},
+             };
+            generator.fakeProductions = new List<Production>
+            {
+               new Production { Id = 1, Hour = 8, Day = new DateTime(2023, 6, 29, 0, 0, 0), Quantity = 10, Production_PlanId = 2},
+               new Production { Id = 2, Hour = 10, Day = new DateTime(2023, 6, 29, 0, 0, 0), Quantity = 10, Production_PlanId = 2}
+            };
 
-        //    Assert.NotNull(rdi.Product);
-        //}
+            //trocar os dados do dataServices pelos do datagenerator 
+            _dataService.Setup(x => x.GetLineById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetLineById(id));
+            _dataService.Setup(x => x.GetProdPlansByLineId(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetProdPlansByLineId(id));
+            _dataService.Setup(x => x.GetProductById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetProductById(id));
+            _dataService.Setup(x => x.GetProductionsByProdPlanId(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetProductionsByProdPlanId(id));
 
-        ////CoordinatorInfo
+            //Inicializar Controllador com as Mocks
+            var controller = new ContextServerController(fakeContext, systemLogic, _dataService.Object);
+            var response = controller.GetProductionsInfo(1, new DateTime(2023, 7, 30, 0, 0, 0), null).GetAwaiter().GetResult();
+
+            //Teste 1 - Não existem Planos de produções nessas datas
+            Assert.IsType<OkObjectResult>(response);
+            var rgpi = (response as OkObjectResult)?.Value as ResponseGetProductionsInfo;
+            Assert.NotNull(rgpi);
+            Assert.Equal("Não existem Planos de produções nessas datas", rgpi.Message);
+
+            //Teste 2 - Não existem produções nessas datas
+            var response2 = controller.GetProductionsInfo(1, null, null).GetAwaiter().GetResult();
+            Assert.IsType<OkObjectResult>(response2);
+            var rgpi2 = (response2 as OkObjectResult)?.Value as ResponseGetProductionsInfo;
+            Assert.NotNull(rgpi2);
+            Assert.False(rgpi2.listProductions.Any());
+            Assert.Equal("Não foram encontradas produções nessa linha", rgpi2.Message);
+
+            //Teste 3 - Não existem produções nessas datas
+            var response3 = controller.GetProductionsInfo(2, null, null).GetAwaiter().GetResult();
+            Assert.IsType<OkObjectResult>(response2);
+            var rgpi3 = (response3 as OkObjectResult)?.Value as ResponseGetProductionsInfo;
+            Assert.NotNull(rgpi3);
+            Assert.True(rgpi3.listProductions.Any());
+            Assert.Equal(2, rgpi3.listProductions.Count);
+            Assert.Equal("Info obtida com sucesso!!", rgpi3.Message);
+        }
+
+
+        //-----------------------------------GetComponentsDeviceInfo
+        [Fact]
+        public void GetComponentsDeviceInfo_Device_NotFound()
+        {
+            //Inicializar as mocks
+            var systemLogic = new SystemLogic();
+            var _dataService = new Mock<IDataService>();
+            var generator = new DataGenerator();
+            var fakeContext = A.Fake<IContextAwareDb>();
+
+            //Atribuir valores ao dados que vou utilizar
+            generator.fakeDevices = new List<Device>
+            {
+                new Device { Id = 1, Type = 1 , LineId = 1},
+                new Device { Id = 2, Type = 2 , LineId = 1},
+                new Device { Id = 3, Type = 3 , LineId = 1},
+            };
+
+            //trocar os dados do dataServices pelos do datagenerator
+            _dataService.Setup(x => x.GetDeviceById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetDeviceById(id));
+
+            //Inicializar Controllador com as Mocks
+            var controller = new ContextServerController(fakeContext, systemLogic, _dataService.Object);
+
+            var response = controller.GetComponentsDeviceInfo(4).GetAwaiter().GetResult();
+
+            Assert.IsType<NotFoundObjectResult>(response);
+            var rgcdi = (response as NotFoundObjectResult)?.Value as ResponseGetComponentsDeviceInfo;
+            Assert.NotNull(rgcdi);
+            Assert.Equal("Erro ao identificar o Device!!", rgcdi.Message);
+        }
+
+        [Fact]
+        public void GetComponentsDeviceInfo_Line_NotFound()
+        {
+            //Inicializar as mocks
+            var systemLogic = new SystemLogic();
+            var _dataService = new Mock<IDataService>();
+            var generator = new DataGenerator();
+            var fakeContext = A.Fake<IContextAwareDb>();
+
+            //Atribuir valores ao dados que vou utilizar
+            generator.fakeDevices = new List<Device>
+            {
+                new Device { Id = 1, Type = 1 , LineId = 1},
+                new Device { Id = 2, Type = 2 , LineId = 1},
+                new Device { Id = 3, Type = 3 , LineId = 1},
+            };
+            generator.fakeLines = new List<Line>
+            {
+               new Line { Id = 2, Name = "Linha2" , Priority = true, CoordinatorId = 10},
+               new Line { Id = 3, Name = "Linha3" , Priority = true, CoordinatorId = 10},
+            };
+            //trocar os dados do dataServices pelos do datagenerator
+            _dataService.Setup(x => x.GetDeviceById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetDeviceById(id));
+            _dataService.Setup(x => x.GetLineById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetLineById(id));
+
+            //Inicializar Controllador com as Mocks
+            var controller = new ContextServerController(fakeContext, systemLogic, _dataService.Object);
+
+            var response = controller.GetComponentsDeviceInfo(1).GetAwaiter().GetResult();
+
+            Assert.IsType<NotFoundObjectResult>(response);
+            var rgcdi = (response as NotFoundObjectResult)?.Value as ResponseGetComponentsDeviceInfo;
+            Assert.NotNull(rgcdi);
+            Assert.Equal("Erro ao identificar a linha de produção!!", rgcdi.Message);
+        }
+
+        [Fact]
+        public void GetComponentsDeviceInfo_ProductionPlan_NotFound()
+        {
+            //Inicializar as mocks
+            var systemLogic = new SystemLogic();
+            var _dataService = new Mock<IDataService>();
+            var generator = new DataGenerator();
+            var fakeContext = A.Fake<IContextAwareDb>();
+
+            //Atribuir valores ao dados que vou utilizar
+            generator.fakeDevices = new List<Device>
+            {
+                new Device { Id = 1, Type = 1 , LineId = 1},
+                new Device { Id = 2, Type = 2 , LineId = 1},
+                new Device { Id = 3, Type = 3 , LineId = 1},
+            };
+            generator.fakeLines = new List<Line>
+            {
+               new Line { Id = 1, Name = "Linha1" , Priority = true, CoordinatorId = 10},
+               new Line { Id = 2, Name = "Linha2" , Priority = true, CoordinatorId = 10},
+               new Line { Id = 3, Name = "Linha3" , Priority = true, CoordinatorId = 10},
+            };
+            generator.fakeProduction_Plans = new List<Production_Plan>
+                {
+                   new Production_Plan { Id = 1, Goal = 100 ,Name = "Plano de produção 1", InitialDate = new DateTime(2023, 6, 28, 0, 0, 0)
+                   ,EndDate = new DateTime(2023, 6, 29, 0, 0, 0), Shift = 1, ProductId = 1, LineId = 1},
+                   //new Production_Plan { Id = 22, Goal = 100 ,Name = "Plano de produção 4", InitialDate = DateTime.Now.AddDays(-1),EndDate = DateTime.Now.AddDays(1), Shift = 1, ProductId = 1, LineId = 1}
+                };
+
+            //trocar os dados do dataServices pelos do datagenerator
+            _dataService.Setup(x => x.GetDeviceById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetDeviceById(id));
+            _dataService.Setup(x => x.GetLineById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetLineById(id));
+            _dataService.Setup(x => x.GetProdPlansByLineId(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetProdPlansByLineId(id));
+
+
+            //Inicializar Controllador com as Mocks
+            var controller = new ContextServerController(fakeContext, systemLogic, _dataService.Object);
+
+            var response = controller.GetComponentsDeviceInfo(1).GetAwaiter().GetResult();
+
+            Assert.IsType<NotFoundObjectResult>(response);
+            var rgcdi = (response as NotFoundObjectResult)?.Value as ResponseGetComponentsDeviceInfo;
+            Assert.NotNull(rgcdi);
+            Assert.Equal("Não existe nenhum plano de produção na linha no momento!!", rgcdi.Message);
+        }
+
+        [Fact]
+        public void GetComponentsDeviceInfo_Product_Not_Found()
+        {
+            //Inicializar as mocks
+            var systemLogic = new SystemLogic();
+            var _dataService = new Mock<IDataService>();
+            var generator = new DataGenerator();
+            var fakeContext = A.Fake<IContextAwareDb>();
+
+            //Atribuir valores ao dados que vou utilizar
+            generator.fakeDevices = new List<Device>
+            {
+                new Device { Id = 1, Type = 1 , LineId = 1},
+                new Device { Id = 2, Type = 2 , LineId = 1},
+                new Device { Id = 3, Type = 3 , LineId = 1},
+            };
+            generator.fakeLines = new List<Line>
+            {
+               new Line { Id = 1, Name = "Linha1" , Priority = true, CoordinatorId = 10},
+               new Line { Id = 2, Name = "Linha2" , Priority = true, CoordinatorId = 10},
+               new Line { Id = 3, Name = "Linha3" , Priority = true, CoordinatorId = 10},
+            };
+            generator.fakeProduction_Plans = new List<Production_Plan>
+                {
+                   new Production_Plan { Id = 1, Goal = 100 ,Name = "Plano de produção 1", InitialDate = new DateTime(2023, 6, 28, 0, 0, 0)
+                   ,EndDate = new DateTime(2023, 6, 29, 0, 0, 0), Shift = 1, ProductId = 1, LineId = 1},
+                   new Production_Plan { Id = 22, Goal = 100 ,Name = "Plano de produção 4", InitialDate = DateTime.Now.AddDays(-1),EndDate = DateTime.Now.AddDays(1), Shift = 1, ProductId = 1, LineId = 1}
+                };
+            generator.fakeProducts = new List<Product>
+                {
+                   new Product { Id = 2, LabelReference = "prod1", Cycle = new TimeSpan(0, 0, 0),}
+                };
+
+            //trocar os dados do dataServices pelos do datagenerator
+            _dataService.Setup(x => x.GetDeviceById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetDeviceById(id));
+            _dataService.Setup(x => x.GetLineById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetLineById(id));
+            _dataService.Setup(x => x.GetProdPlansByLineId(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetProdPlansByLineId(id));
+            _dataService.Setup(x => x.GetProductById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetProductById(id));
+            //Inicializar Controllador com as Mocks
+            var controller = new ContextServerController(fakeContext, systemLogic, _dataService.Object);
+
+            var response = controller.GetComponentsDeviceInfo(1).GetAwaiter().GetResult();
+
+            Assert.IsType<NotFoundObjectResult>(response);
+            var rgcdi = (response as NotFoundObjectResult)?.Value as ResponseGetComponentsDeviceInfo;
+            Assert.NotNull(rgcdi);
+            Assert.Equal("Erro ao identificar a product!!", rgcdi.Message);
+        }
+
+        [Fact]
+        public void GetComponentsDeviceInfo_OK_Test_Components()
+        {
+            //Inicializar as mocks
+            var systemLogic = new SystemLogic();
+            var _dataService = new Mock<IDataService>();
+            var generator = new DataGenerator();
+            var fakeContext = A.Fake<IContextAwareDb>();
+
+            //Atribuir valores ao dados que vou utilizar
+            generator.fakeDevices = new List<Device>
+            {
+                new Device { Id = 1, Type = 1 , LineId = 1},
+                new Device { Id = 2, Type = 2 , LineId = 1},
+                new Device { Id = 3, Type = 3 , LineId = 1},
+            };
+            generator.fakeLines = new List<Line>
+            {
+               new Line { Id = 1, Name = "Linha1" , Priority = true, CoordinatorId = 10},
+               new Line { Id = 2, Name = "Linha2" , Priority = true, CoordinatorId = 10},
+               new Line { Id = 3, Name = "Linha3" , Priority = true, CoordinatorId = 10},
+            };
+            generator.fakeProduction_Plans = new List<Production_Plan>
+                {
+                   new Production_Plan { Id = 1, Goal = 100 ,Name = "Plano de produção 1", InitialDate = new DateTime(2023, 6, 28, 0, 0, 0)
+                   ,EndDate = new DateTime(2023, 6, 29, 0, 0, 0), Shift = 1, ProductId = 1, LineId = 1},
+                   new Production_Plan { Id = 22, Goal = 100 ,Name = "Plano de produção 4", InitialDate = DateTime.Now.AddDays(-1),EndDate = DateTime.Now.AddDays(1), Shift = 1, ProductId = 1, LineId = 1}
+                };
+            generator.fakeProducts = new List<Product>
+                {
+                   new Product { Id = 1, LabelReference = "prod1", Cycle = new TimeSpan(0, 0, 0),}
+                };
+            generator.fakeComponentProducts = new List<ComponentProduct>
+            {
+               new ComponentProduct { Id = 1, ProductId = 1, ComponentId = 1, Quantidade = 1},
+               new ComponentProduct { Id = 2, ProductId = 1, ComponentId = 2, Quantidade = 1},
+            };
+            generator.fakeComponents = new List<Component>
+            {
+               new Component { Id = 1, Name = "Component1", Reference = "Comp1", Category = 1},
+               new Component { Id = 2, Name = "Component2", Reference = "Comp2", Category = 1},
+            };
+
+
+            //trocar os dados do dataServices pelos do datagenerator
+            _dataService.Setup(x => x.GetDeviceById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetDeviceById(id));
+            _dataService.Setup(x => x.GetLineById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetLineById(id));
+            _dataService.Setup(x => x.GetProdPlansByLineId(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetProdPlansByLineId(id));
+            _dataService.Setup(x => x.GetProductById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetProductById(id));
+            _dataService.Setup(x => x.GetComponentProductsByProductId(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetComponentProductsByProductId(id));
+            _dataService.Setup(x => x.GetComponentById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetComponentById(id));
+
+            //Inicializar Controllador com as Mocks
+            var controller = new ContextServerController(fakeContext, systemLogic, _dataService.Object);
+
+            var response = controller.GetComponentsDeviceInfo(1).GetAwaiter().GetResult();
+
+            Assert.IsType<OkObjectResult>(response);
+            var rgcdi = (response as OkObjectResult)?.Value as ResponseGetComponentsDeviceInfo;
+            Assert.NotNull(rgcdi);
+            Assert.Equal("Info obtida com sucesso!!", rgcdi.Message);
+            Assert.Equal(2, rgcdi.listComponents.Count);
+            Assert.Contains(rgcdi.listComponents, c => c.Id == 1);
+            Assert.Contains(rgcdi.listComponents, c => c.Id == 2);
+        }
+
+
+        //------------------------Product Info
+        [Fact]
+        public void ProductInfo_Line_NotFound()
+        {
+            //Inicializar as mocks
+            var systemLogic = new SystemLogic();
+            var _dataService = new Mock<IDataService>();
+            var generator = new DataGenerator();
+            var fakeContext = A.Fake<IContextAwareDb>();
+
+            //Atribuir valores ao dados que vou utilizar
+            generator.fakeLines = new List<Line>
+            {
+               new Line { Id = 2, Name = "Linha2" , Priority = true, CoordinatorId = 10},
+               new Line { Id = 3, Name = "Linha3" , Priority = true, CoordinatorId = 10},
+            };
+            //trocar os dados do dataServices pelos do datagenerator
+            _dataService.Setup(x => x.GetLineById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetLineById(id));
+
+            //Inicializar Controllador com as Mocks
+            var controller = new ContextServerController(fakeContext, systemLogic, _dataService.Object);
+
+            var response = controller.ProductInfo(1).GetAwaiter().GetResult();
+
+            Assert.IsType<NotFoundObjectResult>(response);
+            var rpi = (response as NotFoundObjectResult)?.Value as ResponseProductInfo;
+            Assert.NotNull(rpi);
+            Assert.Equal("Erro ao identificar a Line!!", rpi.Message);
+        }
+
+
+        [Fact]
+        public void ProductInfo_Production_Plan_NotFound()
+        {
+            //Inicializar as mocks
+            var systemLogic = new SystemLogic();
+            var _dataService = new Mock<IDataService>();
+            var generator = new DataGenerator();
+            var fakeContext = A.Fake<IContextAwareDb>();
+
+            //Atribuir valores ao dados que vou utilizar
+            generator.fakeLines = new List<Line>
+            {
+                new Line { Id = 1, Name = "Linha1" , Priority = true, CoordinatorId = 1},
+               new Line { Id = 2, Name = "Linha2" , Priority = true, CoordinatorId = 10},
+               new Line { Id = 3, Name = "Linha3" , Priority = true, CoordinatorId = 10},
+            };
+            generator.fakeProduction_Plans = new List<Production_Plan>
+                {
+                   new Production_Plan { Id = 1, Goal = 100 ,Name = "Plano de produção 1", InitialDate = new DateTime(2023, 6, 28, 0, 0, 0)
+                   ,EndDate = new DateTime(2023, 6, 29, 0, 0, 0), Shift = 1, ProductId = 1, LineId = 1},
+                   //new Production_Plan { Id = 22, Goal = 100 ,Name = "Plano de produção 4", InitialDate = DateTime.Now.AddDays(-1),EndDate = DateTime.Now.AddDays(1), Shift = 1, ProductId = 1, LineId = 1}
+             };
+
+            //trocar os dados do dataServices pelos do datagenerator
+            _dataService.Setup(x => x.GetLineById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetLineById(id));
+            _dataService.Setup(x => x.GetProdPlansByLineId(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetProdPlansByLineId(id));
+            _dataService.Setup(x => x.GetProductById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetProductById(id));
+
+            //Inicializar Controllador com as Mocks
+            var controller = new ContextServerController(fakeContext, systemLogic, _dataService.Object);
+
+            var response = controller.ProductInfo(1).GetAwaiter().GetResult();
+
+            Assert.IsType<NotFoundObjectResult>(response);
+            var rpi = (response as NotFoundObjectResult)?.Value as ResponseProductInfo;
+            Assert.NotNull(rpi);
+            Assert.Equal("Não existe nenhum plano de produção na linha no momento!!", rpi.Message);
+
+        }
+
+        [Fact]
+        public void ProductInfo_Product_NotFound()
+        {
+            //Inicializar as mocks
+            var systemLogic = new SystemLogic();
+            var _dataService = new Mock<IDataService>();
+            var generator = new DataGenerator();
+            var fakeContext = A.Fake<IContextAwareDb>();
+
+            //Atribuir valores ao dados que vou utilizar
+            generator.fakeLines = new List<Line>
+            {
+                new Line { Id = 1, Name = "Linha1" , Priority = true, CoordinatorId = 1},
+               new Line { Id = 2, Name = "Linha2" , Priority = true, CoordinatorId = 10},
+               new Line { Id = 3, Name = "Linha3" , Priority = true, CoordinatorId = 10},
+            };
+            generator.fakeProduction_Plans = new List<Production_Plan>
+                {
+                   new Production_Plan { Id = 1, Goal = 100 ,Name = "Plano de produção 1", InitialDate = new DateTime(2023, 6, 28, 0, 0, 0)
+                   ,EndDate = new DateTime(2023, 6, 29, 0, 0, 0), Shift = 1, ProductId = 1, LineId = 1},
+                   new Production_Plan { Id = 22, Goal = 100 ,Name = "Plano de produção 4", InitialDate = DateTime.Now.AddDays(-1),EndDate = DateTime.Now.AddDays(1), Shift = 1, ProductId = 1, LineId = 1}
+                };
+            generator.fakeProducts = new List<Product>
+                {
+                   new Product { Id = 2, LabelReference = "prod1", Cycle = new TimeSpan(0, 0, 0),}
+                };
+
+            //trocar os dados do dataServices pelos do datagenerator
+            _dataService.Setup(x => x.GetLineById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetLineById(id));
+            _dataService.Setup(x => x.GetProdPlansByLineId(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetProdPlansByLineId(id));
+
+            //Inicializar Controllador com as Mocks
+            var controller = new ContextServerController(fakeContext, systemLogic, _dataService.Object);
+
+            var response = controller.ProductInfo(1).GetAwaiter().GetResult();
+
+            Assert.IsType<NotFoundObjectResult>(response);
+            var rpi = (response as NotFoundObjectResult)?.Value as ResponseProductInfo;
+            Assert.NotNull(rpi);
+            Assert.Equal("Erro ao identificar a product!!", rpi.Message);
+
+        }
+
+
+        [Fact]
+        public void ProductInfo_Product_OK()
+        {
+            //Inicializar as mocks
+            var systemLogic = new SystemLogic();
+            var _dataService = new Mock<IDataService>();
+            var generator = new DataGenerator();
+            var fakeContext = A.Fake<IContextAwareDb>();
+
+            //Atribuir valores ao dados que vou utilizar
+            generator.fakeLines = new List<Line>
+            {
+                new Line { Id = 1, Name = "Linha1" , Priority = true, CoordinatorId = 1},
+               new Line { Id = 2, Name = "Linha2" , Priority = true, CoordinatorId = 10},
+               new Line { Id = 3, Name = "Linha3" , Priority = true, CoordinatorId = 10},
+            };
+            generator.fakeProduction_Plans = new List<Production_Plan>
+                {
+                   new Production_Plan { Id = 1, Goal = 100 ,Name = "Plano de produção 1", InitialDate = new DateTime(2023, 6, 28, 0, 0, 0)
+                   ,EndDate = new DateTime(2023, 6, 29, 0, 0, 0), Shift = 1, ProductId = 1, LineId = 1},
+                   new Production_Plan { Id = 22, Goal = 100 ,Name = "Plano de produção 4", InitialDate = DateTime.Now.AddDays(-1),EndDate = DateTime.Now.AddDays(1), Shift = 1, ProductId = 1, LineId = 1}
+                };
+            generator.fakeProducts = new List<Product>
+                {
+                   new Product { Id = 1, LabelReference = "prod1", Cycle = new TimeSpan(0, 0, 0),},
+                   new Product { Id = 2, LabelReference = "prod2", Cycle = new TimeSpan(0, 0, 0),}
+                };
+
+            //trocar os dados do dataServices pelos do datagenerator
+            _dataService.Setup(x => x.GetLineById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetLineById(id));
+            _dataService.Setup(x => x.GetProdPlansByLineId(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetProdPlansByLineId(id));
+            _dataService.Setup(x => x.GetProductById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetProductById(id));
+
+            //Inicializar Controllador com as Mocks
+            var controller = new ContextServerController(fakeContext, systemLogic, _dataService.Object);
+
+            var response = controller.ProductInfo(1).GetAwaiter().GetResult();
+
+            Assert.IsType<OkObjectResult>(response);
+            var rpi = (response as OkObjectResult)?.Value as ResponseProductInfo;
+            Assert.NotNull(rpi);
+            Assert.Equal("Info obtida com sucesso", rpi.Message);
+            Assert.Equal(1, rpi.Product.Id);
+
+        }
+
+        //------------------------------------------------CoordinatorInfo
+        
         //[Fact]
         //public async Task CoordinatorInfo_Worker_NotFound()
         //{
@@ -1252,6 +1714,39 @@ namespace Testes
 
         //    Assert.Equal("Info obtida com sucesso!!", rdi.Message);
         //}
+
+
+        //------------------------AlertsHistoriy
+        [Fact]
+        public void GetAlertsHistory_Ok_Test()
+        {
+            //Inicializar as mocks
+            var systemLogic = new SystemLogic();
+            var _dataService = new Mock<IDataService>();
+            var generator = new DataGenerator();
+            var fakeContext = A.Fake<IContextAwareDb>();
+
+            //Atribuir valores ao dados que vou utilizar
+            generator.fakeAlertsHistories = new List<AlertsHistory>
+            {
+                new AlertsHistory { Id = 1, TypeOfAlet = 1 , AlertSuccessfullySent = true, ErrorMessage = "", AlertMessage = "nova produção", AlertDate = DateTime.Now },
+            };
+
+            //trocar os dados do _context pelos do datagenerator
+            var fakeAlertsHistorys = generator.fakeAlertsHistories.AsQueryable().BuildMockDbSet();
+            A.CallTo(() => fakeContext.alertsHistories).Returns(fakeAlertsHistorys);
+
+            //Inicializar Controllador com as Mocks
+            var controller = new ContextServerController(fakeContext, systemLogic, _dataService.Object);
+
+            var response = controller.GetAlertsHistory().GetAwaiter().GetResult();
+
+            Assert.IsType<OkObjectResult>(response);
+            var list = (response as OkObjectResult)?.Value as List<AlertsHistory>;
+            Assert.NotNull(list);
+            Assert.Contains(list, a => a.Id == 1);
+        }
+
     }
 }
 

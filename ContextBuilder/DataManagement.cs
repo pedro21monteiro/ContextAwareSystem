@@ -29,11 +29,11 @@ namespace ContextBuilder
                 }
             }
         }
-        private async Task CleanRequests()
+        public async Task CleanRequests()
         {
             using (var scope = _sp.CreateScope())
             {
-                var _context = scope.ServiceProvider.GetRequiredService<ContextBuilderDb>();
+                var _context = scope.ServiceProvider.GetRequiredService<IContextBuilderDb>();
                 foreach (var request in _context.Requests)
                 {
                     TimeSpan ts = DateTime.Now.Subtract(request.Date);
@@ -52,7 +52,7 @@ namespace ContextBuilder
         {
             using (var scope = _sp.CreateScope())
             {
-                var _context = scope.ServiceProvider.GetRequiredService<ContextBuilderDb>();
+                var _context = scope.ServiceProvider.GetRequiredService<IContextBuilderDb>();
                 foreach (var missingComponent in _context.missingComponents)
                 {
                     TimeSpan ts = DateTime.Now.Subtract(missingComponent.OrderDate);
@@ -71,7 +71,7 @@ namespace ContextBuilder
         {
             using (var scope = _sp.CreateScope())
             {
-                var _context = scope.ServiceProvider.GetRequiredService<ContextBuilderDb>();
+                var _context = scope.ServiceProvider.GetRequiredService<IContextBuilderDb>();
                 foreach (var alertHistorie in _context.alertsHistories)
                 {
                     TimeSpan ts = DateTime.Now.Subtract(alertHistorie.AlertDate);

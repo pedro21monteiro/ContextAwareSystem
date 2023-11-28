@@ -4,6 +4,7 @@ using ContextBuilder.Data;
 using FakeItEasy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using MockQueryable.FakeItEasy;
 using Models.ContextModels;
 using Models.FunctionModels;
@@ -14,7 +15,7 @@ namespace Testes
     {
         //----------------------CreateRequest
         [Fact]
-        public void CreateResquest_ValidRequest_ReturnsOkResult()
+        public void CreateResquest_ValidRequest_ReturnsOk()
         {
             // Arrange
             var fakeContext = A.Fake<IContextBuilderDb>();
@@ -37,7 +38,6 @@ namespace Testes
 
             // Verifique se o método Add foi chamado para a entidade Request
             A.CallTo(() => fakeContext.Add(request)).MustHaveHappenedOnceExactly();
-
             // Verifique se o método SaveChangesAsync foi chamado
             A.CallTo(() => fakeContext.SaveChangesAsync()).MustHaveHappenedOnceExactly();
         }
@@ -173,6 +173,8 @@ namespace Testes
             // Assert
             Assert.IsType<BadRequestResult>(response);
         }
+
+
 
 
     }

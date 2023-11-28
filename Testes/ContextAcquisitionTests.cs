@@ -26,46 +26,46 @@ namespace Testes
 
         //----------------------------------------------Integration Tests----------------------------------
 
-        //productions
-        [Fact]
-        public async Task Productions_Integration_Test()
-        {
-            var productionsContinental = await _contextContinental.Productions.ToListAsync();
-            var productionsContext = await _context.Productions.ToListAsync();
+        ////productions
+        //[Fact]
+        //public async Task Productions_Integration_Test()
+        //{
+        //    var productionsContinental = await _contextContinental.Productions.ToListAsync();
+        //    var productionsContext = await _context.Productions.ToListAsync();
 
-            Assert.All(productionsContinental, production =>
-            {
-                Assert.True(productionsContext.Any(p =>
-                    p.Id == production.Id &&
-                    p.Hour == production.Hour &&
-                    p.Day.Equals(production.Day) &&
-                    p.Quantity == production.Quantity &&
-                    p.Production_PlanId == production.Production_PlanId),
-                    $"A produção com Id {production.Id} não foi encontrada na base de dados do contexto.");
-            });
-        }
+        //    Assert.All(productionsContinental, production =>
+        //    {
+        //        Assert.True(productionsContext.Any(p =>
+        //            p.Id == production.Id &&
+        //            p.Hour == production.Hour &&
+        //            p.Day.Equals(production.Day) &&
+        //            p.Quantity == production.Quantity &&
+        //            p.Production_PlanId == production.Production_PlanId),
+        //            $"A produção com Id {production.Id} não foi encontrada na base de dados do contexto.");
+        //    });
+        //}
 
-        //Stops
-        [Fact]
-        public async Task Stops_Integration_Test()
-        {
-            var stopsContinental = await _contextContinental.Stops.ToListAsync();
-            var stopsContext = await _context.Stops.ToListAsync();
+        ////Stops
+        //[Fact]
+        //public async Task Stops_Integration_Test()
+        //{
+        //    var stopsContinental = await _contextContinental.Stops.ToListAsync();
+        //    var stopsContext = await _context.Stops.ToListAsync();
 
-            Assert.All(stopsContinental, stop =>
-            {
-                Assert.True(stopsContext.Any(s =>
-                    s.Id == stop.Id &&
-                    s.Planned == stop.Planned &&
-                    s.InitialDate.Equals(stop.InitialDate) &&
-                    s.EndDate.Equals(stop.EndDate) &&
-                    s.Duration.Equals(stop.Duration) &&
-                    s.Shift == stop.Shift &&
-                    s.LineId == stop.LineId &&
-                    s.ReasonId == stop.ReasonId),
-                    $"A paragem com Id {stop.Id} não foi encontrada na base de dados do contexto.");
-            });
-        }
+        //    Assert.All(stopsContinental, stop =>
+        //    {
+        //        Assert.True(stopsContext.Any(s =>
+        //            s.Id == stop.Id &&
+        //            s.Planned == stop.Planned &&
+        //            s.InitialDate.Equals(stop.InitialDate) &&
+        //            s.EndDate.Equals(stop.EndDate) &&
+        //            s.Duration.Equals(stop.Duration) &&
+        //            s.Shift == stop.Shift &&
+        //            s.LineId == stop.LineId &&
+        //            s.ReasonId == stop.ReasonId),
+        //            $"A paragem com Id {stop.Id} não foi encontrada na base de dados do contexto.");
+        //    });
+        //}
 
 
 

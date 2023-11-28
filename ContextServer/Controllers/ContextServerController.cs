@@ -589,6 +589,7 @@ namespace Context_aware_System.Controllers
                     if(line!= null && componente != null)
                     {
                         MissingComponentResponse mcr = new MissingComponentResponse();
+                        mcr.Id = missingComponente.Id;
                         mcr.OrderDate = missingComponente.OrderDate;
                         mcr.Line = line;
                         mcr.Component = componente;

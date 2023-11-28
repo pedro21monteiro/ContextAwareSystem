@@ -8,11 +8,13 @@ using Microsoft.Extensions.DependencyInjection;
 using MockQueryable.FakeItEasy;
 using Models.ContextModels;
 using Models.FunctionModels;
+using Moq;
 
 namespace Testes
 {
     public class ContextBuilderTests
     {
+
         //----------------------CreateRequest
         [Fact]
         public void CreateResquest_ValidRequest_ReturnsOk()
@@ -73,7 +75,7 @@ namespace Testes
         }
 
         [Fact]
-        public void AddMissingComponent_Returns_Ok()
+        public void AddMissingComponent_ReturnsOk()
         {
             // Arrange
             var fakeContext = A.Fake<IContextBuilderDb>();
@@ -109,44 +111,35 @@ namespace Testes
         }
 
         //------------------RemoveMissingComponent
+        
         [Fact]
-        public void RemoveMissingComponent_Returns_Ok()
+        public void RemoveMissingComponent_ReturnsOk()
         {
-            // Arrange
+            // Preparação
             var fakeContext = A.Fake<IContextBuilderDb>();
-
             var missingComponent = new MissingComponent
             {
                 LineId = 1,
                 ComponentId = 1,
                 OrderDate = DateTime.Now
             };
-
             var listMissingComponents = new List<MissingComponent>
                 {
                    new MissingComponent { Id = 1, LineId = 1 ,ComponentId = 1, OrderDate = DateTime.Now.AddDays(-1)}
                 };
-
             var fakeMissingComponentes = listMissingComponents.AsQueryable().BuildMockDbSet();
             A.CallTo(() => fakeContext.missingComponents).Returns(fakeMissingComponentes);
-
-            // Act
+            // Ação
             var controller = new ContextBuilderController(fakeContext);
             var response = controller.RemoveMissingComponent(missingComponent).GetAwaiter().GetResult();
-
-            // Assert
+            // Verificação
             Assert.IsType<OkResult>(response);
-
-            // Verifique se o método Add foi chamado para a entidade MissingComponent
             A.CallTo(() => fakeContext.missingComponents.Remove(A<MissingComponent>.Ignored)).MustHaveHappenedOnceExactly();
-
-            // Verifique se o método SaveChangesAsync foi chamado- vai ser chamado 2 vez uma para guardao o mc e outra no SendAlert
             A.CallTo(() => fakeContext.SaveChangesAsync()).MustHaveHappenedOnceExactly();
-
         }
 
         [Fact]
-        public void RemoveMissingComponent_Returns_BadRequest()
+        public void RemoveMissingComponent_ReturnsBadRequest()
         {
             // Arrange
             var fakeContext = A.Fake<IContextBuilderDb>();
@@ -173,8 +166,6 @@ namespace Testes
             // Assert
             Assert.IsType<BadRequestResult>(response);
         }
-
-
 
 
     }

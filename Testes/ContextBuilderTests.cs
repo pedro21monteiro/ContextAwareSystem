@@ -16,6 +16,11 @@ namespace Testes
     {
 
         //----------------------CreateRequest
+       
+
+        /// <summary>
+        ///  Garante que o método “CreateResquest” retorne “OK” para um exemplo de dados válido
+        /// </summary>
         [Fact]
         public void CreateResquest_ValidRequest_ReturnsOk()
         {
@@ -45,6 +50,11 @@ namespace Testes
         }
 
         //----------------------AddMissingComponent
+
+        /// <summary>
+        /// Garante que o método “AddMissingComponent” retorne “BadRequest” ao tentar adicionar um 
+        /// componente em falta que já existe na base de dados.
+        /// </summary>
         [Fact]
         public void AddMissingComponent_ReturnsBadRequest()
         {
@@ -74,6 +84,10 @@ namespace Testes
             Assert.IsType<BadRequestResult>(response);
         }
 
+
+        /// <summary>
+        /// Garante que o método “AddMissingComponent” retorne “OK” ao tentar adicionar um componente em falta válido.
+        /// </summary>
         [Fact]
         public void AddMissingComponent_ReturnsOk()
         {
@@ -111,7 +125,11 @@ namespace Testes
         }
 
         //------------------RemoveMissingComponent
-        
+
+        /// <summary>
+        /// Garante que o método “RemoveMissingComponent” retorne “BadRequest” ao tentar remover um componente em 
+        /// falta que não exista na base de dados.
+        /// </summary>
         [Fact]
         public void RemoveMissingComponent_ReturnsOk()
         {
@@ -138,6 +156,9 @@ namespace Testes
             A.CallTo(() => fakeContext.SaveChangesAsync()).MustHaveHappenedOnceExactly();
         }
 
+        /// <summary>
+        /// Garante que o método “RemoveMissingComponent” retorne “OK” ao remover um componente em falta que exista na base de dados.
+        /// </summary>
         [Fact]
         public void RemoveMissingComponent_ReturnsBadRequest()
         {
@@ -167,6 +188,8 @@ namespace Testes
             Assert.IsType<BadRequestResult>(response);
         }
 
+
+        
 
     }
 }

@@ -708,9 +708,96 @@ namespace Testes
 
         }
 
+        //----------------Cenários para testar CoordinatorInfo
 
+        public void Test_CoordinatorInfo_Scenery_Worker_NotFound()
+        {
+            clearData();
+            //Implementar Cenário
+            fakeWorkers = new List<Worker>
+            {
+               new Worker { Id = 1, IdFirebase = "hafirebase", UserName = "Hugo Anes", Email = "ha@gmail.com", Role = 2},
+               new Worker { Id = 2, IdFirebase = "hafirebase", UserName = "Hugo Anes", Email = "ha@gmail.com", Role = 2},
+               new Worker { Id = 3, IdFirebase = "rfirebase", UserName = "Rodrigo", Email = "r@gmail.com", Role = 3},
+            };
+        }
 
+        public void Test_CoordinatorInfo_Scenery_Coordinator_NotFound()
+        {
+            clearData();
+            //Implementar Cenário
+            fakeWorkers = new List<Worker>
+            {
+               new Worker { Id = 1, IdFirebase = "hafirebase", UserName = "Hugo Anes", Email = "ha@gmail.com", Role = 2},
+               new Worker { Id = 2, IdFirebase = "hafirebase2", UserName = "Hugo Anes", Email = "ha@gmail.com", Role = 2},
+               new Worker { Id = 3, IdFirebase = "rfirebase", UserName = "Rodrigo", Email = "r@gmail.com", Role = 3},
+            };
+            fakeCoordinators = new List<Coordinator>
+            {
+               new Coordinator { Id = 1, WorkerId = 6},
+            };
+        }
 
+        public void Test_CoordinatorInfo_Scenery_OK_There_Is_No_Lines()
+        {
+            clearData();
+            //Implementar Cenário
+            fakeWorkers = new List<Worker>
+            {
+               new Worker { Id = 1, IdFirebase = "hafirebase", UserName = "Hugo Anes", Email = "ha@gmail.com", Role = 2},
+               new Worker { Id = 2, IdFirebase = "hafirebase2", UserName = "Hugo Anes", Email = "ha@gmail.com", Role = 2},
+               new Worker { Id = 3, IdFirebase = "rfirebase", UserName = "Rodrigo", Email = "r@gmail.com", Role = 3},
+            };
+            fakeCoordinators = new List<Coordinator>
+            {
+               new Coordinator { Id = 1, WorkerId = 3},
+            };
+            fakeLines = new List<Line>
+            {
+               new Line { Id = 1, Name = "Linha1" , Priority = true, CoordinatorId = 4},
+            };
+        }
+
+        public void Test_CoordinatorInfo_Scenery_OK_There_Is_Lines()
+        {
+            clearData();
+            //Implementar Cenário
+            fakeWorkers = new List<Worker>
+            {
+               new Worker { Id = 1, IdFirebase = "hafirebase", UserName = "Hugo Anes", Email = "ha@gmail.com", Role = 2},
+               new Worker { Id = 2, IdFirebase = "hafirebase2", UserName = "Hugo Anes", Email = "ha@gmail.com", Role = 2},
+               new Worker { Id = 3, IdFirebase = "rfirebase", UserName = "Rodrigo", Email = "r@gmail.com", Role = 3},
+            };
+            fakeCoordinators = new List<Coordinator>
+            {
+               new Coordinator { Id = 1, WorkerId = 3},
+            };
+            fakeLines = new List<Line>
+            {
+               new Line { Id = 1, Name = "Linha1" , Priority = true, CoordinatorId = 1},
+            };
+        }
+
+        //Cenáario para testar os missing Components
+        public void TestGetMissingComponents_Scenery_OK()
+        {
+            clearData();
+            //Implementar Cenário            
+            fakeLines = new List<Line>
+            {
+               new Line { Id = 1, Name = "Linha1" , Priority = true, CoordinatorId = 1},
+            };           
+
+            fakeMissingComponents = new List<MissingComponent>
+                {
+                   new MissingComponent { Id = 1, LineId = 1 ,ComponentId = 1, OrderDate = DateTime.Now.AddDays(-1)}
+                };
+
+            fakeComponents = new List<Component>
+            {
+               new Component { Id = 1, Name = "Component1", Reference = "Comp1", Category = 1},
+            };
+        }
 
 
         //Componentes
@@ -992,6 +1079,10 @@ namespace Testes
             return fakeComponentProducts.Where(c => c.ProductId == id).ToList();
         }
 
+        public Coordinator? GetCoordinatorByWorkerId(int id)
+        {
+            return fakeCoordinators.Where(c => c.WorkerId == id).FirstOrDefault();
+        }
 
         //----------Funções do context
 

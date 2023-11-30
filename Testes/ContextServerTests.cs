@@ -995,50 +995,135 @@ namespace Testes
 
         //---------------------------------------CoordinatorInfo---------------------------------------
 
+        /// <summary>
+        /// Garante que o método "CoordinatorInfo" retorne "NotFound" em diversos cenários de dados, incluindo a impossibilidade 
+        /// de identificar o trabalhador ou, caso seja identificado, que este não seja um coordenador.
+        /// </summary>
+        [Fact]
+        public void CoordinatorInfo_ReturnsNotFound()
+        {
+            //Inicializar as mocks
+            var systemLogic = new SystemLogic();
+            var _dataService = new Mock<IDataService>();
+            var generator = new DataGenerator();
+            var fakeContext = A.Fake<IContextAwareDb>();
+
+            //trocar os dados do dataServices pelos do datagenerator
+            _dataService.Setup(x => x.GetWorkerByIdFirebase(It.IsAny<string>())).ReturnsAsync((string id) => generator.GetWorkerByIdFirebase(id));
+            _dataService.Setup(x => x.GetCoordinatorByWorkerId(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetCoordinatorByWorkerId(id));
+            _dataService.Setup(x => x.GetLinesByCoordinatorId(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetLinesByCoordinatorId(id));
+
+            //Inicializar Controllador com as Mocks
+            var controller = new ContextServerController(fakeContext, systemLogic, _dataService.Object);
+
+            //Teste 1 - WorkerNotFound
+            generator.Test_CoordinatorInfo_Scenery_Worker_NotFound();
+
+            var responseTest1 = controller.CoordinatorInfo("dsadasads").GetAwaiter().GetResult();
+            Assert.IsType<NotFoundObjectResult>(responseTest1);
+            var rciTest1 = (responseTest1 as NotFoundObjectResult)?.Value as ResponseCoordinatorInfo;
+            Assert.NotNull(rciTest1);
+            Assert.Equal("Erro ao identificar o worker!!", rciTest1.Message);
+
+            //Teste 2 - CoordinatorNotFound
+            generator.Test_CoordinatorInfo_Scenery_Coordinator_NotFound();
+
+            var responseTest2 = controller.CoordinatorInfo("rfirebase").GetAwaiter().GetResult();
+            Assert.IsType<NotFoundObjectResult>(responseTest2);
+            var rciTest2 = (responseTest2 as NotFoundObjectResult)?.Value as ResponseCoordinatorInfo;
+            Assert.NotNull(rciTest2);
+            Assert.Equal("Erro ao identificar o Coordinator!!", rciTest2.Message);
+            Assert.Equal(3,rciTest2.Worker.Id);
+
+        }
+
+        /// <summary>
+        /// Assegura que o método "CoordinatorInfo" retorne "OK" para vários cenários de dados válidos e verifica se os retornos 
+        /// incluem as informações do coordenador e das linhas sob sua coordenação.
+        /// </summary>
+        [Fact]
+        public void CoordinatorInfo_ReturnsOK()
+        {
+            //Inicializar as mocks
+            var systemLogic = new SystemLogic();
+            var _dataService = new Mock<IDataService>();
+            var generator = new DataGenerator();
+            var fakeContext = A.Fake<IContextAwareDb>();
+
+            //trocar os dados do dataServices pelos do datagenerator
+            _dataService.Setup(x => x.GetWorkerByIdFirebase(It.IsAny<string>())).ReturnsAsync((string id) => generator.GetWorkerByIdFirebase(id));
+            _dataService.Setup(x => x.GetCoordinatorByWorkerId(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetCoordinatorByWorkerId(id));
+            _dataService.Setup(x => x.GetLinesByCoordinatorId(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetLinesByCoordinatorId(id));
+
+            //Inicializar Controllador com as Mocks
+            var controller = new ContextServerController(fakeContext, systemLogic, _dataService.Object);
+
+            //Teste 1 - OK_There_Is_No_Lines
+            generator.Test_CoordinatorInfo_Scenery_OK_There_Is_No_Lines();
+
+            var responseTest1 = controller.CoordinatorInfo("rfirebase").GetAwaiter().GetResult();
+            Assert.IsType<OkObjectResult>(responseTest1);
+            var rciTest1 = (responseTest1 as OkObjectResult)?.Value as ResponseCoordinatorInfo;
+            Assert.NotNull(rciTest1);
+            Assert.Equal("Info obtida com sucesso!!", rciTest1.Message);
+            Assert.Equal(3, rciTest1.Worker.Id);
+            Assert.Equal(1, rciTest1.Coordinator.Id);
+            Assert.Empty(rciTest1.listLine);
+            //Teste 2 - OK_There_Is_Lines
+            generator.Test_CoordinatorInfo_Scenery_OK_There_Is_Lines();
+
+            var responseTest2 = controller.CoordinatorInfo("rfirebase").GetAwaiter().GetResult();
+            Assert.IsType<OkObjectResult>(responseTest2);
+            var rciTest2 = (responseTest2 as OkObjectResult)?.Value as ResponseCoordinatorInfo;
+            Assert.NotNull(rciTest2);
+            Assert.Equal("Info obtida com sucesso!!", rciTest2.Message);
+            Assert.Equal(3, rciTest2.Worker.Id);
+            Assert.Equal(1, rciTest2.Coordinator.Id);
+            Assert.NotEmpty(rciTest2.listLine);
+
+        }
 
 
-        //-------------------Testes Antigos----------------------------------------------------------------
+        //---------------------------------------GetMissingComponentes---------------------------------------
+
+        /// <summary>
+        /// Assegura que o método "GetMissingComponents" retorne "OK" para um cenários de dados válidos e verifica
+        /// se os retornos incluem as informações dos componentes em falta.
+        /// </summary>
+        [Fact]
+        public void GetMissingComponents_ReturnsOK()
+        {
+            // Inicializar as mocks
+            var systemLogic = new SystemLogic();
+            var _dataService = new Mock<IDataService>();
+            var generator = new DataGenerator();
+            var fakeContext = A.Fake<IContextAwareDb>();
+
+            generator.TestGetMissingComponents_Scenery_OK();
+
+            //trocar os dados do _context pelos do datagenerator
+            var fakeMissingComponentes = generator.GetMissingComponents().AsQueryable().BuildMockDbSet();
+            A.CallTo(() => fakeContext.missingComponents).Returns(fakeMissingComponentes);
+
+            //trocar os dados do dataServices pelos do datagenerator
+            _dataService.Setup(x => x.GetLineById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetLineById(id));
+            _dataService.Setup(x => x.GetComponentById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetComponentById(id));
+
+            //Inicializar Controllador com as Mocks
+            var controller = new ContextServerController(fakeContext, systemLogic, _dataService.Object);
+
+            //Teste 1 - Is_Coordinator_OK
+
+            var response = controller.GetMissingComponents().GetAwaiter().GetResult();
+            Assert.IsType<OkObjectResult>(response);
+            var rgmc = (response as OkObjectResult)?.Value as ResponseGetMissingComponents;
+            Assert.NotNull(rgmc);
+            Assert.Equal("Info obtida com sucesso!!", rgmc.Message);
+            Assert.Single(rgmc.listMissingComponentes);
+        }
 
 
-
-
-        //------------------------------------------------CoordinatorInfo
-
-        //[Fact]
-        //public async Task CoordinatorInfo_Worker_NotFound()
-        //{
-        //    //test1
-        //    var response = await controller.CoordinatorInfo("adsgjasdh");
-        //    // Assert
-        //    var rdi = (response as NotFoundObjectResult).Value as ResponseCoordinatorInfo;
-
-        //    Assert.Equal("Erro ao identificar o worker!!", rdi.Message);
-        //}
-
-        //[Fact]
-        //public async Task CoordinatorInfo_Coordinator_NotFound()
-        //{
-        //    //test1
-        //    var response = await controller.CoordinatorInfo("hafirebase");
-        //    // Assert
-        //    var rdi = (response as NotFoundObjectResult).Value as ResponseCoordinatorInfo;
-
-        //    Assert.Equal("Erro ao identificar o Coordinator!!", rdi.Message);
-        //}
-
-        //[Fact]
-        //public async Task CoordinatorInfo_Ok()
-        //{
-        //    //test1
-        //    var response = await controller.CoordinatorInfo("pmfirebase");
-        //    // Assert
-        //    var rdi = (response as OkObjectResult).Value as ResponseCoordinatorInfo;
-
-        //    Assert.Equal("Info obtida com sucesso!!", rdi.Message);
-        //}
-
-
-        
+        //---------------------------------------NotificationRecomendation---------------------------------------
 
 
     }

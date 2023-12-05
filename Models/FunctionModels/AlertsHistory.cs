@@ -12,7 +12,9 @@ namespace Models.FunctionModels
         [Key]
         public int Id { get; set; }
 
-        //1-Alerta de Paragem, 2- Alerta de produções, 3- Alerta de componentes em falta
+        /// <summary>
+        /// 1-Alerta de Paragem, 2- Alerta de produções, 3- Alerta de componentes em falta
+        /// </summary>
         public int TypeOfAlet { get; set; }
         public bool AlertSuccessfullySent { get; set; }
         public string ErrorMessage { get; set; } = string.Empty;

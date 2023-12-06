@@ -18,7 +18,7 @@ namespace Context_aware_System.Controllers
         private readonly IContextAwareDb _context;
         private readonly SystemLogic _systemLogic;
         private readonly IDataService _DataService;
-        //para experimentar os datetimes 2023-11-20T11:11:11Z
+        //para experimentar os datetimes ex: 2023-11-20T11:11:11Z
 
         public ContextServerController(IContextAwareDb context, SystemLogic systemLogic, IDataService dataService)
         {
@@ -577,6 +577,7 @@ namespace Context_aware_System.Controllers
         [Route("GetMissingComponents")]
         public async Task<IActionResult> GetMissingComponents()
         {
+            bool error = false;
             //Formato da resposta
             ResponseGetMissingComponents rgmc = new ResponseGetMissingComponents();
             var missingComponentes = await _context.missingComponents.ToListAsync();
@@ -586,18 +587,33 @@ namespace Context_aware_System.Controllers
                 {
                     var line = await _DataService.GetLineById(missingComponente.LineId);
                     var componente = await _DataService.GetComponentById(missingComponente.ComponentId);
-                    if(line!= null && componente != null)
+                    MissingComponentResponse mcr = new MissingComponentResponse();
+                    mcr.Id = missingComponente.Id;
+                    mcr.OrderDate = missingComponente.OrderDate;
+                    mcr.Line.Id = missingComponente.LineId;
+                    mcr.Component.Id = missingComponente.ComponentId;
+                    if(line == null || componente == null)
                     {
-                        MissingComponentResponse mcr = new MissingComponentResponse();
-                        mcr.Id = missingComponente.Id;
-                        mcr.OrderDate = missingComponente.OrderDate;
-                        mcr.Line = line;
-                        mcr.Component = componente;
-                        rgmc.listMissingComponentes.Add(mcr);
+                        error = true;
                     }
+                    if(line != null)
+                    {
+                        mcr.Line = line;
+                    }
+                    if (componente != null)
+                    {
+                        mcr.Component = componente;
+                    }
+                    rgmc.listMissingComponentes.Add(mcr);
                 }
             }
-            rgmc.Message = "Info obtida com sucesso!!";
+            if(error == true)
+            {
+                rgmc.Message = "Houve um erro ao aceder aos dados de algum componente ou linha de produção!!";
+            }
+            else{
+                rgmc.Message = "Info obtida com sucesso!!";
+            }
             return Ok(rgmc);
         }
 
@@ -747,5 +763,18 @@ namespace Context_aware_System.Controllers
         {
             return Ok(await _context.alertsHistories.ToListAsync());
         }
+
+        /// <summary>
+        /// Retorna o histórico de pedidos para visualização das informações solicitadas pelos utilizadores a outras aplicações,
+        /// as quais, posteriormente, enviaram essas informações para o Context Engine.
+        /// </summary>
+        [HttpGet]
+        [Route("GetRequestsHistory")]
+        public async Task<IActionResult> GetRequestsHistory()
+        {
+            return Ok(await _context.requests.ToListAsync());
+        }
+
+
     }
 }

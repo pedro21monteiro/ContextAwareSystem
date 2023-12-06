@@ -10,11 +10,15 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<ContinentalTestDbContext>(options =>
 {
+    //var dbname = System.Environment.GetEnvironmentVariable("DBNAME") ?? "ContinentalTestDb";
+    //var dbhost = System.Environment.GetEnvironmentVariable("DBHOST") ?? "192.168.28.86";
+    //var dbuser = System.Environment.GetEnvironmentVariable("DBUSER") ?? "sa";
+    //var dbpass = System.Environment.GetEnvironmentVariable("DBPASS") ?? "xA6UCjFY";
+    //options.UseSqlServer("Data Source=" + dbhost + $";Database={dbname};User ID=" + dbuser + ";Password=" + dbpass + ";TrustServerCertificate=Yes;");
+
     var dbname = System.Environment.GetEnvironmentVariable("DBNAME") ?? "ContinentalTestDb";
-    var dbhost = System.Environment.GetEnvironmentVariable("DBHOST") ?? "192.168.28.86";
-    var dbuser = System.Environment.GetEnvironmentVariable("DBUSER") ?? "sa";
-    var dbpass = System.Environment.GetEnvironmentVariable("DBPASS") ?? "xA6UCjFY";
-    options.UseSqlServer("Data Source=" + dbhost + $";Database={dbname};User ID=" + dbuser + ";Password=" + dbpass + ";TrustServerCertificate=Yes;");
+    var dbhost = System.Environment.GetEnvironmentVariable("DBHOST") ?? ".\\SQLEXPRESS";
+    options.UseSqlServer($"Server={dbhost};Database={dbname};Trusted_Connection=True;");
 });
 
 builder.Services.AddSingleton<RabbitMqService>();

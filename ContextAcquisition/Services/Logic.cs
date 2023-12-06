@@ -16,7 +16,7 @@ namespace ContextAcquisition.Services
     {
         //private static string connectionString = "https://localhost:7284/api/ContextBuilder/";
         //private static string continentalTestAPIHost = System.Environment.GetEnvironmentVariable("CONTAPI") ?? "https://localhost:7013";
-        private static string AlertAppConnectionString = "https://192.168.28.86:8091/api/Alert/SendNotification/";
+        private static string AlertAppConnectionString = "https://localhost:7013/api/ServiceLayer/SendNotification/";
         //private static string builderHost = System.Environment.GetEnvironmentVariable("BUILDER") ?? "https://localhost:7284";
         private static readonly ContextAcquisitonDb _context = new ContextAcquisitonDb();
         private static readonly IDataService _dataService = new DataService();

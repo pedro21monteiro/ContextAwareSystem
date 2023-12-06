@@ -21,11 +21,15 @@ namespace ContextAcquisition.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            //var dbname = System.Environment.GetEnvironmentVariable("DBNAME") ?? "ContextDb";
+            //var dbhost = System.Environment.GetEnvironmentVariable("DBHOST") ?? "192.168.28.86";
+            //var dbuser = System.Environment.GetEnvironmentVariable("DBUSER") ?? "sa";
+            //var dbpass = System.Environment.GetEnvironmentVariable("DBPASS") ?? "xA6UCjFY";
+            //optionsBuilder.UseSqlServer("Data Source=" + dbhost + $";Database={dbname};User ID=" + dbuser + ";Password=" + dbpass + ";TrustServerCertificate=Yes;");
+
             var dbname = System.Environment.GetEnvironmentVariable("DBNAME") ?? "ContextDb";
-            var dbhost = System.Environment.GetEnvironmentVariable("DBHOST") ?? "192.168.28.86";
-            var dbuser = System.Environment.GetEnvironmentVariable("DBUSER") ?? "sa";
-            var dbpass = System.Environment.GetEnvironmentVariable("DBPASS") ?? "xA6UCjFY";
-            optionsBuilder.UseSqlServer("Data Source=" + dbhost + $";Database={dbname};User ID=" + dbuser + ";Password=" + dbpass + ";TrustServerCertificate=Yes;");
+            var dbhost = System.Environment.GetEnvironmentVariable("DBHOST") ?? ".\\SQLEXPRESS";
+            optionsBuilder.UseSqlServer($"Server={dbhost};Database={dbname};Trusted_Connection=True;");
         }
 
         public DbSet<Production> Productions { get; set; }

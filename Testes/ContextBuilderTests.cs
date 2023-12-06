@@ -81,7 +81,7 @@ namespace Testes
             var response = controller.AddMissingComponent(missingComponent).GetAwaiter().GetResult();
 
             // Assert
-            Assert.IsType<BadRequestResult>(response);
+            Assert.IsType<BadRequestObjectResult>(response);
         }
 
 
@@ -185,7 +185,7 @@ namespace Testes
             var response = controller.RemoveMissingComponent(missingComponent).GetAwaiter().GetResult();
 
             // Assert
-            Assert.IsType<BadRequestResult>(response);
+            Assert.IsType<BadRequestObjectResult>(response);
         }
 
 

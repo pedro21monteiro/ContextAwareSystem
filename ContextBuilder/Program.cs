@@ -14,11 +14,15 @@ builder.Services.AddHostedService<DataManagement>();
 
 builder.Services.AddDbContext<IContextBuilderDb, ContextBuilderDb>(options =>
 {
+    //var dbname = System.Environment.GetEnvironmentVariable("DBNAME") ?? "ContextDb";
+    //var dbhost = System.Environment.GetEnvironmentVariable("DBHOST") ?? "192.168.28.86";
+    //var dbuser = System.Environment.GetEnvironmentVariable("DBUSER") ?? "sa";
+    //var dbpass = System.Environment.GetEnvironmentVariable("DBPASS") ?? "xA6UCjFY";
+    //options.UseSqlServer("Data Source=" + dbhost + $";Database={dbname};User ID=" + dbuser + ";Password=" + dbpass + ";TrustServerCertificate=Yes;");
+
     var dbname = System.Environment.GetEnvironmentVariable("DBNAME") ?? "ContextDb";
-    var dbhost = System.Environment.GetEnvironmentVariable("DBHOST") ?? "192.168.28.86";
-    var dbuser = System.Environment.GetEnvironmentVariable("DBUSER") ?? "sa";
-    var dbpass = System.Environment.GetEnvironmentVariable("DBPASS") ?? "xA6UCjFY";
-    options.UseSqlServer("Data Source=" + dbhost + $";Database={dbname};User ID=" + dbuser + ";Password=" + dbpass + ";TrustServerCertificate=Yes;");
+    var dbhost = System.Environment.GetEnvironmentVariable("DBHOST") ?? ".\\SQLEXPRESS";
+    options.UseSqlServer($"Server={dbhost};Database={dbname};Trusted_Connection=True;");
 });
 
 var app = builder.Build();

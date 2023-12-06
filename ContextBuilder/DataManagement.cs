@@ -30,7 +30,9 @@ namespace ContextBuilder
                 }
             }
         }
-
+        /// <summary>
+        /// Função responsável por fazer a limpeza de Requests com datas que deixam de ser considerada importates para a aplicação.
+        /// </summary>
         private async Task CleanRequests()
         {
             using (var scope = _sp.CreateScope())
@@ -50,12 +52,15 @@ namespace ContextBuilder
                 foreach (var request in requestsToRemove)
                 {
                     _context.Requests.Remove(request);
-                    Console.WriteLine("Request: " + request.Id.ToString() + " - Removido com Sucesso");
+                    Console.WriteLine($"Request: {request.Id} - Removido com Sucesso.");
                 }
                 await _context.SaveChangesAsync();
             }
             return;
         }
+        /// <summary>
+        /// Função responsável por fazer a limpeza de componentes em falta com datas que deixam de ser consideradas importates para a aplicação.
+        /// </summary>
         private async Task CleanMissingComponents()
         {
             using (var scope = _sp.CreateScope())
@@ -75,13 +80,15 @@ namespace ContextBuilder
                 foreach(var missingComponent in missingComponentsToRemove)
                 {
                     _context.missingComponents.Remove(missingComponent);
-                    Console.WriteLine("MissingComponent: " + missingComponent.Id + " - Removido com Sucesso");
+                    Console.WriteLine($"MissingComponent: {missingComponent.Id} - Removido com Sucesso.");
                 }
                 await _context.SaveChangesAsync();
             }
             return;
         }
-
+        /// <summary>
+        /// Função responsável por fazer a limpeza de gistóricos de alertas com datas que deixam de ser considerada importates para a aplicação.
+        /// </summary>
         private async Task CleanAlertHistories()
         {
             using (var scope = _sp.CreateScope())
@@ -100,7 +107,7 @@ namespace ContextBuilder
                 foreach(var alertHistory in alertsHistorieToRemove)
                 {
                     _context.alertsHistories.Remove(alertHistory);
-                    Console.WriteLine("Alert: " + alertHistory.Id + " - Removido com Sucesso");
+                    Console.WriteLine($"Alert: {alertHistory.Id} - Removido com Sucesso.");
                 }
                 await _context.SaveChangesAsync();
             }

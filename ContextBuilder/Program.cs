@@ -1,6 +1,7 @@
 using ContextBuilder;
 using ContextBuilder.Data;
 using Microsoft.EntityFrameworkCore;
+using Services.DataServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,15 +12,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHostedService<DataManagement>();
+builder.Services.AddSingleton<IHttpClientWrapper, HttpClientWrapper>();
+builder.Services.AddHttpClient();
 
 builder.Services.AddDbContext<IContextBuilderDb, ContextBuilderDb>(options =>
 {
-    //var dbname = System.Environment.GetEnvironmentVariable("DBNAME") ?? "ContextDb";
-    //var dbhost = System.Environment.GetEnvironmentVariable("DBHOST") ?? "192.168.28.86";
-    //var dbuser = System.Environment.GetEnvironmentVariable("DBUSER") ?? "sa";
-    //var dbpass = System.Environment.GetEnvironmentVariable("DBPASS") ?? "xA6UCjFY";
-    //options.UseSqlServer("Data Source=" + dbhost + $";Database={dbname};User ID=" + dbuser + ";Password=" + dbpass + ";TrustServerCertificate=Yes;");
-
     var dbname = System.Environment.GetEnvironmentVariable("DBNAME") ?? "ContextDb";
     var dbhost = System.Environment.GetEnvironmentVariable("DBHOST") ?? ".\\SQLEXPRESS";
     options.UseSqlServer($"Server={dbhost};Database={dbname};Trusted_Connection=True;");

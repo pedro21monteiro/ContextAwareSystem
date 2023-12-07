@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models.ContextModels;
 using Models.FunctionModels;
+using Services.DataServices;
 
 namespace ContextBuilder.Controllers
 {
@@ -11,12 +12,15 @@ namespace ContextBuilder.Controllers
 
     public class ContextBuilderController : Controller
     {
-        private static string AlertAppConnectionString = "https://localhost:7013/api/ServiceLayer/SendNotification/";
+        private static readonly string NASHost = System.Environment.GetEnvironmentVariable("NAS") ?? "https://localhost:7013";
+        private static readonly string AlertAppConnectionString = $"{NASHost}/api/ServiceLayer/SendNotification/";
         private readonly IContextBuilderDb _context;
+        private readonly IHttpClientWrapper _httpClientWrapper;
 
-        public ContextBuilderController(IContextBuilderDb context)
+        public ContextBuilderController(IContextBuilderDb context, IHttpClientWrapper httpClientWrapper)
         {
             _context = context;
+            _httpClientWrapper = httpClientWrapper;
         }
 
         /// <summary>
@@ -134,13 +138,10 @@ namespace ContextBuilder.Controllers
             };
             try
             {
-                using (var client = new HttpClient())
-                {
-                    var response = await client.PostAsJsonAsync(AlertAppConnectionString, asr);
-                    response.EnsureSuccessStatusCode();
-                    Console.WriteLine($"Alerta de componente em falta: ComponenteId - {missingComponente.ComponentId}, LineId - {missingComponente.LineId} enviado com sucesso");
-                    alertHistory.AlertSuccessfullySent = true;
-                }
+                var response = await _httpClientWrapper.PostAsJsonAsync(AlertAppConnectionString, asr);
+                response.EnsureSuccessStatusCode();
+                Console.WriteLine($"Alerta de componente em falta: ComponenteId - {missingComponente.ComponentId}, LineId - {missingComponente.LineId} enviado com sucesso");
+                alertHistory.AlertSuccessfullySent = true;
                 _context.Add(alertHistory);
                 await _context.SaveChangesAsync();
             }

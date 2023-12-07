@@ -1,9 +1,5 @@
 ﻿using ContextAcquisition.Data;
 using ContextAcquisition.Services;
-using System.Net.Http;
-using System;
-using System.Threading.Tasks;
-using System.Timers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Services.DataServices;
@@ -23,15 +19,21 @@ namespace ContextAcquisition
             var serviceProvider = new ServiceCollection()
             .AddSingleton<IDataService, DataService>()
             .AddSingleton<IContextAcquisitonDb, ContextAcquisitonDb>()
-            .AddSingleton<ContextAcquisitonDb>()
-            .AddSingleton<ILogic>(provider =>
+            .AddDbContext<ContextAcquisitonDb>()
+            .AddHttpClient()
+            .AddSingleton<IHttpClientWrapper, HttpClientWrapper>(provider =>
             {
-                // Obter o contexto do provedor
+                var httpClient = provider.GetRequiredService<IHttpClientFactory>().CreateClient();
+
+                return new HttpClientWrapper(httpClient);
+            })
+            .AddSingleton<ILogic>(provider =>
+            {               
                 var context = provider.GetRequiredService<IContextAcquisitonDb>();
-                // Obter o serviço de DataService
                 var dataService = provider.GetRequiredService<IDataService>();
-                // Criar uma instância do Logic com os parâmetros necessários
-                var logic = new Logic(context, dataService);
+                var httpClientWrapper = provider.GetRequiredService<IHttpClientWrapper>();
+
+                var logic = new Logic(context, dataService, httpClientWrapper);
                 return logic;
             })
             .BuildServiceProvider();

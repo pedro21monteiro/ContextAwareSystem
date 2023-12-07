@@ -14,10 +14,12 @@ namespace ContextAcquisition.Services
 
         private readonly IContextAcquisitonDb _context;
         private readonly IDataService _dataService;
-        public Logic(IContextAcquisitonDb context, IDataService dataService)
+        private readonly IHttpClientWrapper _httpClientWrapper;
+        public Logic(IContextAcquisitonDb context, IDataService dataService, IHttpClientWrapper httpClientWrapper)
         {
             _context = context;
             _dataService = dataService;
+            _httpClientWrapper = httpClientWrapper;
         }
 
         /// <summary>
@@ -273,22 +275,20 @@ namespace ContextAcquisition.Services
             };
             try
             {
-                using (var client = new HttpClient())
+                var response = await _httpClientWrapper.PostAsJsonAsync(AlertAppConnectionString, _sendAlertRequest);
+                response.EnsureSuccessStatusCode();
+                //Se passar para baixo é pq foi enviado com sucesso
+                alertHistory.AlertSuccessfullySent = true;
+                //Alerta de paragem
+                if (TypeOfAlert == 1)
                 {
-                    var response = await client.PostAsJsonAsync(AlertAppConnectionString, _sendAlertRequest);
-                    response.EnsureSuccessStatusCode();
-                    //Se passar para baixo é pq foi enviado com sucesso
-                    alertHistory.AlertSuccessfullySent = true;
-                    //Alerta de paragem
-                    if (TypeOfAlert == 1)
-                    {                       
-                        Console.WriteLine($"Alerta da Paragem: ID-{_sendAlertRequest.Stop?.Id} Enviado com sucesso.");
-                    }
-                    if (TypeOfAlert == 2)
-                    {
-                        Console.WriteLine($"Alerta da Produção: ID-{_sendAlertRequest.Production?.Id} Enviado com sucesso.");
-                    }
+                    Console.WriteLine($"Alerta da Paragem: ID-{_sendAlertRequest.Stop?.Id} Enviado com sucesso.");
                 }
+                if (TypeOfAlert == 2)
+                {
+                    Console.WriteLine($"Alerta da Produção: ID-{_sendAlertRequest.Production?.Id} Enviado com sucesso.");
+                }
+
                 _context.Add(alertHistory);
                 await _context.SaveChangesAsync();
             }

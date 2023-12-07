@@ -9,6 +9,7 @@ using MockQueryable.FakeItEasy;
 using Models.ContextModels;
 using Models.FunctionModels;
 using Moq;
+using Services.DataServices;
 
 namespace Testes
 {
@@ -26,6 +27,7 @@ namespace Testes
         {
             // Arrange
             var fakeContext = A.Fake<IContextBuilderDb>();
+            var fakeHttpClientWrapper = A.Fake<IHttpClientWrapper>();
 
             var request = new Request
             {
@@ -37,7 +39,7 @@ namespace Testes
             var listRequests = new List<Request>();
 
             // Act
-            var controller = new ContextBuilderController(fakeContext);
+            var controller = new ContextBuilderController(fakeContext, fakeHttpClientWrapper);
             var response = controller.CreateResquest(request).GetAwaiter().GetResult();
 
             // Assert
@@ -60,6 +62,7 @@ namespace Testes
         {
             // Arrange
             var fakeContext = A.Fake<IContextBuilderDb>();
+            var fakeHttpClientWrapper = A.Fake<IHttpClientWrapper>();
 
             var missingComponent = new MissingComponent
             {
@@ -77,7 +80,7 @@ namespace Testes
             A.CallTo(() => fakeContext.missingComponents).Returns(fakeMissingComponentes);
 
             // Act
-            var controller = new ContextBuilderController(fakeContext);
+            var controller = new ContextBuilderController(fakeContext, fakeHttpClientWrapper);
             var response = controller.AddMissingComponent(missingComponent).GetAwaiter().GetResult();
 
             // Assert
@@ -93,6 +96,7 @@ namespace Testes
         {
             // Arrange
             var fakeContext = A.Fake<IContextBuilderDb>();
+            var fakeHttpClientWrapper = A.Fake<IHttpClientWrapper>();
 
             var missingComponent = new MissingComponent
             {
@@ -110,7 +114,7 @@ namespace Testes
             A.CallTo(() => fakeContext.missingComponents).Returns(fakeMissingComponentes);
 
             // Act
-            var controller = new ContextBuilderController(fakeContext);
+            var controller = new ContextBuilderController(fakeContext, fakeHttpClientWrapper);
             var response = controller.AddMissingComponent(missingComponent).GetAwaiter().GetResult();
 
             // Assert
@@ -135,6 +139,8 @@ namespace Testes
         {
             // Preparação
             var fakeContext = A.Fake<IContextBuilderDb>();
+            var fakeHttpClientWrapper = A.Fake<IHttpClientWrapper>();
+
             var missingComponent = new MissingComponent
             {
                 LineId = 1,
@@ -148,7 +154,7 @@ namespace Testes
             var fakeMissingComponentes = listMissingComponents.AsQueryable().BuildMockDbSet();
             A.CallTo(() => fakeContext.missingComponents).Returns(fakeMissingComponentes);
             // Ação
-            var controller = new ContextBuilderController(fakeContext);
+            var controller = new ContextBuilderController(fakeContext, fakeHttpClientWrapper);
             var response = controller.RemoveMissingComponent(missingComponent).GetAwaiter().GetResult();
             // Verificação
             Assert.IsType<OkResult>(response);
@@ -164,6 +170,7 @@ namespace Testes
         {
             // Arrange
             var fakeContext = A.Fake<IContextBuilderDb>();
+            var fakeHttpClientWrapper = A.Fake<IHttpClientWrapper>();
 
             var missingComponent = new MissingComponent
             {
@@ -181,7 +188,7 @@ namespace Testes
             A.CallTo(() => fakeContext.missingComponents).Returns(fakeMissingComponentes);
 
             // Act
-            var controller = new ContextBuilderController(fakeContext);
+            var controller = new ContextBuilderController(fakeContext, fakeHttpClientWrapper);
             var response = controller.RemoveMissingComponent(missingComponent).GetAwaiter().GetResult();
 
             // Assert

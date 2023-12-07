@@ -22,17 +22,20 @@ namespace ContinentalTestAPI.Controllers
             if(AlertRequest.MissingComponent != null)
             {
                 Console.WriteLine($"Alerta de componente em falta: ComponenteId - {AlertRequest.MissingComponent.ComponentId} " +
-                    $"LineId - {AlertRequest.MissingComponent.LineId} Recebido com Sucesso");
+                    $"LineId - {AlertRequest.MissingComponent.LineId} Recebido com Sucesso.");
+                Console.WriteLine(AlertRequest.Message);
                 return Ok();
             }
             if (AlertRequest.Stop != null)
             {
-                Console.WriteLine($"Alerta de paragem urgente: Id - {AlertRequest.Stop.Id} Recebido com Sucesso");
+                Console.WriteLine($"Alerta de paragem urgente: Id - {AlertRequest.Stop.Id} Recebido com Sucesso.");
+                Console.WriteLine(AlertRequest.Message);
                 return Ok();
             }
             if (AlertRequest.Production != null)
             {
-                Console.WriteLine($"Alerta de nova produção: Id - {AlertRequest.Production.Id} Recebido com Sucesso");
+                Console.WriteLine($"Alerta de nova produção: Id - {AlertRequest.Production.Id} Recebido com Sucesso.");
+                Console.WriteLine(AlertRequest.Message);
                 return Ok();
             }
             return Ok();

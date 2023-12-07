@@ -13,31 +13,37 @@ namespace ContextAcquisition
 {
     class Program
     {
-        //Vai haver duas funcionalidades para fazer a verificação de alteração de dados 1-DataMonitoringUsingDatabase, 2-CDC(Change Data Capture)
+        //Vai haver duas funcionalidades para fazer a verificação de alteração de dados, 1-DataMonitoringUsingDatabase, 2-CDC(Change Data Capture)
         public static int functionDataMonitoring = 1;
 
-        public static System.Timers.Timer _timer;
-        //Singleton para o ContextAcquisitonDb
-        private static readonly ContextAcquisitonDb _context = new ContextAcquisitonDb();
-        public static HttpClient client = new HttpClient();
+        public static System.Timers.Timer _timer = new System.Timers.Timer();
         static async Task Main(string[] args)
         {            
-            //inicializar o contexto para haver uma primeira data de pesquisa
-            DbInitializer.Initalize(_context);
-            //criar o singleton para o service de Data
+            //criar o singleton dos serviços que irão ser necessários
             var serviceProvider = new ServiceCollection()
             .AddSingleton<IDataService, DataService>()
+            .AddSingleton<IContextAcquisitonDb, ContextAcquisitonDb>()
+            .AddSingleton<ContextAcquisitonDb>()
+            .AddSingleton<ILogic>(provider =>
+            {
+                // Obter o contexto do provedor
+                var context = provider.GetRequiredService<IContextAcquisitonDb>();
+                // Obter o serviço de DataService
+                var dataService = provider.GetRequiredService<IDataService>();
+                // Criar uma instância do Logic com os parâmetros necessários
+                var logic = new Logic(context, dataService);
+                return logic;
+            })
             .BuildServiceProvider();
-            var dataService = serviceProvider.GetRequiredService<IDataService>();
-            //criar o singleton para o service de Logic
-            var serviceProvider2 = new ServiceCollection()
-            .AddSingleton<ILogic, Logic>()
-            .BuildServiceProvider();
-            var logicService = serviceProvider2.GetRequiredService<ILogic>();
 
+            var dataService = serviceProvider.GetRequiredService<IDataService>();
+            var _context = serviceProvider.GetRequiredService<ContextAcquisitonDb>();
+            var _logicService = serviceProvider.GetRequiredService<ILogic>();
+
+            //inicializar o contexto para haver uma primeira data de pesquisa
+            DbInitializer.Initalize(_context);
 
             //Inicialmente vou começar com um Timer para todas as funções esse timer será de 30 em 30 segundos
-            _timer = new System.Timers.Timer();
             _timer.AutoReset = false;
             _timer.Interval = 30000; // Intervalo em milésimos 30000(30 segundos)
 
@@ -47,10 +53,9 @@ namespace ContextAcquisition
                 {
                     if (sender != null)
                     {
-                        await DataMonitoringUsingDatabase(sender, arq, dataService, logicService);
+                        await DataMonitoringUsingDatabase(sender, arq, dataService, _logicService, _context);
                     }
                 };
-                //_timer.Elapsed += async (sender, arq) => await DataMonitoringUsingDatabase(sender, arq, dataService, logicService);
             }
             if (functionDataMonitoring == 2)
             {
@@ -59,7 +64,7 @@ namespace ContextAcquisition
                 {
                     if (sender != null)
                     {
-                        await ChangeDataCapture(sender, arq, dataService, logicService);
+                        await ChangeDataCapture(sender, arq, dataService, _logicService, _context);
                     }
                 };
             }
@@ -68,7 +73,7 @@ namespace ContextAcquisition
             await Task.Run(() => Thread.Sleep(Timeout.Infinite));
         }
 
-        static async Task DataMonitoringUsingDatabase(object sender, System.Timers.ElapsedEventArgs e, IDataService _dataService, ILogic _logicService)
+        static async Task DataMonitoringUsingDatabase(object sender, System.Timers.ElapsedEventArgs e, IDataService _dataService, ILogic _logicService, ContextAcquisitonDb _context)
         {
             _timer.Enabled = false;
             ItensToUpdate ITU = new ItensToUpdate();
@@ -113,7 +118,7 @@ namespace ContextAcquisition
             _timer.Enabled = true;
         }
 
-        static async Task ChangeDataCapture(object sender, System.Timers.ElapsedEventArgs e, IDataService _dataService, ILogic _logicService)
+        static async Task ChangeDataCapture(object sender, System.Timers.ElapsedEventArgs e, IDataService _dataService, ILogic _logicService, ContextAcquisitonDb _context)
         {
             _timer.Enabled = false;
             //--------------

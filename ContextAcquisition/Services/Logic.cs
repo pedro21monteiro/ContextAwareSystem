@@ -1,52 +1,40 @@
 ﻿using ContextAcquisition.Data;
 using Models.ContextModels;
 using Models.FunctionModels;
-using Newtonsoft.Json;
 using Services.DataServices;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http.Json;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace ContextAcquisition.Services
 {
     public class Logic : ILogic
-    {
-        //private static string connectionString = "https://localhost:7284/api/ContextBuilder/";
-        //private static string continentalTestAPIHost = System.Environment.GetEnvironmentVariable("CONTAPI") ?? "https://localhost:7013";
-        private static string AlertAppConnectionString = "https://localhost:7013/api/ServiceLayer/SendNotification/";
-        //private static string builderHost = System.Environment.GetEnvironmentVariable("BUILDER") ?? "https://localhost:7284";
-        private static readonly ContextAcquisitonDb _context = new ContextAcquisitonDb();
-        private static readonly IDataService _dataService = new DataService();
+    { 
+        private static readonly string NASHost = System.Environment.GetEnvironmentVariable("NAS") ?? "https://localhost:7013";
+        private static readonly string AlertAppConnectionString = $"{NASHost}/api/ServiceLayer/SendNotification/";
 
-        //Update dos itens todos
+        private readonly IContextAcquisitonDb _context;
+        private readonly IDataService _dataService;
+        public Logic(IContextAcquisitonDb context, IDataService dataService)
+        {
+            _context = context;
+            _dataService = dataService;
+        }
+
+        /// <summary>
+        /// Esta função tem como finalidade realizar a verificação das alterações nos dados por meio da abordagem de monitorização 
+        /// de dados, verificando na base de dados. Para isso, ela receberá um objeto "ItensToUpdate", no qual haverá uma lista de
+        /// paragens e uma lista de produções. Com essas informações, a função procederá à atualização dos objetos na base de dados
+        /// e, posteriormente, verificará se é necessário enviar avisos.
+        /// </summary>
         public async Task UpdateItensDMUD(ItensToUpdate ITU)
         {
             DateTime inicio = DateTime.Now;
             //-----------escrever no ecra o nº de itens para atualizar--------
-            Console.WriteLine("-----------------  " + inicio.ToString() + "  ----------------");
-            
+            Console.WriteLine($"-----------------  {inicio}  ----------------");
             //productions
-            if (ITU.productions != null)
-            {
-                Console.WriteLine(ITU.productions.Count.ToString() + " productions novos/atualizados detetados");
-            }
-            else
-            {
-                Console.WriteLine("0 productions novos/atualizados detetados");
-            }
-           
+            Console.WriteLine($"{ITU.productions.Count} Productions novos/atualizados detetados.");
             //stops
-            if (ITU.stops != null)
-            {
-                Console.WriteLine(ITU.stops.Count.ToString() + " stops novos/atualizados detetados");
-            }
-            else
-            {
-                Console.WriteLine("0 stops novos/atualizados detetados");
-            }
+            Console.WriteLine($"{ITU.stops.Count} Stops novos/atualizados detetados.");
             //Escrever no fim
             Console.WriteLine("---------------Atualizacao dos itens---------------------------");
 
@@ -70,119 +58,24 @@ namespace ContextAcquisition.Services
                 }
             }
             Console.WriteLine();
-            TimeSpan tempoDeExecucao = DateTime.Now.Subtract(inicio);
-            Console.WriteLine("Código executado em: " + tempoDeExecucao.ToString());
-
+            Console.WriteLine($"Código executado em: {DateTime.Now.Subtract(inicio)}.");
         }
 
-        //-------------------------
-        //Os Updates todos
-        
-        public static async Task UpdateStop(Stop stop)
-        {
-            var sExistInContext = _context.Stops.SingleOrDefault(s => s.Id == stop.Id);
-            if (sExistInContext == null)
-            {
-                try
-                {
-                    _context.Add(stop);
-                    await _context.SaveChangesAsync();
-                    Console.WriteLine("stop: " + stop.Id.ToString() + " - Adicionado com suceso");
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
-            }
-            else
-            {
-                //fazer update
-                try
-                {
-                    if (stop.ReasonId != null)
-                    {
-                        sExistInContext.ReasonId = stop.ReasonId;
-                    }
-                    sExistInContext.LineId = stop.LineId;
-                    //o resto do stop
-                    sExistInContext.Planned = stop.Planned;
-                    sExistInContext.InitialDate = stop.InitialDate;
-                    sExistInContext.EndDate = stop.EndDate;
-                    sExistInContext.Duration = stop.Duration;
-                    sExistInContext.Shift = stop.Shift;
-                    _context.Update(sExistInContext);
-                    await _context.SaveChangesAsync();
-                    Console.WriteLine("stop: " + stop.Id.ToString() + " - atualizado com suceso");
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
-            }
-        }
-        
-        public static async Task UpdateProduction(Production production)
-        {
-            var pExistInContext = _context.Productions.SingleOrDefault(p => p.Id == production.Id);
-            if (pExistInContext == null)
-            {
-                try
-                {
-                    _context.Add(production);
-                    await _context.SaveChangesAsync();
-                    Console.WriteLine("Production: " + production.Id.ToString() + " - Adicionado com suceso");
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
-            }
-            else
-            {
-                //fazer update
-                try
-                {
-                    pExistInContext.Production_PlanId = production.Production_PlanId;
-                    pExistInContext.Hour = production.Hour;
-                    pExistInContext.Day = production.Day;
-                    pExistInContext.Quantity = production.Quantity;
-                    _context.Update(pExistInContext);
-                    await _context.SaveChangesAsync();
-                    Console.WriteLine("Production: " + production.Id.ToString() + " - Atualizada com suceso");
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
-            }
-        }
-
-        //Implementação a usar o CDC
+        /// <summary>
+        /// Esta função tem como finalidade realizar a verificação das alterações nos dados por meio da abordagem 
+        /// CDC - Change Data Capture. Para isso, ela receberá um objeto "ItensToUpdate", no qual haverá uma lista 
+        /// de cdc_paragens e uma lista de cdc_produções que tirá de passar para o formato correto. Com essas 
+        /// informações, a função procederá à verificação se é necessário enviar avisos.
+        /// </summary>
         public async Task UpdateItensCDC(ItensToUpdate ITU, DateTime lastVerification)
         {
             DateTime inicio = DateTime.Now;
             //-----------escrever no ecra o nº de itens para atualizar--------
-            Console.WriteLine("-----------------  " + inicio.ToString() + "  ----------------");
-
+            Console.WriteLine($"-----------------  {inicio}  ----------------");
             //productions
-            if (ITU.productions != null)
-            {
-                Console.WriteLine(ITU.Cdc_Productions.Count.ToString() + " productions novos/atualizados detetados");
-            }
-            else
-            {
-                Console.WriteLine("0 productions novos/atualizados detetados");
-            }
-
+            Console.WriteLine($"{ITU.productions.Count} Productions novos/atualizados detetados.");
             //stops
-            if (ITU.stops != null)
-            {
-                Console.WriteLine(ITU.Cdc_Stops.Count.ToString() + " stops novos/atualizados detetados");
-            }
-            else
-            {
-                Console.WriteLine("0 stops novos/atualizados detetados");
-            }
+            Console.WriteLine($"{ITU.stops.Count} Stops novos/atualizados detetados.");
             //Escrever no fim
             Console.WriteLine("---------------Atualizacao dos itens---------------------------");
 
@@ -193,7 +86,7 @@ namespace ContextAcquisition.Services
                 foreach (var cdc_stop in ITU.Cdc_Stops)
                 {
                     //só vai fazer a verificação nos updates e insertes
-                    if(cdc_stop.Operation == 2 || cdc_stop.Operation == 3)
+                    if (cdc_stop.Operation == 2 || cdc_stop.Operation == 3)
                     {
                         await CheckIfIsUrgentStop(cdc_stop.toStop());
                     }
@@ -210,133 +103,210 @@ namespace ContextAcquisition.Services
                     }
                 }
             }
-
             //atualizar a data de ultima verificação
             var lvr = _context.LastVerificationRegists.First();
             lvr.LastVerification = lastVerification;
             _context.LastVerificationRegists.Update(lvr);
             await _context.SaveChangesAsync();
-            //
-            Console.WriteLine();
-            TimeSpan tempoDeExecucao = DateTime.Now.Subtract(inicio);
-            Console.WriteLine("Código executado em: " + tempoDeExecucao.ToString());
 
+            Console.WriteLine();
+            Console.WriteLine($"Código executado em: {DateTime.Now.Subtract(inicio)}.");
         }
 
-        //Funções para ver se é para adicionar avisos
-        public static async Task CheckIfIsUrgentStop(Stop stop)
+        /// <summary>
+        /// Esta função receberá uma paragem que deverá ser atualizada na base de dados e será responsável por 
+        /// adicioná-la caso ainda não exista ou atualizá-la caso já exista na base de dados.
+        /// </summary>
+        public async Task UpdateStop(Stop stop)
+        {
+            var stopContext = _context.Stops.SingleOrDefault(s => s.Id == stop.Id);
+            if (stopContext == null)
+            {
+                try
+                {
+                    _context.Add(stop);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine($"Stop: ID-{stop.Id} Adicionado com suceso.");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Exceção:{e.Message}");
+                }
+            }
+            else
+            {
+                //fazer update
+                try
+                {
+                    stopContext.ReasonId = stop.ReasonId;
+                    stopContext.LineId = stop.LineId;
+                    stopContext.Planned = stop.Planned;
+                    stopContext.InitialDate = stop.InitialDate;
+                    stopContext.EndDate = stop.EndDate;
+                    stopContext.Duration = stop.Duration;
+                    stopContext.Shift = stop.Shift;
+                    _context.Update(stopContext);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine($"Stop: ID-{stop.Id} Atualizado com suceso.");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Exceção:{e.Message}");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Esta função receberá uma produção que deverá ser atualizada na base de dados e será responsável por 
+        /// adicioná-la caso ainda não exista ou atualizá-la caso já exista na base de dados.
+        /// </summary>
+        public async Task UpdateProduction(Production production)
+        {
+            var productionContext = _context.Productions.SingleOrDefault(p => p.Id == production.Id);
+            if (productionContext == null)
+            {
+                try
+                {
+                    _context.Add(production);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine($"Production: ID-{production.Id} Adicionado com suceso");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Exceção:{e.Message}");
+                }
+            }
+            else
+            {
+                //fazer update
+                try
+                {
+                    productionContext.Production_PlanId = production.Production_PlanId;
+                    productionContext.Hour = production.Hour;
+                    productionContext.Day = production.Day;
+                    productionContext.Quantity = production.Quantity;
+                    _context.Update(productionContext);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine($"Production: ID-{production.Id} Atualizada com suceso.");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Exceção:{e.Message}");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Está função é responsável por verificar se a paragem é considerada uma paragem urgente. Caso seja 
+        /// chamará a função para enviar o alerta.
+        /// </summary>
+        public async Task CheckIfIsUrgentStop(Stop stop)
         {
             //ver se a paragem durou mais de 15 min, se não é planeada e se foi no dia de hoje
             if (stop.Duration.TotalMinutes < 15 || stop.Planned == true || !stop.InitialDate.Date.Equals(DateTime.Now.Date))
             {
-                Console.WriteLine("Paragem - " + stop.Id.ToString() + " não é urgente");
+                Console.WriteLine($"Stop: ID-{stop.Id} não é urgente.");
                 return;
             }
-            //a paragem é urgente
-            //Soar o aviso
-            var asr = new SendAlertRequest
+            var _sendeAlertRequest = new SendAlertRequest
             {
                 Stop = stop,
             };
-
             if (stop.ReasonId != null)
             {
                 var reason = await _dataService.GetReasonById((int)stop.ReasonId);
                 if (reason != null)
                 {
-                    asr.Message = "Paragem urgente detetada, Id-" + stop.Id + ", LineId-" + stop.LineId + " Razão - " + reason.Description;
+                    _sendeAlertRequest.Message = $"Paragem urgente detetada, Id-{stop.Id}, LineId-{stop.LineId}, Razão - {reason.Description}.";
                 }
             }
-            var alertHistory = new AlertsHistory
-            {
-                TypeOfAlet = 1,
-                AlertDate = DateTime.Now,
-                AlertMessage = asr.Message
-            };
-            try
-            {
-                using (var client = new HttpClient())
-                {
-                    var response = await client.PostAsJsonAsync(AlertAppConnectionString, asr);
-                    response.EnsureSuccessStatusCode();
-                    if (response.IsSuccessStatusCode)
-                    {
-                        Console.WriteLine("Alerta da paragem - " + stop.Id.ToString() + " Enviado com sucesso");
-                        //guardar alerta na bd
-                        alertHistory.AlertSuccessfullySent = true;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Alerta da paragem - " + stop.Id.ToString() + " Erro ao enviar Alerta");
-                        //guardar alerta na bd
-                        alertHistory.AlertSuccessfullySent = false;
-                    }
-                }
-                _context.Add(alertHistory);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                alertHistory.ErrorMessage = e.Message;
-                alertHistory.AlertSuccessfullySent = false;
-                _context.Add(alertHistory);
-                await _context.SaveChangesAsync();
-                Console.WriteLine("Alerta da paragem - " + stop.Id.ToString() + " Erro ao enviar Alerta");
-                Console.WriteLine(e.Message);
-            }             
+            //Soar o alerta
+            await SendAlert(_sendeAlertRequest, 1);
         }
 
-        //vai verificar se a produção aconteceu nas ultimas 24 horas
-        public static async Task CheckIfItIsNewProduction(Production production)
+        /// <summary>
+        /// Está função é responsável por verificar se a produção é considerada importante. Caso seja 
+        /// chamará a função para enviar o alerta.
+        /// </summary>
+        public async Task CheckIfItIsNewProduction(Production production)
         {
-            DateTime ProductionDateTime = production.Day.Date;
-            ProductionDateTime.AddHours(production.Hour);
+            //A produção será considerada importante para o envio de alerta se ocorreu nas ultimas 24 horas.
+            DateTime ProductionDateTime = production.Day.Date.AddHours(production.Hour);
             TimeSpan ts = DateTime.Now.Subtract(ProductionDateTime);
-            if (ts.TotalHours >= 24)
+            if (ts.TotalHours > 24)
             {
-                Console.WriteLine("Production - " + production.Id.ToString() + " não é das ultimas 24 horas");
+                Console.WriteLine($"Production: ID-{production.Id} não é das ultimas 24 horas, não enviar notificação.");
                 return;
             }
             //Soar o aviso
-            var asr = new SendAlertRequest
+            var _sendeAlertRequest = new SendAlertRequest
             {
                 Production = production,
-                Message = "Foi detetada uma nova produção, Id-" + production.Id  + ", Quantidade-" + production.Quantity + ", ProductionPlan- " + production.Production_PlanId,
+                Message = $"Foi detetada uma nova produção nas ultimas 24 horas, Id-{production.Id}, Quantidade-{production.Quantity}, ProductionPlan-{production.Production_PlanId}.",
             };
+            //Soar o alerta
+            await SendAlert(_sendeAlertRequest, 2);
+        }
+
+
+        /// <summary>
+        /// Esta função receberá um alerta para enviar e o tipo de alerta (1 - paragem, 2 - produção). Com esses dados, a função 
+        /// enviará o alerta para o NAS e registrará na base de dados do Context Engine se o alerta foi enviado com sucesso ou não.
+        /// </summary>
+        public async Task SendAlert(SendAlertRequest _sendAlertRequest, int TypeOfAlert)
+        {
+            if (TypeOfAlert == 1 && _sendAlertRequest.Stop == null)
+            {
+                Console.WriteLine("Erro de código na parte do enviar alertas, se o tipo de alerta for 1, tem de ter um stop na mensagem!!");
+                return;
+            }
+            if (TypeOfAlert == 2 && _sendAlertRequest.Production == null)
+            {
+                Console.WriteLine("Erro de código na parte do enviar alertas, se o tipo de alerta for 2, tem de ter uma paragem na mensagem!!");
+                return;
+            }
             var alertHistory = new AlertsHistory
             {
-                TypeOfAlet = 2,
+                TypeOfAlet = TypeOfAlert,
                 AlertDate = DateTime.Now,
-                AlertMessage = asr.Message
+                AlertMessage = _sendAlertRequest.Message
             };
             try
             {
                 using (var client = new HttpClient())
                 {
-                    var response = await client.PostAsJsonAsync(AlertAppConnectionString, asr);
+                    var response = await client.PostAsJsonAsync(AlertAppConnectionString, _sendAlertRequest);
                     response.EnsureSuccessStatusCode();
-                    if (response.IsSuccessStatusCode)
-                    {
-                        Console.WriteLine("Alerta de nova production - " + production.Id.ToString() + " Enviado com sucesso");
-                        alertHistory.AlertSuccessfullySent = true;
+                    //Se passar para baixo é pq foi enviado com sucesso
+                    alertHistory.AlertSuccessfullySent = true;
+                    //Alerta de paragem
+                    if (TypeOfAlert == 1)
+                    {                       
+                        Console.WriteLine($"Alerta da Paragem: ID-{_sendAlertRequest.Stop?.Id} Enviado com sucesso.");
                     }
-                    else
+                    if (TypeOfAlert == 2)
                     {
-                        Console.WriteLine("Alerta de nova production - " + production.Id.ToString() + " Erro ao enviar Alerta");
-                        alertHistory.AlertSuccessfullySent = false;
+                        Console.WriteLine($"Alerta da Produção: ID-{_sendAlertRequest.Production?.Id} Enviado com sucesso.");
                     }
-                    _context.Add(alertHistory);
-                    await _context.SaveChangesAsync();
                 }
+                _context.Add(alertHistory);
+                await _context.SaveChangesAsync();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                alertHistory.ErrorMessage = e.Message;
+                if (TypeOfAlert == 1)
+                {
+                    Console.WriteLine($"Erro ao enviar alerta de Paragem: ID-{_sendAlertRequest.Stop?.Id}.");
+                }
+                if (TypeOfAlert == 2)
+                {
+                    Console.WriteLine($"Erro ao enviar alerta de Produção: ID-{_sendAlertRequest.Production?.Id}.");
+                }
+                Console.WriteLine($"Exceção: {ex.Message}");
+                alertHistory.ErrorMessage = ex.Message;
                 alertHistory.AlertSuccessfullySent = false;
                 _context.Add(alertHistory);
                 await _context.SaveChangesAsync();
-                Console.WriteLine("Alerta de nova production - " + production.Id.ToString() + " Erro ao enviar Alerta");
-                Console.WriteLine(e.Message);
             }
         }
     }

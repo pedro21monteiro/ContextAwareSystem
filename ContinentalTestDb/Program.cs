@@ -1,5 +1,4 @@
 using ContinentalTestDb.Data;
-using ContinentalTestDb.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,7 +20,6 @@ builder.Services.AddDbContext<ContinentalTestDbContext>(options =>
     options.UseSqlServer($"Server={dbhost};Database={dbname};Trusted_Connection=True;");
 });
 
-builder.Services.AddSingleton<RabbitMqService>();
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<HttpClient>();
 var app = builder.Build();

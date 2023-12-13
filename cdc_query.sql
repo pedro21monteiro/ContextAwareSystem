@@ -75,6 +75,7 @@ CREATE trigger Stop_InsertLog ON Stops
   GO
 
    ---Insert
+
  CREATE trigger Production_InsertLog ON Productions
   after insert
   as

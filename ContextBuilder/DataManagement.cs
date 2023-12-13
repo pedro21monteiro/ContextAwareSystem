@@ -5,7 +5,7 @@ namespace ContextBuilder
 {
     public class DataManagement : BackgroundService
     {
-        private const int generalDelay =  1000 * 30;//24 horas- 1000 * 60 * 60 * 24;//24 horas
+        private const int generalDelay =  1000 * 60 * 60 * 24; //24 horas
         private IServiceProvider _sp;
         public DataManagement(IServiceProvider sp)
         {
@@ -17,7 +17,6 @@ namespace ContextBuilder
             while(!stoppingToken.IsCancellationRequested)
             {
                 await Task.Delay(generalDelay, stoppingToken);
-                Console.WriteLine(DateTime.Now.ToString());
                 try
                 {
                     await CleanRequests();
@@ -26,13 +25,16 @@ namespace ContextBuilder
                 }
                 catch(Exception e)
                 {
-                    Console.WriteLine(e.Message);
+                    Console.WriteLine($"Exceção: {e.Message}");
                 }
             }
         }
+
+
         /// <summary>
         /// Função responsável por fazer a limpeza de Requests com datas que deixam de ser considerada importates para a aplicação.
         /// </summary>
+        
         private async Task CleanRequests()
         {
             using (var scope = _sp.CreateScope())
@@ -58,6 +60,7 @@ namespace ContextBuilder
             }
             return;
         }
+
         /// <summary>
         /// Função responsável por fazer a limpeza de componentes em falta com datas que deixam de ser consideradas importates para a aplicação.
         /// </summary>
@@ -87,8 +90,8 @@ namespace ContextBuilder
             return;
         }
         /// <summary>
-        /// Função responsável por fazer a limpeza de gistóricos de alertas com datas que deixam de ser considerada importates para a aplicação.
-        /// </summary>
+        /// Função responsável por fazer a limpeza de históricos de alertas com datas que deixam de ser considerada importates para a aplicação.
+        /// </summary>            
         private async Task CleanAlertHistories()
         {
             using (var scope = _sp.CreateScope())
@@ -113,5 +116,6 @@ namespace ContextBuilder
             }
             return;
         }
+
     }
 }

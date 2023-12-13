@@ -35,13 +35,13 @@ namespace ContinentalTestDb.Controllers
             var pp = _context.Production_Plans.SingleOrDefault(p => p.Id == production.Production_PlanId);
             if (pp == null)
             {
-                ModelState.AddModelError("Production_PlanId", "Production_PlanId inválido. Insira um Production_PlanId válido.");
+                ModelState.AddModelError("Production_PlanId", "Invalid Production_PlanId. Enter a valid Production_PlanId.");
                 ViewData["Production_PlanId"] = new SelectList(_context.Production_Plans, "Id", "Name", production.Production_PlanId);
                 return View(production);
             }
             if(production.Hour < 0 || production.Hour >= 24)
             {
-                ModelState.AddModelError("Hour", "Hour inválido. Insira uma hora válida (0-23).");
+                ModelState.AddModelError("Hour", "Invalid hour. Enter a valid time (0-23).");
                 ViewData["Production_PlanId"] = new SelectList(_context.Production_Plans, "Id", "Name", production.Production_PlanId);
                 return View(production);
             }

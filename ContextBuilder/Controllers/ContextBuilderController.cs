@@ -52,6 +52,8 @@ namespace ContextBuilder.Controllers
         /// Se os dados forem válidos, a aplicação enviará um aviso para o NAS e, posteriormente, adicionará 
         /// esse componente em falta à base de dados, caso ainda não esteja lá registado.
         /// </summary>
+        
+
         [HttpPost]
         [Route("AddMissingComponent")]
         public async Task<ActionResult> AddMissingComponent([FromBody] MissingComponent missingComponente)

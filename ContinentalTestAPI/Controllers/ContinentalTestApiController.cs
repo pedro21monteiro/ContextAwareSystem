@@ -19,26 +19,28 @@ namespace ContinentalTestAPI.Controllers
 
         [HttpGet]
         [Route("GetComponents")]
-        public async Task<IActionResult> GetComponents(int? id, string? name, string ?reference, int? category)
+        public async Task<IActionResult> GetComponents(int? id,string? name,string? reference,int? category)
         {
-            List<Component> listComponents = new List<Component>();
-            listComponents = await _context.Components.ToListAsync();
+            IQueryable<Component> query = _context.Components.AsQueryable();
+
             if (id != null)
             {
-                listComponents = listComponents.Where(c => c.Id.Equals(id)).ToList();
+                query = query.Where(c => c.Id == id);
             }
             if (name != null)
             {
-                listComponents = listComponents.Where(c => c.Name.Equals(name)).ToList();
+                query = query.Where(c => c.Name == name);
             }
             if (reference != null)
             {
-                listComponents = listComponents.Where(c => c.Reference.Equals(reference)).ToList();
+                query = query.Where(c => c.Reference == reference);
             }
             if (category != null)
             {
-                listComponents = listComponents.Where(c => c.Category.Equals(category)).ToList();
+                query = query.Where(c => c.Category == category);
             }
+
+            var listComponents = await query.ToListAsync();
 
             return Ok(listComponents);
         }
@@ -47,17 +49,19 @@ namespace ContinentalTestAPI.Controllers
         [Route("Getcoordinators")]
         public async Task<IActionResult> GetCoordinators(int? id, int? workerId)
         {
-            List<Coordinator> listCoordinator = new List<Coordinator>();
-            listCoordinator = await _context.Coordinators.ToListAsync();
-            //o id só pode existir um
+            IQueryable<Coordinator> query = _context.Coordinators.AsQueryable();
+
             if (id != null)
             {
-                listCoordinator = listCoordinator.Where(c => c.Id.Equals(id)).ToList();
+                query = query.Where(c => c.Id == id);
             }
             if (workerId != null)
             {
-                listCoordinator = listCoordinator.Where(c => c.WorkerId.Equals(workerId)).ToList();
+                query = query.Where(c => c.WorkerId == workerId);
             }
+
+            var listCoordinator = await query.ToListAsync();
+
             return Ok(listCoordinator);
         }
 
@@ -65,21 +69,23 @@ namespace ContinentalTestAPI.Controllers
         [Route("GetDevices")]
         public async Task<IActionResult> GetDevices(int? id, int? type, int? lineId)
         {
-            List<Device> listDevice = new List<Device>();
-            listDevice = await _context.Devices.ToListAsync();
-            //o id só pode existir um
+            IQueryable<Device> query = _context.Devices.AsQueryable();
+
             if (id != null)
             {
-                listDevice = listDevice.Where(d => d.Id.Equals(id)).ToList();
+                query = query.Where(d => d.Id == id);
             }
             if (type != null)
             {
-                listDevice = listDevice.Where(d => d.Type.Equals(type)).ToList();
+                query = query.Where(d => d.Type == type);
             }
             if (lineId != null)
             {
-                listDevice = listDevice.Where(d => d.LineId.Equals(lineId)).ToList();
+                query = query.Where(d => d.LineId == lineId);
             }
+
+            var listDevice = await query.ToListAsync();
+
             return Ok(listDevice);
         }
 
@@ -87,26 +93,26 @@ namespace ContinentalTestAPI.Controllers
         [Route("GetLines")]
         public async Task<IActionResult> GetLines(int? id, string? name, bool? priority, int? coordinatorId)
         {
-            List<Line> listLines = new List<Line>();
-            listLines = await _context.Lines.ToListAsync();
+            IQueryable<Line> query = _context.Lines.AsQueryable();
 
-            //o id só pode existir um
             if (id != null)
             {
-                listLines = listLines.Where(l => l.Id.Equals(id)).ToList();
+                query = query.Where(l => l.Id == id);
             }
             if (name != null)
             {
-                listLines = listLines.Where(l => l.Name.Equals(name)).ToList();
+                query = query.Where(l => l.Name.Equals(name));
             }
             if (priority != null)
             {
-                listLines = listLines.Where(l => l.Priority.Equals(priority)).ToList();
+                query = query.Where(l => l.Priority == priority);
             }
             if (coordinatorId != null)
             {
-                listLines = listLines.Where(l => l.CoordinatorId.Equals(coordinatorId)).ToList();
+                query = query.Where(l => l.CoordinatorId == coordinatorId);
             }
+
+            var listLines = await query.ToListAsync();
 
             return Ok(listLines);
         }
@@ -115,17 +121,18 @@ namespace ContinentalTestAPI.Controllers
         [Route("GetOperators")]
         public async Task<IActionResult> GetOperators(int? id, int? workerId)
         {
-            List<Operator> listOperators = new List<Operator>();
-            listOperators = await _context.Operators.ToListAsync();
-            //o id só pode existir um
+            IQueryable<Operator> query = _context.Operators.AsQueryable();
+
             if (id != null)
             {
-                listOperators = listOperators.Where(o => o.Id.Equals(id)).ToList();
+                query = query.Where(o => o.Id == id);
             }
             if (workerId != null)
             {
-                listOperators = listOperators.Where(o => o.WorkerId.Equals(workerId)).ToList();
+                query = query.Where(o => o.WorkerId == workerId);
             }
+
+            var listOperators = await query.ToListAsync();
 
             return Ok(listOperators);
         }
@@ -134,25 +141,26 @@ namespace ContinentalTestAPI.Controllers
         [Route("GetProducts")]
         public async Task<IActionResult> GetProducts(int? id, string? name, string? labelReference, TimeSpan? cycle)
         {
-            List<Product> listProducts = new List<Product>();
-            listProducts = await _context.Products.ToListAsync();
+            IQueryable<Product> query = _context.Products.AsQueryable();
 
             if (id != null)
             {
-                listProducts = listProducts.Where(p => p.Id.Equals(id)).ToList();
+                query = query.Where(p => p.Id == id);
             }
             if (name != null)
             {
-                listProducts = listProducts.Where(p => p.Name.Equals(name)).ToList();
+                query = query.Where(p => p.Name.Equals(name));
             }
             if (labelReference != null)
             {
-                listProducts = listProducts.Where(p => p.LabelReference.Equals(labelReference)).ToList();
+                query = query.Where(p => p.LabelReference.Equals(labelReference));
             }
             if (cycle != null)
             {
-                listProducts = listProducts.Where(p => p.Cycle.Equals(cycle)).ToList();
+                query = query.Where(p => p.Cycle == cycle);
             }
+
+            var listProducts = await query.ToListAsync();
 
             return Ok(listProducts);
         }
@@ -161,29 +169,30 @@ namespace ContinentalTestAPI.Controllers
         [Route("GetProductions")]
         public async Task<IActionResult> GetProductions(int? id, int? hour, DateTime? day, int? quantity, int? prodPlanId)
         {
-            List<Production> listProduction = new List<Production>();
-            listProduction = await _context.Productions.ToListAsync();
+            IQueryable<Production> query = _context.Productions.AsQueryable();
 
             if (id != null)
             {
-                listProduction = listProduction.Where(p => p.Id.Equals(id)).ToList();
+                query = query.Where(p => p.Id == id);
             }
             if (hour != null)
             {
-                listProduction = listProduction.Where(p => p.Hour.Equals(hour)).ToList();
+                query = query.Where(p => p.Hour == hour);
             }
             if (day != null)
             {
-                listProduction = listProduction.Where(p => p.Day.Equals(day)).ToList();
+                query = query.Where(p => p.Day.Date == day.Value.Date);
             }
             if (quantity != null)
             {
-                listProduction = listProduction.Where(p => p.Quantity.Equals(quantity)).ToList();
+                query = query.Where(p => p.Quantity == quantity);
             }
             if (prodPlanId != null)
             {
-                listProduction = listProduction.Where(p => p.Production_PlanId.Equals(prodPlanId)).ToList();
+                query = query.Where(p => p.Production_PlanId == prodPlanId);
             }
+
+            var listProduction = await query.ToListAsync();
 
             return Ok(listProduction);
         }
@@ -192,37 +201,38 @@ namespace ContinentalTestAPI.Controllers
         [Route("GetProdPlans")]
         public async Task<IActionResult> GetProdPlans(int? id, int? goal, string? name, DateTime? inicialDate, DateTime? endDate, int? productId, int? lineId)
         {
-            List<Production_Plan> listProdPlans = new List<Production_Plan>();
-            listProdPlans = await _context.Production_Plans.ToListAsync();
+            IQueryable<Production_Plan> query = _context.Production_Plans.AsQueryable();
 
             if (id != null)
             {
-                listProdPlans = listProdPlans.Where(p => p.Id.Equals(id)).ToList();
+                query = query.Where(p => p.Id == id);
             }
             if (goal != null)
             {
-                listProdPlans = listProdPlans.Where(p => p.Goal.Equals(goal)).ToList();
+                query = query.Where(p => p.Goal == goal);
             }
             if (name != null)
             {
-                listProdPlans = listProdPlans.Where(p => p.Name.Equals(name)).ToList();
+                query = query.Where(p => p.Name.Equals(name));
             }
             if (inicialDate != null)
             {
-                listProdPlans = listProdPlans.Where(p => p.InitialDate.Equals(inicialDate)).ToList();
+                query = query.Where(p => p.InitialDate == inicialDate);
             }
             if (endDate != null)
             {
-                listProdPlans = listProdPlans.Where(p => p.EndDate.Equals(endDate)).ToList();
+                query = query.Where(p => p.EndDate == endDate);
             }
             if (productId != null)
             {
-                listProdPlans = listProdPlans.Where(p => p.ProductId.Equals(productId)).ToList();
+                query = query.Where(p => p.ProductId == productId);
             }
             if (lineId != null)
             {
-                listProdPlans = listProdPlans.Where(p => p.LineId.Equals(lineId)).ToList();
+                query = query.Where(p => p.LineId == lineId);
             }
+
+            var listProdPlans = await query.ToListAsync();
 
             return Ok(listProdPlans);
         }
@@ -231,16 +241,18 @@ namespace ContinentalTestAPI.Controllers
         [Route("GetReasons")]
         public async Task<IActionResult> GetReasons(int? id, string? description)
         {
-            List<Reason> listReasons = new List<Reason>();
-            listReasons = await _context.Reasons.ToListAsync();
+            IQueryable<Reason> query = _context.Reasons.AsQueryable();
+
             if (id != null)
             {
-                listReasons = listReasons.Where(r => r.Id.Equals(id)).ToList();
+                query = query.Where(r => r.Id == id);
             }
             if (description != null)
             {
-                listReasons = listReasons.Where(r => r.Description.Equals(description)).ToList();
+                query = query.Where(r => r.Description.Equals(description));
             }
+
+            var listReasons = await query.ToListAsync();
 
             return Ok(listReasons);
         }
@@ -249,33 +261,34 @@ namespace ContinentalTestAPI.Controllers
         [Route("GetSchedules")]
         public async Task<IActionResult> GetSchedules(int? id, DateTime? day, int? shift, int? lineId, int? operatorId, int? supervisorId)
         {
-            List<Schedule_Worker_Line> listSchedules = new List<Schedule_Worker_Line>();
-            listSchedules = await _context.Schedule_Worker_Lines.ToListAsync();
+            IQueryable<Schedule_Worker_Line> query = _context.Schedule_Worker_Lines.AsQueryable();
 
             if (id != null)
             {
-                listSchedules = listSchedules.Where(s => s.Id.Equals(id)).ToList();
+                query = query.Where(s => s.Id == id);
             }
             if (day != null)
             {
-                listSchedules = listSchedules.Where(s => s.Day.Date.Equals(day.Value.Date)).ToList();
+                query = query.Where(s => s.Day.Date == day.Value.Date);
             }
             if (shift != null)
             {
-                listSchedules = listSchedules.Where(s => s.Shift == shift).ToList();
+                query = query.Where(s => s.Shift == shift);
             }
             if (lineId != null)
             {
-                listSchedules = listSchedules.Where(s => s.LineId == lineId).ToList();
+                query = query.Where(s => s.LineId == lineId);
             }
             if (operatorId != null)
             {
-                listSchedules = listSchedules.Where(s => s.OperatorId == operatorId).ToList();
+                query = query.Where(s => s.OperatorId == operatorId);
             }
             if (supervisorId != null)
             {
-                listSchedules = listSchedules.Where(s => s.SupervisorId == supervisorId).ToList();
+                query = query.Where(s => s.SupervisorId == supervisorId);
             }
+
+            var listSchedules = await query.ToListAsync();
 
             return Ok(listSchedules);
         }
@@ -285,62 +298,64 @@ namespace ContinentalTestAPI.Controllers
         public async Task<IActionResult> GetStops(int? id, bool? planned, DateTime? initialDate, DateTime? endDate, TimeSpan? duration, int? shift, int? lineId, int? reasonId)
         {
 
-            List<Stop> listStops = new List<Stop>();
-            listStops = await _context.Stops.ToListAsync();
+            IQueryable<Stop> query = _context.Stops.AsQueryable();
 
             if (id != null)
             {
-                listStops = listStops.Where(s => s.Id.Equals(id)).ToList();
+                query = query.Where(s => s.Id == id);
             }
             if (planned != null)
             {
-                listStops = listStops.Where(s => s.Planned == planned).ToList();
+                query = query.Where(s => s.Planned == planned);
             }
             if (initialDate != null)
             {
-                listStops = listStops.Where(s => s.InitialDate.Equals(initialDate)).ToList();
+                query = query.Where(s => s.InitialDate == initialDate);
             }
             if (endDate != null)
             {
-                listStops = listStops.Where(s => s.EndDate.Equals(endDate)).ToList();
+                query = query.Where(s => s.EndDate == endDate);
             }
             if (duration != null)
             {
-                listStops = listStops.Where(s => s.Duration.Equals(duration)).ToList();
+                query = query.Where(s => s.Duration == duration);
             }
             if (shift != null)
             {
-                listStops = listStops.Where(s => s.Shift == shift).ToList();
+                query = query.Where(s => s.Shift == shift);
             }
             if (reasonId != null)
             {
-                listStops = listStops.Where(s => s.ReasonId.Equals(reasonId)).ToList();
+                query = query.Where(s => s.ReasonId == reasonId);
             }
             if (lineId != null)
             {
-                listStops = listStops.Where(s => s.LineId.Equals(lineId)).ToList();
+                query = query.Where(s => s.LineId == lineId);
             }
+
+            var listStops = await query.ToListAsync();
 
             return Ok(listStops);
         }
 
         [HttpGet]
         [Route("GetSupervisors")]
-        public async Task<IActionResult> GetSupervisors(int? Id, int? workerId)
+        public async Task<IActionResult> GetSupervisors(int? id, int? workerId)
         {
-            List<Supervisor> listSupervisor = new List<Supervisor>();
-            listSupervisor = await _context.Supervisors.ToListAsync();
+            IQueryable<Supervisor> query = _context.Supervisors.AsQueryable();
 
-            if (Id != null)
+            if (id != null)
             {
-                listSupervisor = listSupervisor.Where(s => s.Id.Equals(Id)).ToList();
+                query = query.Where(s => s.Id == id);
             }
             if (workerId != null)
             {
-                listSupervisor = listSupervisor.Where(s => s.WorkerId.Equals(workerId)).ToList();
+                query = query.Where(s => s.WorkerId == workerId);
             }
 
-            return Ok(listSupervisor);
+            var listSupervisors = await query.ToListAsync();
+
+            return Ok(listSupervisors);
 
         }
 
@@ -348,29 +363,30 @@ namespace ContinentalTestAPI.Controllers
         [Route("GetWorkers")]
         public async Task<IActionResult> GetWorkers(int? id, string? idFirebase, string? username, string? email, int? role)
         {
-            List<Worker> listWorkers = new List<Worker>();
-            listWorkers = await _context.Workers.ToListAsync();
+            IQueryable<Worker> query = _context.Workers.AsQueryable();
 
             if (id != null)
             {
-                listWorkers = listWorkers.Where(w => w.Id.Equals(id)).ToList();
+                query = query.Where(w => w.Id == id);
             }
             if (idFirebase != null)
             {
-                listWorkers = listWorkers.Where(w => w.IdFirebase.Equals(idFirebase)).ToList();
+                query = query.Where(w => w.IdFirebase == idFirebase);
             }
             if (username != null)
             {
-                listWorkers = listWorkers.Where(w => w.UserName == username).ToList();
+                query = query.Where(w => w.UserName == username);
             }
             if (email != null)
             {
-                listWorkers = listWorkers.Where(w => w.Email == email).ToList();
+                query = query.Where(w => w.Email == email);
             }
             if (role != null)
             {
-                listWorkers = listWorkers.Where(w => w.Role.Equals(role)).ToList();
+                query = query.Where(w => w.Role == role);
             }
+
+            var listWorkers = await query.ToListAsync();
 
             return Ok(listWorkers);
         }
@@ -379,25 +395,26 @@ namespace ContinentalTestAPI.Controllers
         [Route("GetComponentProducts")]
         public async Task<IActionResult> GetComponentProducts(int? id, int? componentId, int? productId, int? quantidade)
         {
-            List<ComponentProduct> listComponentProducts = new List<ComponentProduct>();
-            listComponentProducts = await _context.ComponentProducts.ToListAsync();
+            IQueryable<ComponentProduct> query = _context.ComponentProducts.AsQueryable();
 
             if (id != null)
             {
-                listComponentProducts = listComponentProducts.Where(c => c.Id.Equals(id)).ToList();
+                query = query.Where(c => c.Id == id);
             }
             if (componentId != null)
             {
-                listComponentProducts = listComponentProducts.Where(c => c.ComponentId.Equals(componentId)).ToList();
+                query = query.Where(c => c.ComponentId == componentId);
             }
             if (productId != null)
             {
-                listComponentProducts = listComponentProducts.Where(c => c.ProductId.Equals(productId)).ToList();
+                query = query.Where(c => c.ProductId == productId);
             }
             if (quantidade != null)
             {
-                listComponentProducts = listComponentProducts.Where(c => c.Quantidade.Equals(quantidade)).ToList();
+                query = query.Where(c => c.Quantidade == quantidade);
             }
+
+            var listComponentProducts = await query.ToListAsync();
 
             return Ok(listComponentProducts);
         }

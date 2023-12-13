@@ -11,7 +11,10 @@ namespace Services.DataServices
 {
     public class DataService : IDataService
     {
-        private static string continentalTestAPIHost = System.Environment.GetEnvironmentVariable("CONTAPI") ?? "https://localhost:7013";
+        private static readonly string continentalTestAPIHost = System.Environment.GetEnvironmentVariable("CONTAPI") ?? "https://localhost:7013";
+        private static readonly string IntegrationLayerConnectionString = $"{continentalTestAPIHost}/api/ContinentalAPI";
+
+
         private readonly HttpClient httpClient = new HttpClient();
 
         //Lista de serviços que podem ser pedidos à camada de integração com as bases de dados
@@ -19,51 +22,27 @@ namespace Services.DataServices
         //--------------------------Serviços relacionados com Components-------------------------------------
         public async Task<List<Component>?> GetComponents(int? id, string? name, string? reference, int? category)
         {
-            string searchLink = string.Empty;
+            string searchLink = "?";
             if (id != null)
             {
-                searchLink = "?id=" + id.ToString();
+                searchLink += $"id={id}";
             }
             if (!string.IsNullOrEmpty(name))
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "name=" + name;
+                searchLink += $"{(searchLink != "?" ? "&" : "")}name={name}";
             }
             if (!string.IsNullOrEmpty(reference))
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "reference=" + reference;
+                searchLink += $"{(searchLink != "?" ? "&" : "")}reference={reference}";
             }
             if (category != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "category=" + category.ToString();
+                searchLink += $"{(searchLink != "?" ? "&" : "")}category={category}";
             }
 
             try
             {
-                return await httpClient.GetFromJsonAsync<List<Component>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetComponents/" + searchLink);
+                return await httpClient.GetFromJsonAsync<List<Component>>($"{IntegrationLayerConnectionString}/GetComponents/{searchLink}");
             }
             catch (Exception e)
             {
@@ -88,27 +67,18 @@ namespace Services.DataServices
         //--------------------------Serviços relacionados com Coordinators-------------------------------------
         public async Task<List<Coordinator>?> GetCoordinators(int? id, int? workerId)
         {
-            string searchLink = string.Empty;
+            string searchLink = "?";
             if (id != null)
             {
-                searchLink = "?id=" + id.ToString();
+                searchLink += $"id={id}";
             }
             if (workerId != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "workerId=" + workerId.ToString();
+                searchLink += $"{(searchLink != "?" ? "&" : "")}workerId={workerId}";
             }
-
             try
             {
-                return await httpClient.GetFromJsonAsync<List<Coordinator>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetCoordinators/" + searchLink);
+                return await httpClient.GetFromJsonAsync<List<Coordinator>>($"{IntegrationLayerConnectionString}/GetCoordinators/{searchLink}");
             }
             catch (Exception e)
             {
@@ -146,38 +116,22 @@ namespace Services.DataServices
         //--------------------------Serviços relacionados com Devices-------------------------------------
         public async Task<List<Device>?> GetDevices(int? id, int? type, int? lineId)
         {
-            string searchLink = string.Empty;
+            string searchLink = "?";
             if (id != null)
             {
-                searchLink = "?id=" + id.ToString();
+                searchLink += $"id={id}";
             }
             if (type != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "type=" + type.ToString();
+                searchLink += $"{(searchLink != "?" ? "&" : "")}type={type}";
             }
             if (lineId != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "lineId=" + lineId.ToString();
+                searchLink += $"{(searchLink != "?" ? "&" : "")}lineId={lineId}";
             }
             try
             {
-                return await httpClient.GetFromJsonAsync<List<Device>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetDevices/" + searchLink);
+                return await httpClient.GetFromJsonAsync<List<Device>>($"{IntegrationLayerConnectionString}/GetDevices/{searchLink}");
             }
             catch (Exception e)
             {
@@ -202,51 +156,27 @@ namespace Services.DataServices
         //--------------------------Serviços relacionados com Lines-------------------------------------
         public async Task<List<Line>?> GetLines(int? id, string? name, bool? priority, int? coordinatorId)
         {
-            string searchLink = string.Empty;
+            string searchLink = "?";
             if (id != null)
             {
-                searchLink = "?id=" + id.ToString();
+                searchLink += $"id={id}";
             }
             if (!string.IsNullOrEmpty(name))
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "name=" + name;
+                searchLink += $"{(searchLink != "?" ? "&" : "")}name={name}";
             }
             if (priority != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "priority=" + priority.ToString();
+                searchLink += $"{(searchLink != "?" ? "&" : "")}priority={priority}";
             }
             if (coordinatorId != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "coordinatorId=" + coordinatorId.ToString();
+                searchLink += $"{(searchLink != "?" ? "&" : "")}coordinatorId={coordinatorId}";
             }
 
             try
             {
-                return await httpClient.GetFromJsonAsync<List<Line>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetLines/" + searchLink);
+                return await httpClient.GetFromJsonAsync<List<Line>>($"{IntegrationLayerConnectionString}/GetLines/{searchLink}");
             }
             catch (Exception e)
             {
@@ -283,27 +213,19 @@ namespace Services.DataServices
         //--------------------------Serviços relacionados com Operators-------------------------------------
         public async Task<List<Operator>?> GetOperators(int? id, int? workerId)
         {
-            string searchLink = string.Empty;
+            string searchLink = "?";
             if (id != null)
             {
-                searchLink = "?id=" + id.ToString();
+                searchLink += $"id={id}";
             }
             if (workerId != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "workerId=" + workerId.ToString();
+                searchLink += $"{(searchLink != "?" ? "&" : "")}workerId={workerId}";
             }
 
             try
             {
-                return await httpClient.GetFromJsonAsync<List<Operator>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetOperators/" + searchLink);
+                return await httpClient.GetFromJsonAsync<List<Operator>>($"{IntegrationLayerConnectionString}/GetOperators/{searchLink}");
             }
             catch (Exception e)
             {
@@ -328,50 +250,26 @@ namespace Services.DataServices
         //--------------------------Serviços relacionados com Products-------------------------------------
         public async Task<List<Product>?> GetProducts(int? id, string? name, string? labelReference, TimeSpan? cycle)
         {
-            string searchLink = string.Empty;
+            string searchLink = "?";
             if (id != null)
             {
-                searchLink = "?id=" + id.ToString();
+                searchLink += $"id={id}";
             }
             if (!string.IsNullOrEmpty(name))
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "name=" + name;
+                searchLink += $"{(searchLink != "?" ? "&" : "")}name={name}";
             }
             if (!string.IsNullOrEmpty(labelReference))
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "labelReference=" + labelReference;
+                searchLink += $"{(searchLink != "?" ? "&" : "")}labelReference={labelReference}";
             }
             if (cycle != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "cycle=" + cycle.ToString();
+                searchLink += $"{(searchLink != "?" ? "&" : "")}cycle={cycle}";
             }
             try
             {
-                return await httpClient.GetFromJsonAsync<List<Product>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetProducts/" + searchLink);
+                return await httpClient.GetFromJsonAsync<List<Product>>($"{IntegrationLayerConnectionString}/GetProducts/{searchLink}");
             }
             catch (Exception e)
             {
@@ -397,63 +295,31 @@ namespace Services.DataServices
         //--------------------------Serviços relacionados com Productions-------------------------------------
         public async Task<List<Production>?> GetProductions(int? id, int? hour, DateTime? day, int? quantity, int? prodPlanId)
         {
-            string searchLink = string.Empty;
+            string searchLink = "?";
             if (id != null)
             {
-                searchLink = "?id=" + id.ToString();
+                searchLink += $"id={id}";
             }
             if (hour != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "hour=" + hour.ToString();
+                searchLink += $"{(searchLink != "?" ? "&" : "")}hour={hour}";
             }
             if (day != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "day=" + day.Value.ToString("yyyy-MM-dd");
+                searchLink += $"{(searchLink != "?" ? "&" : "")}day={day.Value.ToString("yyyy-MM-dd")}";
             }
             if (quantity != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "quantity=" + quantity.ToString();
+                searchLink += $"{(searchLink != "?" ? "&" : "")}quantity={quantity}";
             }
             if (prodPlanId != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "prodPlanId=" + prodPlanId.ToString();
+                searchLink += $"{(searchLink != "?" ? "&" : "")}prodPlanId={prodPlanId}";
             }
 
             try
             {
-                return await httpClient.GetFromJsonAsync<List<Production>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetProductions/" + searchLink);
+                return await httpClient.GetFromJsonAsync<List<Production>>($"{IntegrationLayerConnectionString}/GetProductions/{searchLink}");
             }
             catch (Exception e)
             {
@@ -478,86 +344,38 @@ namespace Services.DataServices
         //--------------------------Serviços relacionados com productionPlans-------------------------------------
         public async Task<List<Production_Plan>?> GetProdPlans(int? id, int? goal, string? name, DateTime? inicialDate, DateTime? endDate, int? productId, int? lineId)
         {
-            string searchLink = string.Empty;
+            string searchLink = "?";
             if (id != null)
             {
-                searchLink = "?id=" + id.ToString();
+                searchLink += $"id={id}";
             }
             if (goal != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "goal=" + goal.ToString();
+                searchLink += $"{(searchLink != "?" ? "&" : "")}goal={goal}";
             }
             if (!string.IsNullOrEmpty(name))
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "name=" + name;
+                searchLink += $"{(searchLink != "?" ? "&" : "")}name={name}";
             }
             if (inicialDate != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "inicialDate=" + inicialDate.Value.ToString("yyyy-MM-dd");
+                searchLink += $"{(searchLink != "?" ? "&" : "")}inicialDate={inicialDate.Value.ToString("yyyy-MM-dd")}";
             }
             if (endDate != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "endDate=" + endDate.Value.ToString("yyyy-MM-dd");
+                searchLink += $"{(searchLink != "?" ? "&" : "")}endDate={endDate.Value.ToString("yyyy-MM-dd")}";
             }
             if (productId != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "productId=" + productId.ToString();
+                searchLink += $"{(searchLink != "?" ? "&" : "")}productId={productId}";
             }
             if (lineId != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "lineId=" + lineId.ToString();
+                searchLink += $"{(searchLink != "?" ? "&" : "")}lineId={lineId}";
             }
             try
             {
-                return await httpClient.GetFromJsonAsync<List<Production_Plan>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetProdPlans/" + searchLink); ;
+                return await httpClient.GetFromJsonAsync<List<Production_Plan>>($"{IntegrationLayerConnectionString}/GetProdPlans/{searchLink}");
             }
             catch (Exception e)
             {
@@ -595,26 +413,18 @@ namespace Services.DataServices
         //--------------------------Serviços relacionados com Reasons-------------------------------------
         public async Task<List<Reason>?> GetReasons(int? id, string? description)
         {
-            string searchLink = string.Empty;
+            string searchLink = "?";
             if (id != null)
             {
-                searchLink = "?id=" + id.ToString();
+                searchLink += $"id={id}";
             }
             if (!string.IsNullOrEmpty(description))
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "description=" + description;
+                searchLink += $"{(searchLink != "?" ? "&" : "")}description={description}";
             }
             try
             {
-                return await httpClient.GetFromJsonAsync<List<Reason>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetReasons/" + searchLink);
+                return await httpClient.GetFromJsonAsync<List<Reason>>($"{IntegrationLayerConnectionString}/GetReasons/{searchLink}");
             }
             catch (Exception e)
             {
@@ -639,74 +449,34 @@ namespace Services.DataServices
         //--------------------------Serviços relacionados com Schedules-------------------------------------
         public async Task<List<Schedule_Worker_Line>?> GetSchedules(int? id, DateTime? day, int? shift, int? lineId, int? operatorId, int? supervisorId)
         {
-            string searchLink = string.Empty;
+            string searchLink = "?";
             if (id != null)
             {
-                searchLink = "?id=" + id.ToString();
+                searchLink += $"id={id}";
             }
             if (day != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "day=" + day.Value.ToString("yyyy-MM-dd");
+                searchLink += $"{(searchLink != "?" ? "&" : "")}day={day.Value.ToString("yyyy-MM-dd")}";
             }
             if (shift != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "shift=" + shift.ToString();
+                searchLink += $"{(searchLink != "?" ? "&" : "")}shift={shift}";
             }
             if (lineId != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "lineId=" + lineId.ToString();
+                searchLink += $"{(searchLink != "?" ? "&" : "")}lineId={lineId}";
             }
             if (operatorId != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "operatorId=" + operatorId.ToString();
+                searchLink += $"{(searchLink != "?" ? "&" : "")}operatorId={operatorId}";
             }
             if (supervisorId != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "supervisorId=" + supervisorId.ToString();
+                searchLink += $"{(searchLink != "?" ? "&" : "")}supervisorId={supervisorId}";
             }
             try
             {
-                return await httpClient.GetFromJsonAsync<List<Schedule_Worker_Line>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetSchedules/" + searchLink);
+                return await httpClient.GetFromJsonAsync<List<Schedule_Worker_Line>>($"{IntegrationLayerConnectionString}/GetSchedules/{searchLink}");
             }
             catch (Exception e)
             {
@@ -742,99 +512,43 @@ namespace Services.DataServices
         //--------------------------Serviços relacionados com Stops-------------------------------------
         public async Task<List<Stop>?> GetStops(int? id, bool? planned, DateTime? initialDate, DateTime? endDate, TimeSpan? duration, int? shift, int? lineId, int? reasonId)
         {
-            string searchLink = string.Empty;
+            string searchLink = "?";
             if (id != null)
             {
-                searchLink = "?id=" + id.ToString();
+                searchLink += $"id={id}";
             }
             if (planned != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "planned=" + planned.ToString();
+                searchLink += $"{(searchLink != "?" ? "&" : "")}planned={planned}";
             }
             if (initialDate != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "initialDate=" + initialDate.Value.ToString("yyyy-MM-dd");
+                searchLink += $"{(searchLink != "?" ? "&" : "")}initialDate={initialDate.Value.ToString("yyyy-MM-dd")}";
             }
             if (endDate != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "endDate=" + endDate.Value.ToString("yyyy-MM-dd");
+                searchLink += $"{(searchLink != "?" ? "&" : "")}endDate={endDate.Value.ToString("yyyy-MM-dd")}";
             }
             if (duration != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "duration=" + duration.ToString();
+                searchLink += $"{(searchLink != "?" ? "&" : "")}duration={duration}";
             }
             if (shift != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "shift=" + shift.ToString();
+                searchLink += $"{(searchLink != "?" ? "&" : "")}shift={shift}";
             }
             if (reasonId != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "reasonId=" + reasonId.ToString();
+                searchLink += $"{(searchLink != "?" ? "&" : "")}reasonId={reasonId}";
             }
             if (lineId != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "lineId=" + lineId.ToString();
+                searchLink += $"{(searchLink != "?" ? "&" : "")}lineId={lineId}";
             }
 
             try
             {
-                return await httpClient.GetFromJsonAsync<List<Stop>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetStops/" + searchLink);
+                return await httpClient.GetFromJsonAsync<List<Stop>>($"{IntegrationLayerConnectionString}/GetStops/{searchLink}");
             }
             catch (Exception e)
             {
@@ -857,27 +571,19 @@ namespace Services.DataServices
         //--------------------------Serviços relacionados com Supervisors-------------------------------------
         public async Task<List<Supervisor>?> GetSupervisors(int? id, int? workerId)
         {
-            string searchLink = string.Empty;
+            string searchLink = "?";
             if (id != null)
             {
-                searchLink = "?id=" + id.ToString();
+                searchLink += $"id={id}";
             }
             if (workerId != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "workerId=" + workerId.ToString();
+                searchLink += $"{(searchLink != "?" ? "&" : "")}workerId={workerId}";
             }
 
             try
             {
-                return await httpClient.GetFromJsonAsync<List<Supervisor>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetSupervisors/" + searchLink);
+                return await httpClient.GetFromJsonAsync<List<Supervisor>>($"{IntegrationLayerConnectionString}/GetSupervisors/{searchLink}");
             }
             catch (Exception e)
             {
@@ -902,62 +608,30 @@ namespace Services.DataServices
         //--------------------------Serviços relacionados com Workers-------------------------------------
         public async Task<List<Worker>?> GetWorkers(int? id, string? idFirebase, string? username, string? email, int? role)
         {
-            string searchLink = string.Empty;
+            string searchLink = "?";
             if (id != null)
             {
-                searchLink = "?id=" + id.ToString();
+                searchLink += $"id={id}";
             }
             if (!string.IsNullOrEmpty(idFirebase))
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "idFirebase=" + idFirebase;
+                searchLink += $"{(searchLink != "?" ? "&" : "")}idFirebase={idFirebase}";
             }
             if (!string.IsNullOrEmpty(username))
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "username=" + username;
+                searchLink += $"{(searchLink != "?" ? "&" : "")}username={username}";
             }
             if (!string.IsNullOrEmpty(email))
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "email=" + email;
+                searchLink += $"{(searchLink != "?" ? "&" : "")}email={email}";
             }
             if (role != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "role=" + role.ToString();
+                searchLink += $"{(searchLink != "?" ? "&" : "")}role={role}";
             }
             try
             {
-                return await httpClient.GetFromJsonAsync<List<Worker>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetWorkers/" + searchLink);
+                return await httpClient.GetFromJsonAsync<List<Worker>>($"{IntegrationLayerConnectionString}/GetWorkers/{searchLink}");
             }
             catch (Exception e)
             {
@@ -995,51 +669,27 @@ namespace Services.DataServices
         //--------------------------Serviços relacionados com ComponentProducts-------------------------------------
         public async Task<List<ComponentProduct>?> GetComponentProducts(int? id, int? componentId, int? productId, int? quantidade)
         {
-            string searchLink = string.Empty;
+            string searchLink = "?";
             if (id != null)
             {
-                searchLink = "?id=" + id.ToString();
+                searchLink += $"id={id}";
             }
             if (componentId != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "componentId=" + componentId.ToString();
+                searchLink += $"{(searchLink != "?" ? "&" : "")}componentId={componentId}";
             }
             if (productId != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "productId=" + productId.ToString();
+                searchLink += $"{(searchLink != "?" ? "&" : "")}productId={productId}";
             }
             if (quantidade != null)
             {
-                if (!string.IsNullOrEmpty(searchLink))
-                {
-                    searchLink += "&";
-                }
-                else
-                {
-                    searchLink += "?";
-                }
-                searchLink += "quantidade=" + quantidade.ToString();
+                searchLink += $"{(searchLink != "?" ? "&" : "")}quantidade={quantidade}";
             }
 
             try
             {
-                return await httpClient.GetFromJsonAsync<List<ComponentProduct>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetComponentProducts/" + searchLink); ;
+                return await httpClient.GetFromJsonAsync<List<ComponentProduct>>($"{IntegrationLayerConnectionString}/GetComponentProducts/{searchLink}"); ;
             }
             catch (Exception e)
             {
@@ -1066,11 +716,11 @@ namespace Services.DataServices
             string searchLink = string.Empty;
             if (LastVerification != null)
             {
-                searchLink = "?InicialDate=" + ((DateTime)LastVerification).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
+                searchLink = $"?InicialDate={LastVerification.Value.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss")}";
             }
             try
             {
-                return await httpClient.GetFromJsonAsync<List<CDC_Stop>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetCdcStops/" + searchLink); ;
+                return await httpClient.GetFromJsonAsync<List<CDC_Stop>>($"{IntegrationLayerConnectionString}/GetCdcStops/{searchLink}"); ;
             }
             catch (Exception e)
             {
@@ -1085,11 +735,11 @@ namespace Services.DataServices
             string searchLink = string.Empty;
             if (LastVerification != null)
             {
-                searchLink = "?InicialDate=" + ((DateTime)LastVerification).ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
+                searchLink = $"?InicialDate={LastVerification.Value.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss")}";
             }
             try
             {
-                return await httpClient.GetFromJsonAsync<List<CDC_Production>>($"{continentalTestAPIHost}/api/ContinentalAPI/GetCdcProductions/" + searchLink); ;
+                return await httpClient.GetFromJsonAsync<List<CDC_Production>>($"{IntegrationLayerConnectionString}/GetCdcProductions/{searchLink}"); ;
             }
             catch (Exception e)
             {

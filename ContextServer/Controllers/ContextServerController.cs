@@ -569,53 +569,6 @@ namespace Context_aware_System.Controllers
             return Ok(rci);
         }
 
-        /// <summary>
-        /// Devolve a informação sobre os componentes em falta, as respetivas linhas afetadas e a data em que o pedido
-        /// de reposição do componente foi efetuado.
-        /// </summary>
-        [HttpGet]
-        [Route("GetMissingComponents")]
-        public async Task<IActionResult> GetMissingComponents()
-        {
-            bool error = false;
-            //Formato da resposta
-            ResponseGetMissingComponents rgmc = new ResponseGetMissingComponents();
-            var missingComponentes = await _context.missingComponents.ToListAsync();
-            if(missingComponentes != null)
-            {
-                foreach(var missingComponente in missingComponentes)
-                {
-                    var line = await _DataService.GetLineById(missingComponente.LineId);
-                    var componente = await _DataService.GetComponentById(missingComponente.ComponentId);
-                    MissingComponentResponse mcr = new MissingComponentResponse();
-                    mcr.Id = missingComponente.Id;
-                    mcr.OrderDate = missingComponente.OrderDate;
-                    mcr.Line.Id = missingComponente.LineId;
-                    mcr.Component.Id = missingComponente.ComponentId;
-                    if(line == null || componente == null)
-                    {
-                        error = true;
-                    }
-                    if(line != null)
-                    {
-                        mcr.Line = line;
-                    }
-                    if (componente != null)
-                    {
-                        mcr.Component = componente;
-                    }
-                    rgmc.listMissingComponentes.Add(mcr);
-                }
-            }
-            if(error == true)
-            {
-                rgmc.Message = "Houve um erro ao aceder aos dados de algum componente ou linha de produção!!";
-            }
-            else{
-                rgmc.Message = "Info obtida com sucesso!!";
-            }
-            return Ok(rgmc);
-        }
 
         /// <summary>
         /// Fornecerá, se possível (caso o trabalhador já tenha horário de trabalho definido para aquele dia), uma 
@@ -715,17 +668,17 @@ namespace Context_aware_System.Controllers
             }
             //se já o ultimo envio foi à mais de um mes vai enviar ou já deveria ter mandado pedido vai mandar jà
             lastRequestDays = (int)(DateTime.Now - anterior).TotalDays;
-            if (lastRequestDays > 31 ||anterior.CompareTo(DateTime.Now) < 0)
+            if (lastRequestDays > 31 || anterior.CompareTo(DateTime.Now) < 0)
             {
                 anterior = DateTime.Now.Date;
                 rnr.Message = "Já devia ter mandado a notificação";
             }
             //ver se já tem horario de trabalho nesse dia
-            var ope = await _DataService.GetOperatorByWorkerId(workerId);              
+            var ope = await _DataService.GetOperatorByWorkerId(workerId);
             if (ope != null)
             {
                 var schedulesope = await _DataService.GetSchedules(null, anterior.Date, null, null, ope.Id, null);
-                if(schedulesope != null)
+                if (schedulesope != null)
                 {
                     var scheduleope = schedulesope.FirstOrDefault();
                     if (scheduleope != null)
@@ -733,7 +686,7 @@ namespace Context_aware_System.Controllers
                         anterior = anterior.AddHours(_systemLogic.GetShiftHourByShiftAndPart(scheduleope.Shift, rnr.ShiftSlipt));
                         rnr.ExistSchedule = true;
                     }
-                }       
+                }
             }
             var sup = await _DataService.GetSupervisorByWorkerId(workerId);
             if (sup != null)
@@ -754,14 +707,102 @@ namespace Context_aware_System.Controllers
             return Ok(rnr);
         }
 
+        //--------------------------Funções de pedidos de dados de histórico--------------------------
+
         /// <summary>
-        /// Retorna o histórico de alertas enviados pela aplicação.
+        /// Devolve a informação sobre os componentes em falta, as respetivas linhas de produção 
+        /// afetadas e a data em que o pedido de reposição do componente foi efetuado.
+        /// </summary>
+        [HttpGet]
+        [Route("GetMissingComponents")]
+        public async Task<IActionResult> GetMissingComponents(int ? lineId, int? componentId, DateTime? Day)
+        {
+            bool error = false;
+            //Formato da resposta
+            ResponseGetMissingComponents rgmc = new ResponseGetMissingComponents();
+
+            //Pesquisa pelos parametros de entrada
+            
+            
+            IQueryable<MissingComponent> query = _context.missingComponents.AsQueryable();
+
+            if (lineId != null)
+            {
+                query = query.Where(m => m.LineId == lineId);
+            }
+            if (componentId != null)
+            {
+                query = query.Where(m => m.ComponentId == componentId);
+            }
+            if (Day != null)
+            {
+                query = query.Where(r => r.OrderDate.Date == Day.Value.Date);
+            }
+
+            var missingComponentes = await query.ToListAsync();
+            
+            //--------Informações extra, se não for necessário retirar
+            if(missingComponentes != null)
+            {
+                foreach(var missingComponente in missingComponentes)
+                {
+                    var line = await _DataService.GetLineById(missingComponente.LineId);
+                    var componente = await _DataService.GetComponentById(missingComponente.ComponentId);
+                    MissingComponentResponse mcr = new MissingComponentResponse();
+                    mcr.Id = missingComponente.Id;
+                    mcr.OrderDate = missingComponente.OrderDate;
+                    mcr.Line.Id = missingComponente.LineId;
+                    mcr.Component.Id = missingComponente.ComponentId;
+                    if(line == null || componente == null)
+                    {
+                        error = true;
+                    }
+                    if(line != null)
+                    {
+                        mcr.Line = line;
+                    }
+                    if (componente != null)
+                    {
+                        mcr.Component = componente;
+                    }
+                    rgmc.listMissingComponentes.Add(mcr);
+                }
+            }
+            if(error == true)
+            {
+                rgmc.Message = "Houve um erro ao aceder aos dados de algum componente ou linha de produção!!";
+            }
+            else{
+                rgmc.Message = "Info obtida com sucesso!!";
+            }
+            return Ok(rgmc);
+        }
+
+       
+        /// <summary>
+        /// Retorna o histórico de alertas enviados pela aplicação
         /// </summary>
         [HttpGet]
         [Route("GetAlertsHistory")]
-        public async Task<IActionResult> GetAlertsHistory()
+        public async Task<IActionResult> GetAlertsHistory(int? typeOfAlert, DateTime? dtInitial, DateTime? dtFinal)
         {
-            return Ok(await _context.alertsHistories.ToListAsync());
+            IQueryable<AlertsHistory> query = _context.alertsHistories.AsQueryable();
+
+            if (typeOfAlert != null)
+            {
+                query = query.Where(a => a.TypeOfAlet == typeOfAlert);
+            }
+            if (dtInitial != null)
+            {
+                query = query.Where(a => a.AlertDate > dtInitial);
+            }
+            if (dtFinal != null)
+            {
+                query = query.Where(a => a.AlertDate < dtFinal);
+            }
+            var listOfAlerts = await query.ToListAsync();
+
+            return Ok(listOfAlerts);
         }
 
         /// <summary>
@@ -770,11 +811,26 @@ namespace Context_aware_System.Controllers
         /// </summary>
         [HttpGet]
         [Route("GetRequestsHistory")]
-        public async Task<IActionResult> GetRequestsHistory()
+        public async Task<IActionResult> GetRequestsHistory(int? type, DateTime? Day, int? workerId)
         {
-            return Ok(await _context.requests.ToListAsync());
-        }
+            IQueryable<Request> query = _context.requests.AsQueryable();
 
+            if (type != null)
+            {
+                query = query.Where(r => r.Type == type);
+            }
+            if (Day != null)
+            {
+                query = query.Where(r => r.Date.Date == Day.Value.Date);
+            }
+            if (workerId != null)
+            {
+                query = query.Where(r => r.WorkerId == workerId);
+            }
+            var listOfRequests = await query.ToListAsync();
+
+            return Ok(listOfRequests);
+        }
 
     }
 }

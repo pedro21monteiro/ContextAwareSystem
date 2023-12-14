@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Moq;
 
-namespace Testes
+namespace Tests
 {
     public static class DbSetMock
     {

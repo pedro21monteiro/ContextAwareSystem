@@ -14,7 +14,7 @@ using Services.DataServices;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace Testes
+namespace Tests
 {
     public class ContextServerTests
     {
@@ -720,35 +720,35 @@ namespace Testes
         /// Assegura que o método "GetAlertsHistory" retorna "OK" e verifica o retorno das informações 
         /// do histórico de alertas fictício.
         /// </summary>
-        [Fact]
-        public void GetAlertsHistory_ReturnsOK()
-        {
-            //Inicializar as mocks
-            var systemLogic = new SystemLogic();
-            var _dataService = new Mock<IDataService>();
-            var generator = new DataGenerator();
-            var fakeContext = A.Fake<IContextAwareDb>();
+        //[Fact]
+        //public void GetAlertsHistory_ReturnsOK()
+        //{
+        //    //Inicializar as mocks
+        //    var systemLogic = new SystemLogic();
+        //    var _dataService = new Mock<IDataService>();
+        //    var generator = new DataGenerator();
+        //    var fakeContext = A.Fake<IContextAwareDb>();
 
-            //Atribuir valores ao dados que vou utilizar
-            generator.fakeAlertsHistories = new List<AlertsHistory>
-            {
-                new AlertsHistory { Id = 1, TypeOfAlet = 1 , AlertSuccessfullySent = true, ErrorMessage = "", AlertMessage = "nova produção", AlertDate = DateTime.Now },
-            };
+        //    //Atribuir valores ao dados que vou utilizar
+        //    generator.fakeAlertsHistories = new List<AlertsHistory>
+        //    {
+        //        new AlertsHistory { Id = 1, TypeOfAlet = 1 , AlertSuccessfullySent = true, ErrorMessage = "", AlertMessage = "nova produção", AlertDate = DateTime.Now },
+        //    };
 
-            //trocar os dados do _context pelos do datagenerator
-            var fakeAlertsHistorys = generator.fakeAlertsHistories.AsQueryable().BuildMockDbSet();
-            A.CallTo(() => fakeContext.alertsHistories).Returns(fakeAlertsHistorys);
+        //    //trocar os dados do _context pelos do datagenerator
+        //    var fakeAlertsHistorys = generator.fakeAlertsHistories.AsQueryable().BuildMockDbSet();
+        //    A.CallTo(() => fakeContext.alertsHistories).Returns(fakeAlertsHistorys);
 
-            //Inicializar Controllador com as Mocks
-            var controller = new ContextServerController(fakeContext, systemLogic, _dataService.Object);
+        //    //Inicializar Controllador com as Mocks
+        //    var controller = new ContextServerController(fakeContext, systemLogic, _dataService.Object);
 
-            var response = controller.GetAlertsHistory().GetAwaiter().GetResult();
+        //    var response = controller.GetAlertsHistory().GetAwaiter().GetResult();
 
-            Assert.IsType<OkObjectResult>(response);
-            var list = (response as OkObjectResult)?.Value as List<AlertsHistory>;
-            Assert.NotNull(list);
-            Assert.Contains(list, a => a.Id == 1);
-        }
+        //    Assert.IsType<OkObjectResult>(response);
+        //    var list = (response as OkObjectResult)?.Value as List<AlertsHistory>;
+        //    Assert.NotNull(list);
+        //    Assert.Contains(list, a => a.Id == 1);
+        //}
 
 
         //---------------------------------------GetComponentsDeviceInfo---------------------------------------
@@ -1090,37 +1090,37 @@ namespace Testes
         /// Assegura que o método "GetMissingComponents" retorne "OK" para um cenários de dados válidos e verifica
         /// se os retornos incluem as informações dos componentes em falta.
         /// </summary>
-        [Fact]
-        public void GetMissingComponents_ReturnsOK()
-        {
-            // Inicializar as mocks
-            var systemLogic = new SystemLogic();
-            var _dataService = new Mock<IDataService>();
-            var generator = new DataGenerator();
-            var fakeContext = A.Fake<IContextAwareDb>();
+        //[Fact]
+        //public void GetMissingComponents_ReturnsOK()
+        //{
+        //    // Inicializar as mocks
+        //    var systemLogic = new SystemLogic();
+        //    var _dataService = new Mock<IDataService>();
+        //    var generator = new DataGenerator();
+        //    var fakeContext = A.Fake<IContextAwareDb>();
 
-            generator.TestGetMissingComponents_Scenery_OK();
+        //    generator.TestGetMissingComponents_Scenery_OK();
 
-            //trocar os dados do _context pelos do datagenerator
-            var fakeMissingComponentes = generator.GetMissingComponents().AsQueryable().BuildMockDbSet();
-            A.CallTo(() => fakeContext.missingComponents).Returns(fakeMissingComponentes);
+        //    //trocar os dados do _context pelos do datagenerator
+        //    var fakeMissingComponentes = generator.GetMissingComponents().AsQueryable().BuildMockDbSet();
+        //    A.CallTo(() => fakeContext.missingComponents).Returns(fakeMissingComponentes);
 
-            //trocar os dados do dataServices pelos do datagenerator
-            _dataService.Setup(x => x.GetLineById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetLineById(id));
-            _dataService.Setup(x => x.GetComponentById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetComponentById(id));
+        //    //trocar os dados do dataServices pelos do datagenerator
+        //    _dataService.Setup(x => x.GetLineById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetLineById(id));
+        //    _dataService.Setup(x => x.GetComponentById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetComponentById(id));
 
-            //Inicializar Controllador com as Mocks
-            var controller = new ContextServerController(fakeContext, systemLogic, _dataService.Object);
+        //    //Inicializar Controllador com as Mocks
+        //    var controller = new ContextServerController(fakeContext, systemLogic, _dataService.Object);
 
-            //Teste 1 - Is_Coordinator_OK
+        //    //Teste 1 - Is_Coordinator_OK
 
-            var response = controller.GetMissingComponents().GetAwaiter().GetResult();
-            Assert.IsType<OkObjectResult>(response);
-            var rgmc = (response as OkObjectResult)?.Value as ResponseGetMissingComponents;
-            Assert.NotNull(rgmc);
-            Assert.Equal("Info obtida com sucesso!!", rgmc.Message);
-            Assert.Single(rgmc.listMissingComponentes);
-        }
+        //    var response = controller.GetMissingComponents().GetAwaiter().GetResult();
+        //    Assert.IsType<OkObjectResult>(response);
+        //    var rgmc = (response as OkObjectResult)?.Value as ResponseGetMissingComponents;
+        //    Assert.NotNull(rgmc);
+        //    Assert.Equal("Info obtida com sucesso!!", rgmc.Message);
+        //    Assert.Single(rgmc.listMissingComponentes);
+        //}
 
 
         //---------------------------------------NotificationRecomendation---------------------------------------

@@ -11,7 +11,7 @@ using Models.FunctionModels;
 using Moq;
 using Services.DataServices;
 
-namespace Testes
+namespace Tests
 {
     public class ContextBuilderTests
     {

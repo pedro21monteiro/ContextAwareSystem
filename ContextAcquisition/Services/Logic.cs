@@ -257,16 +257,6 @@ namespace ContextAcquisition.Services
         /// </summary>
         public async Task SendAlert(SendAlertRequest _sendAlertRequest, int TypeOfAlert)
         {
-            if (TypeOfAlert == 1 && _sendAlertRequest.Stop == null)
-            {
-                Console.WriteLine("Erro de código na parte do enviar alertas, se o tipo de alerta for 1, tem de ter um stop na mensagem!!");
-                return;
-            }
-            if (TypeOfAlert == 2 && _sendAlertRequest.Production == null)
-            {
-                Console.WriteLine("Erro de código na parte do enviar alertas, se o tipo de alerta for 2, tem de ter uma paragem na mensagem!!");
-                return;
-            }
             var alertHistory = new AlertsHistory
             {
                 TypeOfAlet = TypeOfAlert,

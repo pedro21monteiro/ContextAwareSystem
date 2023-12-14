@@ -114,6 +114,7 @@ namespace Services.DataServices
         }
 
         //--------------------------Serviços relacionados com Devices-------------------------------------
+        
         public async Task<List<Device>?> GetDevices(int? id, int? type, int? lineId)
         {
             string searchLink = "?";
@@ -139,6 +140,7 @@ namespace Services.DataServices
                 return null;
             }
         }
+
         public async Task<Device?> GetDeviceById(int id)
         {
             try

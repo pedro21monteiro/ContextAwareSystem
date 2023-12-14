@@ -710,8 +710,8 @@ namespace Context_aware_System.Controllers
         //--------------------------Funções de pedidos de dados de histórico--------------------------
 
         /// <summary>
-        /// Devolve a informação sobre os componentes em falta, as respetivas linhas de produção 
-        /// afetadas e a data em que o pedido de reposição do componente foi efetuado.
+        /// Devolve a informação sobre os componentes em falta, as respetivas linhas de produção afetadas 
+        /// e a data em que o pedido de reposição do componente foi efetuado, conforme os parâmetros de pesquisa.
         /// </summary>
         [HttpGet]
         [Route("GetMissingComponents")]
@@ -778,9 +778,9 @@ namespace Context_aware_System.Controllers
             return Ok(rgmc);
         }
 
-       
+
         /// <summary>
-        /// Retorna o histórico de alertas enviados pela aplicação
+        /// Retorna o histórico de alertas enviados pela aplicação, conforme os parâmetros de pesquisa.
         /// </summary>
         [HttpGet]
         [Route("GetAlertsHistory")]
@@ -806,8 +806,7 @@ namespace Context_aware_System.Controllers
         }
 
         /// <summary>
-        /// Retorna o histórico de pedidos para visualização das informações solicitadas pelos utilizadores a outras aplicações,
-        /// as quais, posteriormente, enviaram essas informações para o Context Engine.
+        /// Retorna o histórico de pedidos para a visualização das informações solicitadas pelos utilizadores, conforme os parâmetros de pesquisa.
         /// </summary>
         [HttpGet]
         [Route("GetRequestsHistory")]

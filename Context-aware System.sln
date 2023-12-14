@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContextAcquisition", "Conte
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContextBuilder", "ContextBuilder\ContextBuilder.csproj", "{12DFE950-1A4F-4BE4-A566-CDEE08DEB805}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testes", "Testes\Testes.csproj", "{510E245E-FD4A-4EA5-9169-C27ECFD8132D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Testes\Tests.csproj", "{510E245E-FD4A-4EA5-9169-C27ECFD8132D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens de Solução", "{8943CACE-E6E7-4129-95E2-921C8CFB6BB3}"
 	ProjectSection(SolutionItems) = preProject

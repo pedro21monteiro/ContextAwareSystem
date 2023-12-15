@@ -52,8 +52,6 @@ namespace ContextBuilder.Controllers
         /// Se os dados forem válidos, a aplicação enviará um aviso para o NAS e, posteriormente, adicionará 
         /// esse componente em falta à base de dados, caso ainda não esteja lá registado.
         /// </summary>
-        
-
         [HttpPost]
         [Route("AddMissingComponent")]
         public async Task<ActionResult> AddMissingComponent([FromBody] MissingComponent missingComponente)
@@ -62,7 +60,7 @@ namespace ContextBuilder.Controllers
             {
                 if(missingComponente.LineId <= 0 || missingComponente.ComponentId <= 0)
                 {
-                    return BadRequest();
+                    return BadRequest($"Parâmetros do MissingComponente não são válidos.");
                 }
                 await SendAlert(missingComponente);
                 var mc = await _context.missingComponents

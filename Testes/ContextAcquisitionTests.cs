@@ -18,7 +18,7 @@ namespace Tests
 
         /// <summary>
         /// Verifica se a função executa corretamente quando o envio de alerta é bem-sucedido.
-        /// </summary>
+        /// </summary>       
         [Fact]
         public void SendAlert_Successful()
         {
@@ -32,10 +32,12 @@ namespace Tests
 
             var sendAlertRequest = new SendAlertRequest
             {
-                Production = new Production { Id = 1, Hour = 10, Day = new DateTime(2023, 6, 29, 0, 0, 0), Quantity = 10, Production_PlanId = 1 },
+                Production = new Production {Id = 1, Hour = 10, Day = new DateTime(2023, 6, 29, 0, 0, 0), 
+                    Quantity = 10, Production_PlanId = 1 },
                 Message = $"Mensagem de teste",
             };
 
+            // Para conseguir verificar informações na consola.
             var consoleOutput = new StringWriter();
             Console.SetOut(consoleOutput);
 

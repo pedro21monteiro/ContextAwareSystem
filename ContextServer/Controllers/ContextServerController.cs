@@ -722,8 +722,7 @@ namespace Context_aware_System.Controllers
             ResponseGetMissingComponents rgmc = new ResponseGetMissingComponents();
 
             //Pesquisa pelos parametros de entrada
-            
-            
+                    
             IQueryable<MissingComponent> query = _context.missingComponents.AsQueryable();
 
             if (lineId != null)

@@ -5,7 +5,7 @@ namespace ContextBuilder
 {
     public class DataManagement : BackgroundService
     {
-        private const int generalDelay =  1000 * 60 * 60 * 24; //24 horas
+        private const int generalDelay = 1000 * 60* 60 * 24; //24 horas
         private IServiceProvider _sp;
         public DataManagement(IServiceProvider sp)
         {

@@ -1464,23 +1464,94 @@ namespace Tests
 
         //---------------------------------------NotificationRecomendation---------------------------------------
 
+        /// <summary>
+        /// Assegura que o método "NotificationRecomendation" retorne "BadRequest" quando 
+        /// não é possível identificar o trabalhador
+        /// </summary>
         [Fact]
         public void NotificationRecomendation_Invalid_WorkerId()
         {
+            // Arrange
+            var systemLogic = new SystemLogic();
+            var _dataService = new Mock<IDataService>();
+            var generator = new DataGenerator();
+            var fakeContext = A.Fake<IContextAwareDb>();
 
+            _dataService.Setup(x => x.GetWorkerById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetWorkerById(id));
+
+            // Act
+            var controller = new ContextServerController(fakeContext, systemLogic, _dataService.Object);
+            var responseTest = controller.NotificationRecommendation(1,1).GetAwaiter().GetResult();
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(responseTest);
+            var rnr = (responseTest as BadRequestObjectResult)?.Value as ResponseNotificationRecommendation;                           
+            Assert.Equal("Erro ao identificar o Worker!!", rnr?.Message);
         }
 
+        /// <summary>
+        /// Assegura que o método "NotificationRecomendation" retorne "BadRequest" quando 
+        /// não é há requests de histórico suficientes para gerar uma reesposta
+        /// </summary>
         [Fact]
         public void NotificationRecomendation_InsufficientRequests()
         {
+            // Arrange
+            var systemLogic = new SystemLogic();
+            var _dataService = new Mock<IDataService>();
+            var generator = new DataGenerator();
+            var fakeContext = A.Fake<IContextAwareDb>();
 
+            generator.fakeWorkers.Add(new Worker { Id = 1, IdFirebase = "hafirebase", UserName = "Hugo Anes", Email = "ha@gmail.com", Role = 2 });
+
+            var requests = new List<Request>();
+            requests.Add(new Request { Id = 1, Type = 1, WorkerId = 1, LineId = 1, Date = DateTime.Now });
+
+            _dataService.Setup(x => x.GetWorkerById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetWorkerById(id));
+
+            var fakeRequests = requests.AsQueryable().BuildMockDbSet();
+            A.CallTo(() => fakeContext.requests).Returns(fakeRequests);
+            // Act
+            var controller = new ContextServerController(fakeContext, systemLogic, _dataService.Object);
+            var responseTest = controller.NotificationRecommendation(1, 1).GetAwaiter().GetResult();
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(responseTest);
+            var rnr = (responseTest as BadRequestObjectResult)?.Value as ResponseNotificationRecommendation;
+            Assert.Equal("É necessário um mínimo de 3 datas para realizar a previsão", rnr?.Message);
         }
 
-
+        /// <summary>
+        /// Assegura que o método "NotificationRecomendation" retorne "OK" quando 
+        /// é possível identificar o trabalhador e este já tenha 3 pedidos registados na base de dados
+        /// </summary>
         [Fact]
         public void NotificationRecomendation_Ok()
         {
+            // Arrange
+            var systemLogic = new SystemLogic();
+            var _dataService = new Mock<IDataService>();
+            var generator = new DataGenerator();
+            var fakeContext = A.Fake<IContextAwareDb>();
 
+            generator.fakeWorkers.Add(new Worker { Id = 1, IdFirebase = "hafirebase", UserName = "Hugo Anes", Email = "ha@gmail.com", Role = 2 });
+
+            var requests = new List<Request>();
+            requests.Add(new Request { Id = 1, Type = 1, WorkerId = 1, LineId = 1, Date = DateTime.Now.AddDays(-15) });
+            requests.Add(new Request { Id = 1, Type = 1, WorkerId = 1, LineId = 1, Date = DateTime.Now.AddDays(-30) });
+            requests.Add(new Request { Id = 1, Type = 1, WorkerId = 1, LineId = 1, Date = DateTime.Now.AddDays(-45) });
+            _dataService.Setup(x => x.GetWorkerById(It.IsAny<int>())).ReturnsAsync((int id) => generator.GetWorkerById(id));
+
+            var fakeRequests = requests.AsQueryable().BuildMockDbSet();
+            A.CallTo(() => fakeContext.requests).Returns(fakeRequests);
+            // Act
+            var controller = new ContextServerController(fakeContext, systemLogic, _dataService.Object);
+            var responseTest = controller.NotificationRecommendation(1, 1).GetAwaiter().GetResult();
+
+            // Assert
+            Assert.IsType<OkObjectResult>(responseTest);
+            var rnr = (responseTest as OkObjectResult)?.Value as ResponseNotificationRecommendation;
+            Assert.Equal("Info obtida com sucesso", rnr?.Message);
         }
 
         //---------------------------------------GetMissingComponents---------------------------------------
